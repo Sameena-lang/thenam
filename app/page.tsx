@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   ArrowRight,
   BarChart3,
@@ -71,6 +71,15 @@ export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [filter, setFilter] = useState('All work')
   const [sent, setSent] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = true
+      videoRef.current.play().catch(() => {})
+    }
+  }, [])
+
   const filteredProjects = filter === 'All work' ? projects : projects.filter((project) => project.category === filter)
 
   return (
@@ -78,9 +87,103 @@ export default function Page() {
       <div className="announcement"><Sparkles size={14} /> Building thoughtful technology for ambitious teams <a href="#contact">Talk to us <ArrowRight size={13} /></a></div>
       <header className="site-header"><div className="container nav-wrap"><Logo /><button className="menu-toggle" aria-label={menuOpen ? 'Close menu' : 'Open menu'} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button><nav className={menuOpen ? 'nav open' : 'nav'}>{['Services', 'Solutions', 'Projects', 'Innovation Lab', 'About Us', 'Careers'].map((item) => <a key={item} href={`#${item.toLowerCase().replaceAll(' ', '-')}`} onClick={() => setMenuOpen(false)}>{item}</a>)}<a className="nav-cta" href="#contact" onClick={() => setMenuOpen(false)}>Start a project <ArrowRight size={15} /></a></nav></div></header>
 
-      <section className="hero"><video className="hero-video" autoPlay muted loop playsInline aria-hidden="true"><source src="/hero-background.mp4" type="video/mp4" /></video><div className="hero-video-overlay" /><div className="hero-orb orb-one" /><div className="hero-orb orb-two" /><div className="container hero-grid"><div className="hero-copy"><p className="eyebrow"><span /> Software, thoughtfully engineered</p><h1>Engineering <em>intelligent</em> digital solutions.</h1><p className="hero-lede">We help businesses innovate, automate, and grow through custom software development, AI-powered solutions, and modern digital experiences.</p><div className="hero-actions"><a className="button button-primary" href="#services">Explore our services <ArrowRight size={17} /></a><a className="button button-ghost" href="#contact">Start a project <MoveUpRight size={16} /></a></div><div className="trust-row"><div className="avatar-stack"><span>TS</span><span>AI</span><span>UX</span></div><p>One team for your<br /><strong>next big idea.</strong></p></div></div><div className="hero-visual"><div className="visual-ring ring-a" /><div className="visual-ring ring-b" /><div className="dashboard"><div className="dash-top"><span className="dots"><i /><i /><i /></span><span>thenam / pulse</span><span className="dash-status"><span /> Live</span></div><div className="dash-body"><div className="dash-title"><div><p>Good morning, team</p><h3>Work at a glance</h3></div><button><ChevronDown size={13} /> This month</button></div><div className="metric-row"><div><span>Active projects</span><strong>24</strong><small className="positive">+12.4% <ArrowRight size={11} /></small></div><div><span>Team velocity</span><strong>86%</strong><small className="positive">+8.2% <ArrowRight size={11} /></small></div></div><div className="chart-card"><div className="chart-heading"><span>Project momentum</span><small>Last 6 months</small></div><div className="fake-chart"><span className="chart-fill" /><svg viewBox="0 0 400 100" preserveAspectRatio="none" aria-label="Rising project momentum chart"><path d="M0 80 C40 75 45 55 82 66 S130 38 168 52 S218 70 250 42 S286 48 310 28 S360 40 400 8" /></svg></div><div className="chart-labels"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span></div></div></div></div><div className="float-card ai-card"><span className="float-icon green"><BrainCircuit size={17} /></span><div><small>AI assistant</small><strong>Insight ready</strong></div><Check size={15} /></div><div className="float-card connected-card"><span className="pulse-dot" /><span>Systems connected</span><strong>12</strong></div></div></div></section>
+      <section className="hero-video-banner" aria-label="Showcase video">
+        <video
+          ref={videoRef}
+          className="hero-video-player"
+          autoPlay
+          muted
+          loop
+          playsInline
+        >
+          <source src="/hero-background.mp4" type="video/mp4" />
+        </video>
+      </section>
 
-      <section className="hero-text-below"><div className="container"><p className="eyebrow"><span /> Software, thoughtfully engineered</p><h1>Engineering <em>intelligent</em> digital solutions.</h1><p>We help businesses innovate, automate, and grow through custom software development, AI-powered solutions, and modern digital experiences.</p><div className="hero-actions"><a className="button button-primary" href="#services">Explore our services <ArrowRight size={17} /></a><a className="button button-ghost" href="#contact">Start a project <MoveUpRight size={16} /></a></div></div></section>\n\n      \n\n      <section className="logo-strip"><div className="container logo-strip-inner"><span>We make complexity feel simple</span><div><b>ORBITAL</b><b>northstar</b><b>mosaic<span>+</span></b><b>arc<span>°</span></b><b>FIELDNOTE</b></div></div></section>
+      <section className="hero">
+        <div className="hero-orb orb-one" />
+        <div className="hero-orb orb-two" />
+        <div className="container hero-grid">
+          <div className="hero-copy">
+            <p className="eyebrow"><span /> Software, thoughtfully engineered</p>
+            <h1>Engineering <em>intelligent</em> digital solutions.</h1>
+            <p className="hero-lede">We help businesses innovate, automate, and grow through custom software development, AI-powered solutions, and modern digital experiences.</p>
+            <div className="hero-actions">
+              <a className="button button-primary" href="#services">Explore our services <ArrowRight size={17} /></a>
+              <a className="button button-ghost" href="#contact">Start a project <MoveUpRight size={16} /></a>
+            </div>
+            <div className="trust-row">
+              <div className="avatar-stack">
+                <span>TS</span><span>AI</span><span>UX</span>
+              </div>
+              <p>One team for your<br /><strong>next big idea.</strong></p>
+            </div>
+          </div>
+          <div className="hero-visual">
+            <div className="visual-ring ring-a" />
+            <div className="visual-ring ring-b" />
+            <div className="dashboard">
+              <div className="dash-top">
+                <span className="dots"><i /><i /><i /></span>
+                <span>thenam / pulse</span>
+                <span className="dash-status"><span /> Live</span>
+              </div>
+              <div className="dash-body">
+                <div className="dash-title">
+                  <div>
+                    <p>Good morning, team</p>
+                    <h3>Work at a glance</h3>
+                  </div>
+                  <button><ChevronDown size={13} /> This month</button>
+                </div>
+                <div className="metric-row">
+                  <div>
+                    <span>Active projects</span>
+                    <strong>24</strong>
+                    <small className="positive">+12.4% <ArrowRight size={11} /></small>
+                  </div>
+                  <div>
+                    <span>Team velocity</span>
+                    <strong>86%</strong>
+                    <small className="positive">+8.2% <ArrowRight size={11} /></small>
+                  </div>
+                </div>
+                <div className="chart-card">
+                  <div className="chart-heading">
+                    <span>Project momentum</span>
+                    <small>Last 6 months</small>
+                  </div>
+                  <div className="fake-chart">
+                    <span className="chart-fill" />
+                    <svg viewBox="0 0 400 100" preserveAspectRatio="none" aria-label="Rising project momentum chart">
+                      <path d="M0 80 C40 75 45 55 82 66 S130 38 168 52 S218 70 250 42 S286 48 310 28 S360 40 400 8" />
+                    </svg>
+                  </div>
+                  <div className="chart-labels">
+                    <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="float-card ai-card">
+              <span className="float-icon green"><BrainCircuit size={17} /></span>
+              <div>
+                <small>AI assistant</small>
+                <strong>Insight ready</strong>
+              </div>
+              <Check size={15} />
+            </div>
+            <div className="float-card connected-card">
+              <span className="pulse-dot" />
+              <span>Systems connected</span>
+              <strong>12</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <section className="logo-strip"><div className="container logo-strip-inner"><span>We make complexity feel simple</span><div><b>ORBITAL</b><b>northstar</b><b>mosaic<span>+</span></b><b>arc<span>°</span></b><b>FIELDNOTE</b></div></div></section>
 
       <section className="section services" id="services"><div className="container"><div className="section-heading"><div><p className="eyebrow"><span /> What we do</p><h2>Technology that moves<br /><em>business forward.</em></h2></div><p>We bring strategy, design, engineering and intelligence together to build products that create a measurable difference.</p></div><div className="service-grid">{services.map(([title, description, Icon], index) => <article className="service-card" key={title}><div className="icon-box"><Icon /></div><span className="service-number">0{index + 1}</span><h3>{title}</h3><p>{description}</p><a href="#contact">Learn more <ArrowRight size={14} /></a></article>)}</div></div></section>
 
