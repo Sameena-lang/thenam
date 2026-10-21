@@ -64,7 +64,7 @@ const projects = [
 ]
 
 function Logo() {
-  return <a href="#top" className="logo" aria-label="Thenam Software Solutions home"><span className="logo-mark"><span /><span /><span /></span><span>THENAM<small>SOFTWARE SOLUTIONS</small></span></a>
+  return <a href="#top" className="logo" aria-label="Thenam Software Solutions home"><img src="/thenam-logo.png" alt="Thenam Software Solutions leaf logo" /><span>THENAM<small>SOFTWARE SOLUTIONS</small></span></a>
 }
 
 export default function Page() {
