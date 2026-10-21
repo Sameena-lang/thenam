@@ -1,201 +1,686 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
+import Link from 'next/link'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import CtaBanner from '@/components/CtaBanner'
 import {
   ArrowRight,
-  BarChart3,
-  BrainCircuit,
-  Check,
-  ChevronDown,
-  Cloud,
-  Code2,
+  Headphones,
   Cpu,
-  Database,
-  Globe2,
-  GraduationCap,
-  HeartPulse,
-  Landmark,
-  Leaf,
-  LineChart,
-  Menu,
-  MessageSquare,
-  MoveUpRight,
-  Network,
-  PackageCheck,
-  Palette,
-  Rocket,
-  Search,
-  ShieldCheck,
-  ShoppingBag,
+  Users,
+  BarChart3,
+  Monitor,
+  Code2,
   Sparkles,
-  TabletSmartphone,
-  X,
+  Cog,
+  ShoppingCart,
+  GraduationCap,
+  Heart,
+  Factory,
+  Building2,
+  MoreHorizontal,
+  Bot,
+  Activity,
+  Layers,
+  CheckCircle2,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize2,
+  Film,
   Zap,
 } from 'lucide-react'
 
-const services = [
-  ['AI & Machine Learning', 'Turn complex data into intelligent decisions and personalized experiences.', BrainCircuit],
-  ['Custom Software Development', 'Reliable digital products designed around the way your business works.', Code2],
-  ['Web Application Development', 'Fast, accessible and conversion-focused web experiences that scale.', Globe2],
-  ['Mobile App Development', 'Native-quality mobile experiences built for the moments that matter.', TabletSmartphone],
-  ['Product Engineering', 'From first prototype to a resilient product your customers love.', Rocket],
-  ['Business Automation', 'Remove repetitive work and give your teams more time to create value.', Zap],
-  ['Cloud & DevOps', 'Secure, observable infrastructure that keeps your products moving.', Cloud],
-  ['UI/UX Design', 'Clear, thoughtful interfaces that make sophisticated technology feel simple.', Palette],
-  ['Data Analytics', 'See what is happening, understand why, and act with confidence.', LineChart],
-  ['IoT Solutions', 'Connect devices, operations and real-time intelligence in one view.', Network],
-  ['Enterprise Software', 'Bring critical workflows together with software built for your scale.', Landmark],
-  ['Research & Development', 'Explore what is next through focused experimentation and rapid learning.', Search],
-] as const
-
-const solutions = [
-  ['Healthcare', 'Make care more connected with secure workflows, patient platforms and actionable insights.', HeartPulse],
-  ['Finance', 'Build trusted financial experiences with automation, analytics and intelligent risk tools.', BarChart3],
-  ['Retail & E-commerce', 'Create seamless journeys from discovery to delivery with connected commerce.', ShoppingBag],
-  ['Education', 'Help learners and institutions do more with engaging, accessible digital platforms.', GraduationCap],
-  ['Agriculture', 'Bring data closer to the field with connected, practical tools for better decisions.', Leaf],
-  ['Enterprise Operations', 'Give every team a clearer view of work, performance and opportunities to improve.', PackageCheck],
-] as const
-
-const projects = [
-  { title: 'Pulse / Operations intelligence', category: 'Web apps', description: 'A demonstration command center for teams that need a faster view of their work.', tags: ['Next.js', 'Analytics'], tone: 'blue' },
-  { title: 'Nexa / Connected commerce', category: 'Product design', description: 'A demonstration retail experience built around discovery, trust and effortless checkout.', tags: ['UX/UI', 'Commerce'], tone: 'green' },
-  { title: 'Aster / Field insights', category: 'Data & AI', description: 'A demonstration data layer helping distributed teams turn signals into action.', tags: ['AI', 'IoT'], tone: 'navy' },
-]
-
-function Logo() {
-  return <a href="#top" className="logo" aria-label="Thenam Software Solutions home"><img src="/thenam-logo.png" alt="Thenam Software Solutions leaf logo" /><span>THENAM<small>SOFTWARE SOLUTIONS</small></span></a>
-}
-
-export default function Page() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [filter, setFilter] = useState('All work')
-  const [sent, setSent] = useState(false)
+export default function HomePage() {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const [isPlaying, setIsPlaying] = useState(true)
+  const [isMuted, setIsMuted] = useState(true)
 
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = true
-      videoRef.current.play().catch(() => {})
+  const togglePlay = () => {
+    if (!videoRef.current) return
+    if (videoRef.current.paused) {
+      videoRef.current.play()
+      setIsPlaying(true)
+    } else {
+      videoRef.current.pause()
+      setIsPlaying(false)
     }
-  }, [])
+  }
 
-  const filteredProjects = filter === 'All work' ? projects : projects.filter((project) => project.category === filter)
+  const toggleMute = () => {
+    if (!videoRef.current) return
+    videoRef.current.muted = !videoRef.current.muted
+    setIsMuted(videoRef.current.muted)
+  }
 
+  const toggleFullscreen = () => {
+    if (!videoRef.current) return
+    if (videoRef.current.requestFullscreen) {
+      videoRef.current.requestFullscreen()
+    }
+  }
   return (
-    <main id="top">
-      <div className="announcement"><Sparkles size={14} /> Building thoughtful technology for ambitious teams <a href="#contact">Talk to us <ArrowRight size={13} /></a></div>
-      <header className="site-header"><div className="container nav-wrap"><Logo /><button className="menu-toggle" aria-label={menuOpen ? 'Close menu' : 'Open menu'} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button><nav className={menuOpen ? 'nav open' : 'nav'}>{['Services', 'Solutions', 'Projects', 'Innovation Lab', 'About Us', 'Careers'].map((item) => <a key={item} href={`#${item.toLowerCase().replaceAll(' ', '-')}`} onClick={() => setMenuOpen(false)}>{item}</a>)}<a className="nav-cta" href="#contact" onClick={() => setMenuOpen(false)}>Start a project <ArrowRight size={15} /></a></nav></div></header>
+    <>
+      <Header />
 
-      <section className="hero-video-banner" aria-label="Showcase video">
-        <video
-          ref={videoRef}
-          className="hero-video-player"
-          autoPlay
-          muted
-          loop
-          playsInline
-        >
-          <source src="/hero-background.mp4" type="video/mp4" />
-        </video>
-      </section>
+      <main id="main-content">
+        {/* ========================================================
+            HERO SECTION (DARK NAVY WITH LAPTOP & FLOATING CARDS)
+            ======================================================== */}
+        <section className="hero-section" aria-label="Hero Introduction">
+          <div className="hero-glow-cyan" aria-hidden="true" />
+          <div className="hero-glow-lime" aria-hidden="true" />
 
-      <section className="hero">
-        <div className="hero-orb orb-one" />
-        <div className="hero-orb orb-two" />
-        <div className="container hero-grid">
-          <div className="hero-copy">
-            <p className="eyebrow"><span /> Software, thoughtfully engineered</p>
-            <h1>Engineering <em>intelligent</em> digital solutions.</h1>
-            <p className="hero-lede">We help businesses innovate, automate, and grow through custom software development, AI-powered solutions, and modern digital experiences.</p>
-            <div className="hero-actions">
-              <a className="button button-primary" href="#services">Explore our services <ArrowRight size={17} /></a>
-              <a className="button button-ghost" href="#contact">Start a project <MoveUpRight size={16} /></a>
-            </div>
-            <div className="trust-row">
-              <div className="avatar-stack">
-                <span>TS</span><span>AI</span><span>UX</span>
+          <div className="container hero-grid">
+            {/* Left Copy */}
+            <div className="hero-copy-col">
+              <span className="hero-eyebrow">
+                <Sparkles size={14} className="accent-cyan" />
+                DIGITAL SOLUTIONS FOR A SMARTER TOMORROW
+              </span>
+
+              <h1 className="hero-title">
+                Technology that moves<br />
+                your <span className="accent-cyan">business</span>{' '}
+                <span className="accent-lime">forward.</span>
+              </h1>
+
+              <p className="hero-desc">
+                We build websites, AI-powered applications, and custom software that solve real business problems.
+              </p>
+
+              <div className="hero-btn-row">
+                <Link href="/services" className="explore-btn">
+                  <span>Explore Our Services</span>
+                  <ArrowRight size={15} />
+                </Link>
+
+                <Link href="/contact" className="quote-btn">
+                  <span>Get a Free Quote</span>
+                  <ArrowRight size={15} />
+                </Link>
+
+                <a href="#video-showcase" className="video-hero-pill" aria-label="Scroll to overview video">
+                  <Play size={13} fill="currentColor" />
+                  <span>Watch Demo</span>
+                </a>
               </div>
-              <p>One team for your<br /><strong>next big idea.</strong></p>
+
+              <div className="price-callout">
+                <span>Websites starting from</span>
+                <span className="price-highlight">₹1,999*</span>
+              </div>
+
+              <div className="hero-badges-row">
+                <div className="badge-item">
+                  <Headphones size={15} />
+                  <span>Reliable Support</span>
+                </div>
+                <div className="badge-item">
+                  <Cpu size={15} />
+                  <span>Modern Tech</span>
+                </div>
+                <div className="badge-item">
+                  <Users size={15} />
+                  <span>Client-Focused</span>
+                </div>
+                <div className="badge-item">
+                  <BarChart3 size={15} />
+                  <span>Scalable</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Visual (Realistic Laptop Mockup + Floating UI) */}
+            <div className="hero-visual-wrapper">
+              <div className="laptop-frame">
+                <div className="laptop-top-bar">
+                  <span className="camera-dot" />
+                </div>
+
+                <div className="laptop-screen-content">
+                  {/* Dashboard Header */}
+                  <div className="screen-header">
+                    <div className="screen-brand">
+                      <img src="/thenam-logo.png" alt="Thenam leaf" width="18" height="18" />
+                      <strong>THENAM</strong>
+                    </div>
+                    <p className="screen-title">Business Overview</p>
+                  </div>
+
+                  {/* 4 KPIs */}
+                  <div className="screen-kpi-grid">
+                    <div className="kpi-card">
+                      <span>Revenue</span>
+                      <strong>₹ 12,48,000</strong>
+                      <small>+12%</small>
+                    </div>
+                    <div className="kpi-card">
+                      <span>Total Users</span>
+                      <strong>1,420</strong>
+                      <small>+18%</small>
+                    </div>
+                    <div className="kpi-card">
+                      <span>Active Projects</span>
+                      <strong>24</strong>
+                      <small>+33%</small>
+                    </div>
+                    <div className="kpi-card">
+                      <span>Satisfaction</span>
+                      <strong>98%</strong>
+                      <small>+2%</small>
+                    </div>
+                  </div>
+
+                  {/* Growth Chart */}
+                  <div className="screen-chart-card">
+                    <div className="chart-header-row">
+                      <span>Growth Overview</span>
+                      <small>Last 12 Months ▾</small>
+                    </div>
+                    <div className="screen-fake-bars">
+                      <i style={{ height: '35%' }} />
+                      <i style={{ height: '42%' }} />
+                      <i style={{ height: '38%' }} />
+                      <i style={{ height: '55%' }} />
+                      <i style={{ height: '62%' }} />
+                      <i style={{ height: '58%' }} />
+                      <i style={{ height: '70%' }} className="active-cyan" />
+                      <i style={{ height: '78%' }} className="active-cyan" />
+                      <i style={{ height: '85%' }} className="active-lime" />
+                      <i style={{ height: '92%' }} className="active-lime" />
+                      <i style={{ height: '96%' }} className="active-lime" />
+                    </div>
+                    <div className="chart-month-labels">
+                      <span>Jan</span><span>Mar</span><span>May</span><span>Jul</span><span>Sep</span><span>Nov</span>
+                    </div>
+                  </div>
+
+                  {/* Recent Projects Table */}
+                  <div className="screen-recent-table">
+                    <div className="recent-row">
+                      <span>Business Website</span>
+                      <span className="status-pill delivered">Delivered</span>
+                      <small style={{ color: '#94a3b8' }}>Oct 10, 2026</small>
+                    </div>
+                    <div className="recent-row">
+                      <span>AI Chatbot</span>
+                      <span className="status-pill progress">In Progress</span>
+                      <small style={{ color: '#94a3b8' }}>Oct 08, 2026</small>
+                    </div>
+                    <div className="recent-row">
+                      <span>Management System</span>
+                      <span className="status-pill planning">Planning</span>
+                      <small style={{ color: '#94a3b8' }}>Oct 05, 2026</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="laptop-base-edge" />
+              </div>
+
+              {/* Floating Card: AI Assistant */}
+              <div className="float-card-ai" aria-hidden="true">
+                <div className="ai-head-row">
+                  <div className="ai-icon-chip">
+                    <Bot size={13} />
+                  </div>
+                  <span>AI Assistant</span>
+                </div>
+                <p className="ai-prompt-text">How can I help you today?</p>
+                <div className="ai-chips-list">
+                  <button type="button" className="ai-chip-btn">Build a website</button>
+                  <button type="button" className="ai-chip-btn">Get a quote</button>
+                  <button type="button" className="ai-chip-btn">Discuss a project</button>
+                </div>
+              </div>
+
+              {/* Floating Card: Create Solution */}
+              <div className="float-card-solution" aria-hidden="true">
+                <div style={{ color: '#0284c7', marginBottom: '4px' }}>
+                  <Layers size={16} />
+                </div>
+                <strong>Create Solution</strong>
+                <p>Turn your ideas into powerful digital products.</p>
+                <Link href="/contact" className="solution-mini-btn">
+                  <span>Get Started</span>
+                  <ArrowRight size={10} />
+                </Link>
+              </div>
+
+              {/* Floating Card: Phone Preview */}
+              <div className="float-card-phone" aria-hidden="true">
+                <div className="phone-speaker" />
+                <p className="phone-title">Your Ideas</p>
+                <div className="phone-list">
+                  <span className="phone-pill">🌐 Web Dev</span>
+                  <span className="phone-pill">🤖 AI Solutions</span>
+                  <span className="phone-pill">💻 Software</span>
+                  <span className="phone-pill">⚡ Automation</span>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="hero-visual">
-            <div className="visual-ring ring-a" />
-            <div className="visual-ring ring-b" />
-            <div className="dashboard">
-              <div className="dash-top">
-                <span className="dots"><i /><i /><i /></span>
-                <span>thenam / pulse</span>
-                <span className="dash-status"><span /> Live</span>
-              </div>
-              <div className="dash-body">
-                <div className="dash-title">
-                  <div>
-                    <p>Good morning, team</p>
-                    <h3>Work at a glance</h3>
-                  </div>
-                  <button><ChevronDown size={13} /> This month</button>
-                </div>
-                <div className="metric-row">
-                  <div>
-                    <span>Active projects</span>
-                    <strong>24</strong>
-                    <small className="positive">+12.4% <ArrowRight size={11} /></small>
-                  </div>
-                  <div>
-                    <span>Team velocity</span>
-                    <strong>86%</strong>
-                    <small className="positive">+8.2% <ArrowRight size={11} /></small>
-                  </div>
-                </div>
-                <div className="chart-card">
-                  <div className="chart-heading">
-                    <span>Project momentum</span>
-                    <small>Last 6 months</small>
-                  </div>
-                  <div className="fake-chart">
-                    <span className="chart-fill" />
-                    <svg viewBox="0 0 400 100" preserveAspectRatio="none" aria-label="Rising project momentum chart">
-                      <path d="M0 80 C40 75 45 55 82 66 S130 38 168 52 S218 70 250 42 S286 48 310 28 S360 40 400 8" />
-                    </svg>
-                  </div>
-                  <div className="chart-labels">
-                    <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="float-card ai-card">
-              <span className="float-icon green"><BrainCircuit size={17} /></span>
+        </section>
+
+        {/* ========================================================
+            SERVICES SECTION ("What We Do" - CLEAN WHITE)
+            ======================================================== */}
+        <section className="services-section" id="services">
+          <div className="container">
+            <div className="section-head-split">
               <div>
-                <small>AI assistant</small>
-                <strong>Insight ready</strong>
+                <span className="section-eyebrow">OUR SERVICES</span>
+                <h2 className="section-title-large">
+                  What <span className="accent-cyan-dark">We</span> <span className="accent-lime-dark">Do</span>
+                </h2>
               </div>
-              <Check size={15} />
+              <div className="section-sub-wrap">
+                <p className="section-desc-light">
+                  End-to-end technology solutions to help businesses build, automate and grow in the digital world.
+                </p>
+                <Link href="/services" className="view-all-link">
+                  <span>View All Services</span>
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
             </div>
-            <div className="float-card connected-card">
-              <span className="pulse-dot" />
-              <span>Systems connected</span>
-              <strong>12</strong>
+
+            <div className="services-grid-4">
+              {/* Card 1: Web Development */}
+              <article className="service-box-card">
+                <div>
+                  <div className="service-icon-wrap cyan">
+                    <Monitor size={22} />
+                  </div>
+                  <h3 className="service-card-title">Web Development</h3>
+                  <p className="service-card-desc">
+                    Modern websites and web applications for businesses, startups and brands. Responsive, fast and SEO-ready.
+                  </p>
+                </div>
+                <div className="service-card-foot">
+                  <span className="service-foot-price">From ₹1,999*</span>
+                  <Link href="/services#web-development" className="service-circle-btn" aria-label="Learn about Web Development">
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </article>
+
+              {/* Card 2: AI & Machine Learning */}
+              <article className="service-box-card">
+                <div>
+                  <div className="service-icon-wrap green">
+                    <Cpu size={22} />
+                  </div>
+                  <h3 className="service-card-title">AI & Machine Learning</h3>
+                  <p className="service-card-desc">
+                    AI-powered applications, chatbots, computer vision and intelligent automated workflows.
+                  </p>
+                </div>
+                <div className="service-card-foot">
+                  <span className="service-foot-link">Get a Quote</span>
+                  <Link href="/contact" className="service-circle-btn" aria-label="Get a quote for AI & Machine Learning">
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </article>
+
+              {/* Card 3: Custom Software */}
+              <article className="service-box-card">
+                <div>
+                  <div className="service-icon-wrap blue">
+                    <Code2 size={22} />
+                  </div>
+                  <h3 className="service-card-title">Custom Software</h3>
+                  <p className="service-card-desc">
+                    Tailored software solutions built to fit your unique business operations and scale securely.
+                  </p>
+                </div>
+                <div className="service-card-foot">
+                  <span className="service-foot-link">Get a Quote</span>
+                  <Link href="/contact" className="service-circle-btn" aria-label="Get a quote for Custom Software">
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </article>
+
+              {/* Card 4: Business Automation */}
+              <article className="service-box-card">
+                <div>
+                  <div className="service-icon-wrap lime">
+                    <Cog size={22} />
+                  </div>
+                  <h3 className="service-card-title">Business Automation</h3>
+                  <p className="service-card-desc">
+                    Automate repetitive tasks, sync business software and streamline manual bottlenecks.
+                  </p>
+                </div>
+                <div className="service-card-foot">
+                  <span className="service-foot-link">Get a Quote</span>
+                  <Link href="/contact" className="service-circle-btn" aria-label="Get a quote for Business Automation">
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </article>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
+        {/* ========================================================
+            AUDIENCE STRIP BANNER ("Built for startups · SMEs")
+            ======================================================== */}
+        <section className="audience-strip" aria-label="Target industries and businesses">
+          <div className="container audience-strip-inner">
+            <span className="audience-label">
+              Built for startups &nbsp;•&nbsp; SMEs &nbsp;•&nbsp; Growing teams
+            </span>
 
-      <section className="logo-strip"><div className="container logo-strip-inner"><span>We make complexity feel simple</span><div><b>ORBITAL</b><b>northstar</b><b>mosaic<span>+</span></b><b>arc<span>°</span></b><b>FIELDNOTE</b></div></div></section>
+            <div className="industry-pills-row">
+              <span className="industry-pill"><ShoppingCart size={14} /> Retail & E-commerce</span>
+              <span className="industry-pill"><GraduationCap size={14} /> Education</span>
+              <span className="industry-pill"><Heart size={14} /> Healthcare</span>
+              <span className="industry-pill"><Factory size={14} /> Manufacturing</span>
+              <span className="industry-pill"><Building2 size={14} /> Real Estate</span>
+              <span className="industry-pill"><MoreHorizontal size={14} /> And More</span>
+            </div>
+          </div>
+        </section>
 
-      <section className="section services" id="services"><div className="container"><div className="section-heading"><div><p className="eyebrow"><span /> What we do</p><h2>Technology that moves<br /><em>business forward.</em></h2></div><p>We bring strategy, design, engineering and intelligence together to build products that create a measurable difference.</p></div><div className="service-grid">{services.map(([title, description, Icon], index) => <article className="service-card" key={title}><div className="icon-box"><Icon /></div><span className="service-number">0{index + 1}</span><h3>{title}</h3><p>{description}</p><a href="#contact">Learn more <ArrowRight size={14} /></a></article>)}</div></div></section>
+        {/* ========================================================
+            FEATURED WORK ("Turning ideas into real solutions.")
+            ======================================================== */}
+        <section className="featured-work-section" id="products">
+          <div className="container featured-work-grid">
+            {/* Left Header */}
+            <div className="featured-work-copy">
+              <span className="section-eyebrow">FEATURED WORK</span>
+              <h2 className="section-title-large">
+                Turning ideas into<br />
+                <span className="accent-cyan-dark">real</span>{' '}
+                <span className="accent-lime-dark">solutions.</span>
+              </h2>
+              <p className="section-desc-light" style={{ marginTop: '16px' }}>
+                Here are some of our recent projects and engineered products helping clients grow.
+              </p>
+              <Link href="/products" className="view-all-link" style={{ marginTop: '8px' }}>
+                <span>Explore our work</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
 
-      <section className="section solutions" id="solutions"><div className="container"><div className="section-heading centered"><p className="eyebrow"><span /> Built for your world</p><h2>Smart solutions for<br /><em>every industry.</em></h2><p>Deep curiosity about your business. Practical technology for the problems that matter most.</p></div><div className="solution-grid">{solutions.map(([title, description, Icon]) => <article className="solution-card" key={title}><Icon /><h3>{title}</h3><p>{description}</p><a href="#contact">Explore solution <ArrowRight size={14} /></a></article>)}</div></div></section>
+            {/* Right Projects Grid */}
+            <div className="featured-work-grid-4">
+              {/* Project 1: AgriSmart */}
+              <article className="project-showcase-card">
+                <div className="project-art-preview art-agrismart">
+                  <div className="project-mock-box">
+                    <div className="mock-top-bar" style={{ color: '#166534' }}>
+                      <span>AgriSmart Drone & IoT</span>
+                      <span>● Active</span>
+                    </div>
+                    <div className="mock-content-mini">
+                      <div className="mock-avatar-circle" style={{ background: '#dcfce7', color: '#15803d' }}>
+                        🌾
+                      </div>
+                      <div className="mock-lines-group">
+                        <div className="mock-line" style={{ background: '#86efac' }} />
+                        <div className="mock-line short" style={{ background: '#bbf7d0' }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="project-meta-bottom">
+                  <h3 className="project-title">AgriSmart</h3>
+                  <p className="project-desc-mini">AI-Powered AgriTech Platform</p>
+                  <div className="project-tag-row">
+                    <span className="tag-pill">Web App</span>
+                    <span className="tag-pill">AI/ML</span>
+                    <span className="tag-pill">IoT</span>
+                  </div>
+                </div>
+              </article>
 
-      <section className="section projects" id="projects"><div className="container"><div className="section-heading"><div><p className="eyebrow"><span /> Selected work</p><h2>Ideas transformed into<br /><em>digital products.</em></h2></div><a className="text-link" href="#contact">Discuss your idea <ArrowRight size={15} /></a></div><div className="filter-row">{['All work', 'Web apps', 'Product design', 'Data & AI'].map((item) => <button key={item} className={filter === item ? 'active' : ''} onClick={() => setFilter(item)}>{item}</button>)}</div><div className="project-grid">{filteredProjects.map((project) => <article className={`project-card ${project.tone}`} key={project.title}><div className="project-art"><div className="art-window"><div className="art-toolbar"><i /><i /><i /></div><div className="art-lines"><span /><span /><span /><span /></div><div className="art-orbit"><div /></div><div className="art-bars"><i /><i /><i /><i /><i /></div></div></div><div className="project-info"><span className="project-category">{project.category}</span><h3>{project.title}</h3><p>{project.description}</p><div className="tag-row">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div></div></article>)}</div></div></section>
+              {/* Project 2: ZaraBot */}
+              <article className="project-showcase-card">
+                <div className="project-art-preview art-zarabot">
+                  <div className="project-mock-box">
+                    <div className="mock-top-bar" style={{ color: '#38bdf8' }}>
+                      <span>ZaraBot AI Voice</span>
+                      <span>⚡ Tamil-first</span>
+                    </div>
+                    <div className="mock-content-mini">
+                      <div className="mock-avatar-circle" style={{ background: '#0c2340', color: '#38bdf8' }}>
+                        🤖
+                      </div>
+                      <div className="mock-lines-group">
+                        <div className="mock-line" style={{ background: '#38bdf8' }} />
+                        <div className="mock-line short" style={{ background: '#0284c7' }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="project-meta-bottom">
+                  <h3 className="project-title">ZaraBot</h3>
+                  <p className="project-desc-mini">Tamil-first AI Assistant</p>
+                  <div className="project-tag-row">
+                    <span className="tag-pill">AI</span>
+                    <span className="tag-pill">Chatbot</span>
+                    <span className="tag-pill">Voice</span>
+                  </div>
+                </div>
+              </article>
 
-      <section className="about-band" id="about-us"><div className="container about-grid"><div><p className="eyebrow light"><span /> A little about us</p><h2>Good technology<br /><em>starts with listening.</em></h2></div><div><p>Thenam Software Solutions is a technology partner for organizations ready to do meaningful work differently. We combine human-centered design with disciplined engineering to turn bold ideas into useful, lasting products.</p><div className="about-points"><span><Check size={15} /> Curious by default</span><span><Check size={15} /> Clear in every step</span><span><Check size={15} /> Built to last</span></div><a className="button button-light" href="#contact">Meet Thenam <ArrowRight size={16} /></a></div></div></section>
+              {/* Project 3: E-Commerce Platform */}
+              <article className="project-showcase-card">
+                <div className="project-art-preview art-ecommerce">
+                  <div className="project-mock-box">
+                    <div className="mock-top-bar" style={{ color: '#92400e' }}>
+                      <span>Fresh Natural Products</span>
+                      <span>🛒 Cart (3)</span>
+                    </div>
+                    <div className="mock-content-mini">
+                      <div className="mock-avatar-circle" style={{ background: '#fef3c7', color: '#b45309' }}>
+                        🛍️
+                      </div>
+                      <div className="mock-lines-group">
+                        <div className="mock-line" style={{ background: '#fde68a' }} />
+                        <div className="mock-line short" style={{ background: '#fcd34d' }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="project-meta-bottom">
+                  <h3 className="project-title">E-Commerce Platform</h3>
+                  <p className="project-desc-mini">Business Website & Storefront</p>
+                  <div className="project-tag-row">
+                    <span className="tag-pill">Web Dev</span>
+                    <span className="tag-pill">E-commerce</span>
+                  </div>
+                </div>
+              </article>
 
-      <section className="section contact" id="contact"><div className="container contact-grid"><div className="contact-copy"><p className="eyebrow"><span /> Let&apos;s work together</p><h2>Let&apos;s build something <em>great</em> together.</h2><p>Have a challenge in mind, a product to shape, or simply a question? We&apos;d love to hear from you.</p><div className="contact-details"><div><MessageSquare size={18} /><span><small>Email us</small><strong>hello@thenamsoftware.com</strong></span></div><div><Globe2 size={18} /><span><small>Working globally</small><strong>Remote-first, worldwide</strong></span></div></div></div><form className="contact-form" onSubmit={(event) => { event.preventDefault(); setSent(true) }}>{sent ? <div className="form-success"><span><Check /></span><h3>Thanks for reaching out.</h3><p>We&apos;ll be in touch soon to learn more about your project.</p><button type="button" onClick={() => setSent(false)}>Send another message</button></div> : <><div className="form-row"><label>Name<input required name="name" placeholder="Your name" /></label><label>Email<input required type="email" name="email" placeholder="you@company.com" /></label></div><div className="form-row"><label>Company<input name="company" placeholder="Your company" /></label><label>Service<select name="service" defaultValue=""><option value="" disabled>Select a service</option><option>Custom software</option><option>AI & Machine Learning</option><option>Product design</option><option>Something else</option></select></label></div><label>Tell us about your project<textarea required name="message" placeholder="A little about what you&apos;re building..." rows={4} /></label><button className="button button-primary" type="submit">Send inquiry <ArrowRight size={16} /></button><small className="form-note">We&apos;ll only use your details to respond to your inquiry.</small></>}</form></div></section>
+              {/* Project 4: Business Management System */}
+              <article className="project-showcase-card">
+                <div className="project-art-preview art-bizmgmt">
+                  <div className="project-mock-box">
+                    <div className="mock-top-bar" style={{ color: '#0369a1' }}>
+                      <span>Enterprise CRM & ERP</span>
+                      <span>📊 Sync</span>
+                    </div>
+                    <div className="mock-content-mini">
+                      <div className="mock-avatar-circle" style={{ background: '#e0f2fe', color: '#0284c7' }}>
+                        📈
+                      </div>
+                      <div className="mock-lines-group">
+                        <div className="mock-line" style={{ background: '#bae6fd' }} />
+                        <div className="mock-line short" style={{ background: '#7dd3fc' }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="project-meta-bottom">
+                  <h3 className="project-title">Business Management System</h3>
+                  <p className="project-desc-mini">Custom Operations Software</p>
+                  <div className="project-tag-row">
+                    <span className="tag-pill">Web App</span>
+                    <span className="tag-pill">Dashboard</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
 
-      <footer className="footer"><div className="container footer-top"><div><Logo /><p>Thoughtful technology for<br />ambitious teams.</p></div><div className="footer-links"><div><strong>Explore</strong><a href="#services">Services</a><a href="#solutions">Solutions</a><a href="#projects">Projects</a></div><div><strong>Company</strong><a href="#about-us">About us</a><a href="#contact">Careers</a><a href="#contact">Contact</a></div><div><strong>Connect</strong><a href="#contact">LinkedIn</a><a href="#contact">Instagram</a><a href="#contact">Email us</a></div></div></div><div className="container footer-bottom"><span>© 2026 Thenam Software Solutions. All rights reserved.</span><span>Privacy policy&nbsp;&nbsp; · &nbsp;&nbsp;Terms</span></div></footer>
-    </main>
+        {/* ========================================================
+            VIDEO SHOWCASE SECTION ("Watch Thenam in Action")
+            ======================================================== */}
+        <section className="video-showcase-section" id="video-showcase" aria-label="Product and technology video showcase">
+          <div className="hero-glow-cyan" aria-hidden="true" style={{ top: '20%', left: '10%' }} />
+          <div className="hero-glow-lime" aria-hidden="true" style={{ bottom: '20%', right: '10%' }} />
+
+          <div className="container video-container">
+            <div className="video-header-center">
+              <span className="hero-eyebrow" style={{ color: 'var(--cyan)' }}>
+                <Film size={14} className="accent-cyan" />
+                EXPERIENCE THENAM · HIGH-PERFORMANCE TECH
+              </span>
+              <h2 className="section-title-large" style={{ color: '#ffffff', fontSize: 'clamp(30px, 4vw, 44px)' }}>
+                Watch how we bring <span className="accent-cyan">intelligence</span> and{' '}
+                <span className="accent-lime">velocity</span> to life.
+              </h2>
+              <p className="section-desc-light" style={{ margin: '14px auto 0', color: '#94a3b8', maxWidth: '640px' }}>
+                Explore our engineering craftsmanship in action. From ultra-responsive web portals to scalable AI engines and automated dashboards.
+              </p>
+            </div>
+
+            {/* Video Player Window Card */}
+            <div className="video-frame-outer">
+              <div className="video-frame-inner">
+                {/* Top Window Bar */}
+                <div className="video-window-bar">
+                  <div className="window-dots">
+                    <span className="window-dot red" />
+                    <span className="window-dot yellow" />
+                    <span className="window-dot green" />
+                  </div>
+                  <div className="video-window-title">
+                    <Film size={13} className="text-cyan" />
+                    <span>thenam-platform-overview.mp4</span>
+                  </div>
+                  <span className="video-window-badge">1080p Ultra HD · 60fps</span>
+                </div>
+
+                {/* Video Media Wrap */}
+                <div className="video-media-wrap">
+                  {/* Floating Live Badge */}
+                  <div className="video-floating-badge">
+                    <span className="status-ping" style={{ background: '#00c9ff' }} />
+                    <span>Live Demonstration</span>
+                  </div>
+
+                  <video
+                    ref={videoRef}
+                    className="showcase-video"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls
+                    onPlay={() => setIsPlaying(true)}
+                    onPause={() => setIsPlaying(false)}
+                  >
+                    <source src="/hero-background.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+
+                  {/* Custom Overlay Controls */}
+                  <div className="video-overlay-controls">
+                    <button
+                      type="button"
+                      onClick={togglePlay}
+                      className="video-btn-pill"
+                      aria-label={isPlaying ? 'Pause video' : 'Play video'}
+                    >
+                      {isPlaying ? <Pause size={14} /> : <Play size={14} fill="currentColor" />}
+                      <span>{isPlaying ? 'Pause' : 'Play Video'}</span>
+                    </button>
+
+                    <div style={{ display: 'flex', gap: '8px', pointerEvents: 'auto' }}>
+                      <button
+                        type="button"
+                        onClick={toggleMute}
+                        className="video-btn-pill"
+                        aria-label={isMuted ? 'Unmute video audio' : 'Mute video audio'}
+                      >
+                        {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                        <span>{isMuted ? 'Unmute' : 'Muted'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={toggleFullscreen}
+                        className="video-btn-pill"
+                        aria-label="Fullscreen video"
+                      >
+                        <Maximize2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Video 3 Feature Cards */}
+            <div className="video-features-row">
+              <div className="video-feature-box">
+                <div className="video-feature-icon">
+                  <Zap size={20} />
+                </div>
+                <div>
+                  <h3 className="video-feature-title">Rapid Turnaround</h3>
+                  <p className="video-feature-desc">
+                    Websites and MVPs engineered and deployed in 48 to 72 hours with top-tier Lighthouse scores.
+                  </p>
+                </div>
+              </div>
+
+              <div className="video-feature-box">
+                <div className="video-feature-icon lime">
+                  <Bot size={20} />
+                </div>
+                <div>
+                  <h3 className="video-feature-title">AI-Powered Systems</h3>
+                  <p className="video-feature-desc">
+                    Conversational agents, custom LLM workflows, and multi-modal models built for Indian languages.
+                  </p>
+                </div>
+              </div>
+
+              <div className="video-feature-box">
+                <div className="video-feature-icon mint">
+                  <Layers size={20} />
+                </div>
+                <div>
+                  <h3 className="video-feature-title">Scalable Architecture</h3>
+                  <p className="video-feature-desc">
+                    Cloud-native Next.js and API microservices with 99.9% uptime and zero maintenance headaches.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================
+            CTA BANNER SECTION ("Have a project in mind?")
+            ======================================================== */}
+        <CtaBanner />
+      </main>
+
+      <Footer />
+    </>
   )
 }

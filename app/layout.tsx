@@ -3,8 +3,9 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Thenam Software Solutions | Intelligent digital solutions',
-  description: 'Thenam Software Solutions helps ambitious teams innovate, automate, and grow through custom software, AI, and modern digital experiences.',
+  title: 'Thenam Software Solutions | Technology That Moves Your Business Forward',
+  description:
+    'We build websites, AI-powered applications, and custom software that solve real business problems. Chennai, Tamil Nadu, India.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -26,8 +27,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light',
-  themeColor: '#1649B8',
+  colorScheme: 'dark light',
+  themeColor: '#050B14',
 }
 
 export default function RootLayout({
@@ -39,8 +40,9 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <Analytics />
       </body>
     </html>
   )
 }
+
