@@ -3889,13 +3889,13 @@ html.light .video-wrapper-glass {
 
 
 /* ========================================================
-   MINIMALIST BLACK-AND-WHITE CONTINUOUS TICKER SECTION
+   TICKER SECTION — OPTION 1: SOFT WHITE + DEEP NAVY
    ======================================================== */
 
 .ticker-section-wrap {
-  background: #000000 !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: #F5F7FA !important;
+  border-top: 1px solid #D8DEE8;
+  border-bottom: 1px solid #D8DEE8;
   padding: 14px 0;
   overflow: hidden;
   position: relative;
@@ -3917,12 +3917,12 @@ html.light .video-wrapper-glass {
 
 .ticker-section-wrap::before {
   left: 0;
-  background: linear-gradient(to right, #000000 0%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(to right, #F5F7FA 0%, rgba(245, 247, 250, 0) 100%);
 }
 
 .ticker-section-wrap::after {
   right: 0;
-  background: linear-gradient(to left, #000000 0%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(to left, #F5F7FA 0%, rgba(245, 247, 250, 0) 100%);
 }
 
 .ticker-container {
@@ -3964,7 +3964,7 @@ html.light .video-wrapper-glass {
   will-change: transform;
 }
 
-/* Small, thin, white-outlined rectangular tags */
+/* Default ticker labels: Deep navy text #17253D with thin navy outlines #233451 */
 .ticker-tag {
   display: inline-flex;
   align-items: center;
@@ -3973,22 +3973,36 @@ html.light .video-wrapper-glass {
   height: 28px;
   box-sizing: border-box;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  border: 1px solid #233451;
   border-radius: 4px;
-  color: #ffffff !important;
+  color: #17253D !important;
   font-family: inherit;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   white-space: nowrap;
   line-height: 1;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
 .ticker-tag:hover {
-  border-color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(35, 52, 81, 0.08);
+}
+
+/* Alternate ticker labels: Deep navy filled background #17253D with white text #FFFFFF */
+.ticker-tag.ticker-tag-filled,
+.ticker-tag:nth-child(even) {
+  background: #17253D !important;
+  border-color: #17253D !important;
+  color: #FFFFFF !important;
+}
+
+.ticker-tag.ticker-tag-filled:hover,
+.ticker-tag:nth-child(even):hover {
+  background: #233451 !important;
+  border-color: #233451 !important;
+  color: #FFFFFF !important;
 }
 
 /* Smooth continuous horizontal animation loops */
@@ -4010,24 +4024,32 @@ html.light .video-wrapper-glass {
   }
 }
 
-/* Light mode protection: maintain premium black-and-white ticker aesthetic */
+/* Light mode support: maintain exact Option 1 palette */
 html.light .ticker-section-wrap {
-  background: #000000 !important;
-  border-top-color: rgba(255, 255, 255, 0.12);
-  border-bottom-color: rgba(255, 255, 255, 0.12);
+  background: #F5F7FA !important;
+  border-top-color: #D8DEE8;
+  border-bottom-color: #D8DEE8;
 }
 
 html.light .ticker-section-wrap::before {
-  background: linear-gradient(to right, #000000 0%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(to right, #F5F7FA 0%, rgba(245, 247, 250, 0) 100%);
 }
 
 html.light .ticker-section-wrap::after {
-  background: linear-gradient(to left, #000000 0%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(to left, #F5F7FA 0%, rgba(245, 247, 250, 0) 100%);
 }
 
 html.light .ticker-tag {
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.45);
+  color: #17253D !important;
+  border-color: #233451;
+  background: transparent;
+}
+
+html.light .ticker-tag.ticker-tag-filled,
+html.light .ticker-tag:nth-child(even) {
+  background: #17253D !important;
+  border-color: #17253D !important;
+  color: #FFFFFF !important;
 }
 
 /* Responsive adjustments */
