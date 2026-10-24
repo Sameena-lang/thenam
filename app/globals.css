@@ -3889,226 +3889,178 @@ html.light .video-wrapper-glass {
 
 
 /* ========================================================
-   COMPACT BALANCED ORBIT TICKER SECTION
+   MINIMALIST BLACK-AND-WHITE CONTINUOUS TICKER SECTION
    ======================================================== */
 
-/* Clean white section seamlessly placed immediately above services */
 .ticker-section-wrap {
-  background: #ffffff;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 24px 0 28px;
+  background: #000000 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 14px 0;
   overflow: hidden;
   position: relative;
-}
-
-/* Compact rounded track aligned with services container width */
-.compact-orbit-track {
-  position: relative;
   width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-  height: 68px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 14px;
-  background: #ffffff;
-  box-shadow: 0 2px 12px rgba(0, 201, 255, 0.05);
+  box-sizing: border-box;
 }
 
-/* Smooth pause on hover */
-.compact-orbit-track:hover .compact-orbit-item {
-  animation-play-state: paused;
-}
-
-/* Fixed 1000x68 canvas with edge fade masking to ensure no text pokes past curved edges */
-.compact-orbit-canvas {
-  width: 1000px;
-  height: 68px;
-  position: relative;
-  flex-shrink: 0;
-  transform-origin: center center;
-  overflow: hidden;
-  border-radius: 14px;
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 4.5%,
-    black 95.5%,
-    transparent 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 4.5%,
-    black 95.5%,
-    transparent 100%
-  );
-}
-
-/* SVG border track, corner accents and subtle moving light */
-.compact-orbit-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 68px;
-  display: block;
-  pointer-events: none;
-  overflow: visible;
-}
-
-/* ── Orbiting Project Names (Generous 226px spacing ensures zero collision/overlap) ── */
-.compact-orbit-item {
+/* Polished edge fade masks to ensure seamless entry/exit */
+.ticker-section-wrap::before,
+.ticker-section-wrap::after {
+  content: '';
   position: absolute;
   top: 0;
+  bottom: 0;
+  width: 64px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.ticker-section-wrap::before {
   left: 0;
-  /* Perfectly centered two-lane path (Top lane: y=22, Bottom lane: y=46 with 20px clearance from borders) */
-  offset-path: path('M 40,22 H 960 Q 975,22 975,34 V 34 Q 975,46 960,46 H 40 Q 25,46 25,34 V 34 Q 25,22 40,22 Z');
-  /* offset-rotate: 0deg ensures all project names stay 100% upright and readable everywhere */
-  offset-rotate: 0deg;
-  offset-anchor: 50% 50%;
+  background: linear-gradient(to right, #000000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.ticker-section-wrap::after {
+  right: 0;
+  background: linear-gradient(to left, #000000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.ticker-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.ticker-row {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.ticker-track-left .ticker-group {
+  animation: tickerScrollLeft 40s linear infinite;
+}
+
+.ticker-track-right .ticker-group {
+  animation: tickerScrollRight 40s linear infinite;
+}
+
+.ticker-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 10px;
+  flex-shrink: 0;
+  will-change: transform;
+}
+
+/* Small, thin, white-outlined rectangular tags */
+.ticker-tag {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  white-space: nowrap;
-  user-select: none;
-  cursor: default;
-  will-change: transform, offset-path, offset-distance, opacity;
-  animation: compactOrbitCycle 130.65s linear infinite;
-  animation-delay: calc(var(--i) * -3.35s);
-}
-
-/* Small cyan-to-lime accent dot */
-.compact-orbit-dot {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #00c9ff, #84cc16);
-  box-shadow: 0 0 5px rgba(0, 201, 255, 0.65);
-  flex-shrink: 0;
-}
-
-/* Dark navy typography matching Thenam brand */
-.compact-orbit-name {
+  justify-content: center;
+  padding: 5px 13px;
+  height: 28px;
+  box-sizing: border-box;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 4px;
+  color: #ffffff !important;
+  font-family: inherit;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #0f172a;
+  white-space: nowrap;
   line-height: 1;
-  transition: color 0.2s;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-.compact-orbit-item:hover .compact-orbit-name {
-  color: #0284c7;
+.ticker-tag:hover {
+  border-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.12);
 }
 
-/* ── Continuous loop cycle: 28s per lap, 226px spacing, guaranteed zero overlaps ── */
-@keyframes compactOrbitCycle {
+/* Smooth continuous horizontal animation loops */
+@keyframes tickerScrollLeft {
   0% {
-    offset-distance: 0%;
-    opacity: 0;
-    visibility: visible;
-  }
-  0.5% {
-    offset-distance: 2.33%;
-    opacity: 1;
-  }
-  20.9% {
-    offset-distance: 97.67%;
-    opacity: 1;
-  }
-  21.431% {
-    offset-distance: 100%;
-    opacity: 0;
-    visibility: hidden;
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    offset-distance: 100%;
-    opacity: 0;
-    visibility: hidden;
+    transform: translate3d(-100%, 0, 0);
   }
 }
 
-/* ── Responsive Scaling across all device sizes ── */
-@media (max-width: 1100px) {
-  .compact-orbit-canvas {
-    transform: scale(0.9);
+@keyframes tickerScrollRight {
+  0% {
+    transform: translate3d(-100%, 0, 0);
   }
-  .compact-orbit-track {
-    height: 60px;
-  }
-}
-
-@media (max-width: 950px) {
-  .compact-orbit-canvas {
-    transform: scale(0.78);
-  }
-  .compact-orbit-track {
-    height: 52px;
+  100% {
+    transform: translate3d(0, 0, 0);
   }
 }
 
+/* Light mode protection: maintain premium black-and-white ticker aesthetic */
+html.light .ticker-section-wrap {
+  background: #000000 !important;
+  border-top-color: rgba(255, 255, 255, 0.12);
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+html.light .ticker-section-wrap::before {
+  background: linear-gradient(to right, #000000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+html.light .ticker-section-wrap::after {
+  background: linear-gradient(to left, #000000 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+html.light .ticker-tag {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .compact-orbit-canvas {
-    transform: scale(0.66);
+  .ticker-section-wrap {
+    padding: 10px 0;
   }
-  .compact-orbit-track {
-    height: 46px;
+  .ticker-container {
+    gap: 7px;
   }
-  .compact-orbit-name {
-    font-size: 12px;
+  .ticker-tag {
+    height: 25px;
+    padding: 4px 10px;
+    font-size: 9.5px;
+    letter-spacing: 0.04em;
   }
-}
-
-@media (max-width: 600px) {
-  .compact-orbit-canvas {
-    transform: scale(0.54);
+  .ticker-group {
+    gap: 8px;
+    padding-right: 8px;
   }
-  .compact-orbit-track {
-    height: 42px;
+  .ticker-track-left .ticker-group {
+    animation-duration: 30s;
   }
-  .compact-orbit-name {
-    font-size: 13px;
-    font-weight: 800;
-  }
-}
-
-@media (max-width: 480px) {
-  .compact-orbit-canvas {
-    transform: scale(0.42);
-  }
-  .compact-orbit-track {
-    height: 38px;
-  }
-  .compact-orbit-name {
-    font-size: 14px;
-    font-weight: 800;
-  }
-}
-
-@media (max-width: 380px) {
-  .compact-orbit-canvas {
-    transform: scale(0.35);
-  }
-  .compact-orbit-track {
-    height: 34px;
-  }
-  .compact-orbit-name {
-    font-size: 15px;
-    font-weight: 800;
+  .ticker-track-right .ticker-group {
+    animation-duration: 30s;
   }
 }
 
 /* Accessibility: Support reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .compact-orbit-item {
+  .ticker-track-left .ticker-group,
+  .ticker-track-right .ticker-group {
     animation: none !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    offset-distance: calc(var(--i) * 2.564%) !important;
   }
 }
 
