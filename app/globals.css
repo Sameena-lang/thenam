@@ -931,11 +931,11 @@ button {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 14px;
-  padding: 26px 22px 22px;
+  padding: 18px 18px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 275px;
+  min-height: 380px;
   transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
 }
@@ -944,6 +944,71 @@ button {
   border-color: var(--cyan);
   transform: translateY(-6px);
   box-shadow: 0 16px 36px rgba(0, 201, 255, 0.12);
+}
+
+.service-card-media-wrap {
+  position: relative;
+  width: 100%;
+  height: 148px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: #0b1528;
+  border: 1px solid #f1f5f9;
+}
+
+.service-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.service-box-card:hover .service-card-img {
+  transform: scale(1.05);
+}
+
+.service-icon-floating {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.service-box-card:hover .service-icon-floating {
+  transform: scale(1.08);
+}
+
+.service-icon-floating.cyan {
+  background: #e0f2fe;
+  color: #0284c7;
+  border: 1px solid rgba(2, 132, 199, 0.25);
+}
+
+.service-icon-floating.green {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid rgba(5, 150, 105, 0.25);
+}
+
+.service-icon-floating.blue {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+}
+
+.service-icon-floating.lime {
+  background: #f7fee7;
+  color: #65a30d;
+  border: 1px solid rgba(101, 163, 13, 0.25);
 }
 
 .service-icon-wrap {
@@ -1028,6 +1093,179 @@ button {
   background: var(--cyan);
   color: #050b14;
   transform: translateX(3px);
+}
+
+/* ========================================================
+   3D FLIP SERVICE CARDS (WHAT WE DO)
+   ======================================================== */
+.service-flip-card {
+  perspective: 1200px;
+  -webkit-perspective: 1200px;
+  height: 350px;
+  min-height: 350px;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
+.service-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 14px;
+}
+
+/* Hover and touch flip states */
+.service-flip-card:hover .service-flip-inner,
+.service-flip-card:focus-visible .service-flip-inner,
+.service-flip-card.is-flipped .service-flip-inner {
+  transform: rotateY(180deg);
+}
+
+.service-flip-front,
+.service-flip-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+/* Front Face */
+.service-flip-front {
+  transform: rotateY(0deg);
+  z-index: 2;
+  padding: 18px 18px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.service-flip-front .service-card-media-wrap {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  background: #0b1528;
+  border: 1px solid #f1f5f9;
+}
+
+.service-flip-front .service-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.service-flip-card:hover .service-card-img {
+  transform: scale(1.05);
+}
+
+.service-flip-front .service-card-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Back Face */
+.service-flip-back {
+  transform: rotateY(180deg);
+  z-index: 1;
+  padding: 24px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.service-back-top {
+  display: flex;
+  flex-direction: column;
+}
+
+.service-back-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.service-back-header .service-icon-wrap.mini {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.service-back-title {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.service-back-desc {
+  font-size: 13px;
+  line-height: 1.65;
+  color: #475569;
+  margin: 0;
+}
+
+.service-back-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+  margin-top: 16px;
+}
+
+/* Active card border glow on flip / hover */
+.service-flip-card:hover .service-flip-front,
+.service-flip-card:hover .service-flip-back,
+.service-flip-card.is-flipped .service-flip-front,
+.service-flip-card.is-flipped .service-flip-back,
+.service-flip-card:focus-visible .service-flip-front,
+.service-flip-card:focus-visible .service-flip-back {
+  border-color: var(--cyan);
+  box-shadow: 0 16px 36px rgba(0, 201, 255, 0.12);
+}
+
+.service-flip-card:hover .service-circle-btn,
+.service-flip-card.is-flipped .service-circle-btn {
+  background: var(--cyan);
+  color: #050b14;
+  transform: translateX(3px);
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .service-flip-inner {
+    transition: transform 0.01s ease !important;
+  }
+  .service-card-img {
+    transition: none !important;
+  }
 }
 
 /* ========================================================

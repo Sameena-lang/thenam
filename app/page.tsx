@@ -38,6 +38,11 @@ export default function HomePage() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPlaying, setIsPlaying] = useState(true)
   const [isMuted, setIsMuted] = useState(true)
+  const [flippedIndex, setFlippedIndex] = useState<number | null>(null)
+
+  const toggleCardFlip = (index: number) => {
+    setFlippedIndex((prev) => (prev === index ? null : index))
+  }
 
   const togglePlay = () => {
     if (!videoRef.current) return
@@ -289,80 +294,240 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="services-grid-4">
+            <div className="services-grid-4" onMouseLeave={() => setFlippedIndex(null)}>
               {/* Card 1: Web Development */}
-              <article className="service-box-card">
-                <div>
-                  <div className="service-icon-wrap cyan">
-                    <Monitor size={22} />
+              <article
+                className={`service-flip-card ${flippedIndex === 0 ? 'is-flipped' : ''}`}
+                onClick={() => toggleCardFlip(0)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    toggleCardFlip(0)
+                  }
+                }}
+                tabIndex={0}
+                role="region"
+                aria-label="Web Development service card - hover or tap to flip for details"
+              >
+                <div className="service-flip-inner">
+                  {/* Front side - default view */}
+                  <div className="service-flip-front">
+                    <div className="service-card-media-wrap">
+                      <img
+                        src="/services/web-development.jpg"
+                        alt="Web Development - Responsive Desktop, Tablet, Mobile"
+                        className="service-card-img"
+                        loading="lazy"
+                      />
+                      <div className="service-icon-floating cyan">
+                        <Monitor size={18} />
+                      </div>
+                    </div>
+                    <h3 className="service-card-title">Web Development</h3>
                   </div>
-                  <h3 className="service-card-title">Web Development</h3>
-                  <p className="service-card-desc">
-                    Modern websites and web applications for businesses, startups and brands. Responsive, fast and SEO-ready.
-                  </p>
-                </div>
-                <div className="service-card-foot">
-                  <span className="service-foot-price">From ₹1,999*</span>
-                  <Link href="/services#web-development" className="service-circle-btn" aria-label="Learn about Web Development">
-                    <ArrowRight size={14} />
-                  </Link>
+
+                  {/* Back side - on hover / flip */}
+                  <div className="service-flip-back">
+                    <div className="service-back-top">
+                      <div className="service-back-header">
+                        <div className="service-icon-wrap cyan mini">
+                          <Monitor size={18} />
+                        </div>
+                        <h3 className="service-back-title">Web Development</h3>
+                      </div>
+                      <p className="service-back-desc">
+                        Modern websites and web applications for businesses, startups and brands. Responsive, fast and SEO-ready.
+                      </p>
+                    </div>
+                    <div className="service-back-foot">
+                      <span className="service-foot-price">From ₹1,999*</span>
+                      <Link
+                        href="/services#web-development"
+                        className="service-circle-btn"
+                        aria-label="Learn about Web Development"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <ArrowRight size={14} />
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </article>
 
               {/* Card 2: AI & Machine Learning */}
-              <article className="service-box-card">
-                <div>
-                  <div className="service-icon-wrap green">
-                    <Cpu size={22} />
+              <article
+                className={`service-flip-card ${flippedIndex === 1 ? 'is-flipped' : ''}`}
+                onClick={() => toggleCardFlip(1)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    toggleCardFlip(1)
+                  }
+                }}
+                tabIndex={0}
+                role="region"
+                aria-label="AI & Machine Learning service card - hover or tap to flip for details"
+              >
+                <div className="service-flip-inner">
+                  {/* Front side - default view */}
+                  <div className="service-flip-front">
+                    <div className="service-card-media-wrap">
+                      <img
+                        src="/services/ai-machine-learning.jpg"
+                        alt="AI & Machine Learning - Intelligent Automation & Models"
+                        className="service-card-img"
+                        loading="lazy"
+                      />
+                      <div className="service-icon-floating green">
+                        <Cpu size={18} />
+                      </div>
+                    </div>
+                    <h3 className="service-card-title">AI & Machine Learning</h3>
                   </div>
-                  <h3 className="service-card-title">AI & Machine Learning</h3>
-                  <p className="service-card-desc">
-                    AI-powered applications, chatbots, computer vision and intelligent automated workflows.
-                  </p>
-                </div>
-                <div className="service-card-foot">
-                  <span className="service-foot-link">Get a Quote</span>
-                  <Link href="/contact" className="service-circle-btn" aria-label="Get a quote for AI & Machine Learning">
-                    <ArrowRight size={14} />
-                  </Link>
+
+                  {/* Back side - on hover / flip */}
+                  <div className="service-flip-back">
+                    <div className="service-back-top">
+                      <div className="service-back-header">
+                        <div className="service-icon-wrap green mini">
+                          <Cpu size={18} />
+                        </div>
+                        <h3 className="service-back-title">AI & Machine Learning</h3>
+                      </div>
+                      <p className="service-back-desc">
+                        AI-powered applications, chatbots, computer vision and intelligent automated workflows.
+                      </p>
+                    </div>
+                    <div className="service-back-foot">
+                      <span className="service-foot-link">Get a Quote</span>
+                      <Link
+                        href="/contact"
+                        className="service-circle-btn"
+                        aria-label="Get a quote for AI & Machine Learning"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <ArrowRight size={14} />
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </article>
 
               {/* Card 3: Custom Software */}
-              <article className="service-box-card">
-                <div>
-                  <div className="service-icon-wrap blue">
-                    <Code2 size={22} />
+              <article
+                className={`service-flip-card ${flippedIndex === 2 ? 'is-flipped' : ''}`}
+                onClick={() => toggleCardFlip(2)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    toggleCardFlip(2)
+                  }
+                }}
+                tabIndex={0}
+                role="region"
+                aria-label="Custom Software service card - hover or tap to flip for details"
+              >
+                <div className="service-flip-inner">
+                  {/* Front side - default view */}
+                  <div className="service-flip-front">
+                    <div className="service-card-media-wrap">
+                      <img
+                        src="/services/custom-software.jpg"
+                        alt="Custom Software Development - Dashboards & Scalable Systems"
+                        className="service-card-img"
+                        loading="lazy"
+                      />
+                      <div className="service-icon-floating blue">
+                        <Code2 size={18} />
+                      </div>
+                    </div>
+                    <h3 className="service-card-title">Custom Software</h3>
                   </div>
-                  <h3 className="service-card-title">Custom Software</h3>
-                  <p className="service-card-desc">
-                    Tailored software solutions built to fit your unique business operations and scale securely.
-                  </p>
-                </div>
-                <div className="service-card-foot">
-                  <span className="service-foot-link">Get a Quote</span>
-                  <Link href="/contact" className="service-circle-btn" aria-label="Get a quote for Custom Software">
-                    <ArrowRight size={14} />
-                  </Link>
+
+                  {/* Back side - on hover / flip */}
+                  <div className="service-flip-back">
+                    <div className="service-back-top">
+                      <div className="service-back-header">
+                        <div className="service-icon-wrap blue mini">
+                          <Code2 size={18} />
+                        </div>
+                        <h3 className="service-back-title">Custom Software</h3>
+                      </div>
+                      <p className="service-back-desc">
+                        Tailored software solutions built to fit your unique business operations and scale securely.
+                      </p>
+                    </div>
+                    <div className="service-back-foot">
+                      <span className="service-foot-link">Get a Quote</span>
+                      <Link
+                        href="/contact"
+                        className="service-circle-btn"
+                        aria-label="Get a quote for Custom Software"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <ArrowRight size={14} />
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </article>
 
               {/* Card 4: Business Automation */}
-              <article className="service-box-card">
-                <div>
-                  <div className="service-icon-wrap lime">
-                    <Cog size={22} />
+              <article
+                className={`service-flip-card ${flippedIndex === 3 ? 'is-flipped' : ''}`}
+                onClick={() => toggleCardFlip(3)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    toggleCardFlip(3)
+                  }
+                }}
+                tabIndex={0}
+                role="region"
+                aria-label="Business Automation service card - hover or tap to flip for details"
+              >
+                <div className="service-flip-inner">
+                  {/* Front side - default view */}
+                  <div className="service-flip-front">
+                    <div className="service-card-media-wrap">
+                      <img
+                        src="/services/business-automation.jpg"
+                        alt="Business Automation - Streamline Processes & Workflows"
+                        className="service-card-img"
+                        loading="lazy"
+                      />
+                      <div className="service-icon-floating lime">
+                        <Cog size={18} />
+                      </div>
+                    </div>
+                    <h3 className="service-card-title">Business Automation</h3>
                   </div>
-                  <h3 className="service-card-title">Business Automation</h3>
-                  <p className="service-card-desc">
-                    Automate repetitive tasks, sync business software and streamline manual bottlenecks.
-                  </p>
-                </div>
-                <div className="service-card-foot">
-                  <span className="service-foot-link">Get a Quote</span>
-                  <Link href="/contact" className="service-circle-btn" aria-label="Get a quote for Business Automation">
-                    <ArrowRight size={14} />
-                  </Link>
+
+                  {/* Back side - on hover / flip */}
+                  <div className="service-flip-back">
+                    <div className="service-back-top">
+                      <div className="service-back-header">
+                        <div className="service-icon-wrap lime mini">
+                          <Cog size={18} />
+                        </div>
+                        <h3 className="service-back-title">Business Automation</h3>
+                      </div>
+                      <p className="service-back-desc">
+                        Automate repetitive tasks, sync business software and streamline manual bottlenecks.
+                      </p>
+                    </div>
+                    <div className="service-back-foot">
+                      <span className="service-foot-link">Get a Quote</span>
+                      <Link
+                        href="/contact"
+                        className="service-circle-btn"
+                        aria-label="Get a quote for Business Automation"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <ArrowRight size={14} />
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </article>
             </div>
