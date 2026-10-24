@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
+import CommunityFeeds from '@/components/CommunityFeeds'
 import {
   ArrowRight,
   Headphones,
@@ -102,11 +103,6 @@ export default function HomePage() {
                   <span>Get a Free Quote</span>
                   <ArrowRight size={15} />
                 </Link>
-
-                <a href="#video-showcase" className="video-hero-pill" aria-label="Scroll to overview video">
-                  <Play size={13} fill="currentColor" />
-                  <span>Watch Demo</span>
-                </a>
               </div>
 
               <div className="price-callout">
@@ -121,7 +117,7 @@ export default function HomePage() {
                 </div>
                 <div className="badge-item">
                   <Cpu size={15} />
-                  <span>Modern Tech</span>
+                  <span>Modern Technology</span>
                 </div>
                 <div className="badge-item">
                   <Users size={15} />
@@ -129,97 +125,103 @@ export default function HomePage() {
                 </div>
                 <div className="badge-item">
                   <BarChart3 size={15} />
-                  <span>Scalable</span>
+                  <span>Scalable Solutions</span>
                 </div>
               </div>
             </div>
 
             {/* Right Visual (Realistic Laptop Mockup + Floating UI) */}
             <div className="hero-visual-wrapper">
-              <div className="laptop-frame">
-                <div className="laptop-top-bar">
-                  <span className="camera-dot" />
+              <div className="laptop-wrapper">
+                <div className="laptop-lid">
+                  <div className="laptop-top-bar">
+                    <span className="camera-dot" />
+                  </div>
+
+                  <div className="laptop-screen-content">
+                    {/* Dashboard Header */}
+                    <div className="screen-header">
+                      <div className="screen-brand">
+                        <img src="/thenam-logo.png" alt="Thenam leaf" width="18" height="18" />
+                        <strong>THENAM</strong>
+                      </div>
+                      <p className="screen-title">Business Overview</p>
+                    </div>
+
+                    {/* 4 KPIs */}
+                    <div className="screen-kpi-grid">
+                      <div className="kpi-card">
+                        <span>Revenue</span>
+                        <strong>₹ 12,48,000</strong>
+                        <small>+12%</small>
+                      </div>
+                      <div className="kpi-card">
+                        <span>Total Users</span>
+                        <strong>1,420</strong>
+                        <small>+18%</small>
+                      </div>
+                      <div className="kpi-card">
+                        <span>Active Projects</span>
+                        <strong>24</strong>
+                        <small>+33%</small>
+                      </div>
+                      <div className="kpi-card">
+                        <span>Satisfaction</span>
+                        <strong>98%</strong>
+                        <small>+2%</small>
+                      </div>
+                    </div>
+
+                    {/* Growth Chart */}
+                    <div className="screen-chart-card">
+                      <div className="chart-header-row">
+                        <span>Growth Overview</span>
+                        <small>Last 12 Months ▾</small>
+                      </div>
+                      <div className="screen-fake-bars">
+                        <i style={{ height: '35%' }} />
+                        <i style={{ height: '42%' }} />
+                        <i style={{ height: '38%' }} />
+                        <i style={{ height: '55%' }} />
+                        <i style={{ height: '62%' }} />
+                        <i style={{ height: '58%' }} />
+                        <i style={{ height: '70%' }} className="active-cyan" />
+                        <i style={{ height: '78%' }} className="active-cyan" />
+                        <i style={{ height: '85%' }} className="active-lime" />
+                        <i style={{ height: '92%' }} className="active-lime" />
+                        <i style={{ height: '96%' }} className="active-lime" />
+                      </div>
+                      <div className="chart-month-labels">
+                        <span>Jan</span><span>Mar</span><span>May</span><span>Jul</span><span>Sep</span><span>Nov</span>
+                      </div>
+                    </div>
+
+                    {/* Recent Projects Table */}
+                    <div className="screen-recent-table">
+                      <div className="recent-row">
+                        <span>Business Website</span>
+                        <span className="status-pill delivered">Delivered</span>
+                        <small style={{ color: '#94a3b8' }}>Oct 10, 2026</small>
+                      </div>
+                      <div className="recent-row">
+                        <span>AI Chatbot</span>
+                        <span className="status-pill progress">In Progress</span>
+                        <small style={{ color: '#94a3b8' }}>Oct 08, 2026</small>
+                      </div>
+                      <div className="recent-row">
+                        <span>Management System</span>
+                        <span className="status-pill planning">Planning</span>
+                        <small style={{ color: '#94a3b8' }}>Oct 05, 2026</small>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="laptop-screen-content">
-                  {/* Dashboard Header */}
-                  <div className="screen-header">
-                    <div className="screen-brand">
-                      <img src="/thenam-logo.png" alt="Thenam leaf" width="18" height="18" />
-                      <strong>THENAM</strong>
-                    </div>
-                    <p className="screen-title">Business Overview</p>
-                  </div>
-
-                  {/* 4 KPIs */}
-                  <div className="screen-kpi-grid">
-                    <div className="kpi-card">
-                      <span>Revenue</span>
-                      <strong>₹ 12,48,000</strong>
-                      <small>+12%</small>
-                    </div>
-                    <div className="kpi-card">
-                      <span>Total Users</span>
-                      <strong>1,420</strong>
-                      <small>+18%</small>
-                    </div>
-                    <div className="kpi-card">
-                      <span>Active Projects</span>
-                      <strong>24</strong>
-                      <small>+33%</small>
-                    </div>
-                    <div className="kpi-card">
-                      <span>Satisfaction</span>
-                      <strong>98%</strong>
-                      <small>+2%</small>
-                    </div>
-                  </div>
-
-                  {/* Growth Chart */}
-                  <div className="screen-chart-card">
-                    <div className="chart-header-row">
-                      <span>Growth Overview</span>
-                      <small>Last 12 Months ▾</small>
-                    </div>
-                    <div className="screen-fake-bars">
-                      <i style={{ height: '35%' }} />
-                      <i style={{ height: '42%' }} />
-                      <i style={{ height: '38%' }} />
-                      <i style={{ height: '55%' }} />
-                      <i style={{ height: '62%' }} />
-                      <i style={{ height: '58%' }} />
-                      <i style={{ height: '70%' }} className="active-cyan" />
-                      <i style={{ height: '78%' }} className="active-cyan" />
-                      <i style={{ height: '85%' }} className="active-lime" />
-                      <i style={{ height: '92%' }} className="active-lime" />
-                      <i style={{ height: '96%' }} className="active-lime" />
-                    </div>
-                    <div className="chart-month-labels">
-                      <span>Jan</span><span>Mar</span><span>May</span><span>Jul</span><span>Sep</span><span>Nov</span>
-                    </div>
-                  </div>
-
-                  {/* Recent Projects Table */}
-                  <div className="screen-recent-table">
-                    <div className="recent-row">
-                      <span>Business Website</span>
-                      <span className="status-pill delivered">Delivered</span>
-                      <small style={{ color: '#94a3b8' }}>Oct 10, 2026</small>
-                    </div>
-                    <div className="recent-row">
-                      <span>AI Chatbot</span>
-                      <span className="status-pill progress">In Progress</span>
-                      <small style={{ color: '#94a3b8' }}>Oct 08, 2026</small>
-                    </div>
-                    <div className="recent-row">
-                      <span>Management System</span>
-                      <span className="status-pill planning">Planning</span>
-                      <small style={{ color: '#94a3b8' }}>Oct 05, 2026</small>
-                    </div>
-                  </div>
+                {/* Laptop Bottom Chassis & Shadow */}
+                <div className="laptop-chassis">
+                  <div className="laptop-notch" />
                 </div>
-
-                <div className="laptop-base-edge" />
+                <div className="laptop-shadow" />
               </div>
 
               {/* Floating Card: AI Assistant */}
@@ -673,6 +675,11 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* ========================================================
+            COMMUNITY & SOCIAL FEEDS SECTION (INSTAGRAM, LINKEDIN, YOUTUBE)
+            ======================================================== */}
+        <CommunityFeeds />
 
         {/* ========================================================
             CTA BANNER SECTION ("Have a project in mind?")
