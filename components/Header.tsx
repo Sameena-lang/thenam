@@ -1,20 +1,53 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ArrowRight, Menu, X, Sparkles } from 'lucide-react'
+import { ArrowRight, Menu, X, Sparkles, Sun, Moon } from 'lucide-react'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  const [mounted, setMounted] = useState(false)
+  const [clickedHref, setClickedHref] = useState<string | null>(null)
   const pathname = usePathname()
 
+  useEffect(() => {
+    setMounted(true)
+    const isLight = document.documentElement.classList.contains('light')
+    setTheme(isLight ? 'light' : 'dark')
+  }, [])
+
+  useEffect(() => {
+    setClickedHref(null)
+  }, [pathname])
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(nextTheme)
+    if (nextTheme === 'light') {
+      document.documentElement.classList.add('light')
+      document.documentElement.classList.remove('dark')
+      document.documentElement.setAttribute('data-theme', 'light')
+      try {
+        localStorage.setItem('thenam-theme', 'light')
+      } catch (e) {}
+    } else {
+      document.documentElement.classList.add('dark')
+      document.documentElement.classList.remove('light')
+      document.documentElement.setAttribute('data-theme', 'dark')
+      try {
+        localStorage.setItem('thenam-theme', 'dark')
+      } catch (e) {}
+    }
+  }
+
   const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'Services', href: '/services' },
-    { label: 'Products', href: '/products' },
-    { label: 'About Us', href: '/about' },
-    { label: 'Careers', href: '/careers' },
+    { label: 'Home', href: '/', pillClass: 'pill-home' },
+    { label: 'Services', href: '/services', pillClass: 'pill-services' },
+    { label: 'Products', href: '/products', pillClass: 'pill-products' },
+    { label: 'About Us', href: '/about', pillClass: 'pill-about' },
+    { label: 'Careers', href: '/careers', pillClass: 'pill-careers' },
   ]
 
   const isActive = (href: string) => {
@@ -24,29 +57,12 @@ export default function Header() {
 
   return (
     <>
-      {/* Top Announcement Bar */}
-      <div className="top-announcement">
-        <div className="container announcement-inner">
-          <div className="announcement-left">
-            <Sparkles size={13} className="text-lime" />
-            <span>Digital Solutions for a Smarter Tomorrow</span>
-          </div>
-          <div className="announcement-right">
-            <span>Websites starting from <strong>₹1,999*</strong></span>
-            <span className="dot-divider">•</span>
-            <Link href="/contact" className="announcement-link">
-              Talk to us <ArrowRight size={12} />
-            </Link>
-          </div>
-        </div>
-      </div>
-
       {/* Main Navbar */}
       <header className="main-header">
         <div className="container header-inner">
           {/* Logo */}
           <Link href="/" className="brand-logo" aria-label="Thenam Software Solutions home">
-            <img src="/thenam-logo.png" alt="Thenam Logo" className="logo-leaf" />
+            <img src="/thenam-logo-white.png" alt="Thenam Logo" className="logo-leaf header-logo-leaf" />
             <div className="brand-text">
               <span className="brand-name">
                 THEN<span className="brand-name-accent">AM</span>
@@ -58,15 +74,24 @@ export default function Header() {
           {/* Desktop Nav */}
           <nav className="desktop-nav">
             {navLinks.map((link) => {
-              const active = isActive(link.href)
+              const active = clickedHref ? clickedHref === link.href : isActive(link.href)
+
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`nav-link ${active ? 'active' : ''}`}
+                  onClick={() => setClickedHref(link.href)}
+                  className={`nav-item-link ${link.pillClass} ${active ? 'is-active-pill' : ''}`}
+                  aria-label={link.label}
                 >
-                  {link.label}
-                  {active && <span className="active-dot" />}
+                  <img
+                    src="/thenam-logo-transparent.png"
+                    alt=""
+                    className="nav-pill-leaf"
+                    width="15"
+                    height="15"
+                  />
+                  <span className="nav-item-text">{link.label}</span>
                 </Link>
               )
             })}
@@ -74,6 +99,21 @@ export default function Header() {
 
           {/* Right Action */}
           <div className="header-actions">
+            {/* Dark / Light Mode Toggle Button */}
+            <button
+              type="button"
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {mounted && theme === 'light' ? (
+                <Moon size={18} className="theme-toggle-icon moon" />
+              ) : (
+                <Sun size={18} className="theme-toggle-icon sun" />
+              )}
+            </button>
+
             <Link href="/contact" className="quote-btn">
               <span>Get a Free Quote</span>
               <ArrowRight size={15} />
@@ -96,19 +136,51 @@ export default function Header() {
           <div className="mobile-menu-drawer">
             <div className="container mobile-drawer-inner">
               <nav className="mobile-nav-list">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`mobile-nav-item ${isActive(link.href) ? 'active' : ''}`}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <span>{link.label}</span>
-                    {isActive(link.href) && <span className="mobile-active-badge">Active</span>}
-                  </Link>
-                ))}
+                {navLinks.map((link) => {
+                  const active = clickedHref ? clickedHref === link.href : isActive(link.href)
+
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`mobile-nav-item mobile-nav-pill ${link.pillClass} ${active ? 'is-active-pill' : ''}`}
+                      onClick={() => {
+                        setClickedHref(link.href)
+                        setMobileMenuOpen(false)
+                      }}
+                    >
+                      <div className="mobile-pill-content">
+                        <img
+                          src="/thenam-logo-transparent.png"
+                          alt=""
+                          className={`nav-pill-leaf ${active ? 'active-leaf' : 'inactive-leaf'}`}
+                          width="16"
+                          height="16"
+                        />
+                        <span>{link.label}</span>
+                      </div>
+                      {active && <span className="mobile-active-badge">Active</span>}
+                    </Link>
+                  )
+                })}
               </nav>
               <div className="mobile-drawer-footer">
+                <button
+                  type="button"
+                  className="mobile-theme-toggle"
+                  onClick={toggleTheme}
+                  aria-label="Toggle theme"
+                >
+                  <span className="mobile-theme-label">
+                    Appearance: <strong>{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</strong>
+                  </span>
+                  {mounted && theme === 'light' ? (
+                    <Moon size={17} style={{ color: '#0284c7' }} />
+                  ) : (
+                    <Sun size={17} style={{ color: '#fbbf24' }} />
+                  )}
+                </button>
+
                 <Link
                   href="/contact"
                   className="quote-btn full-width"

@@ -95,21 +95,11 @@ export default function Footer() {
           {/* Social Icons */}
           <div className="footer-social-row">
             <a
-              href="https://linkedin.com"
+              href="https://www.instagram.com/thenam_software_solutions/"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="LinkedIn"
-              className="social-btn"
-            >
-              <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76c-.97 0-1.75-.79-1.75-1.76s.78-1.75 1.75-1.75c.97 0 1.76.78 1.76 1.75s-.79 1.76-1.76 1.76m1.39 9.74v-8.37H5.07v8.37h2.78Z" />
-              </svg>
-            </a>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
+              aria-label="Instagram @thenam_software_solutions"
+              title="Instagram @thenam_software_solutions"
               className="social-btn"
             >
               <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
@@ -117,10 +107,23 @@ export default function Footer() {
               </svg>
             </a>
             <a
-              href="https://youtube.com"
+              href="https://www.linkedin.com/company/thenam-software-solutions/posts/?feedView=all"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="YouTube"
+              aria-label="LinkedIn - Thenam Software Solutions"
+              title="LinkedIn - Thenam Software Solutions"
+              className="social-btn"
+            >
+              <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76c-.97 0-1.75-.79-1.75-1.76s.78-1.75 1.75-1.75c.97 0 1.76.78 1.76 1.75s-.79 1.76-1.76 1.76m1.39 9.74v-8.37H5.07v8.37h2.78Z" />
+              </svg>
+            </a>
+            <a
+              href="https://www.youtube.com/@Thenamsoftwaresolutions-v9w"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube @Thenamsoftwaresolutions-v9w"
+              title="YouTube @Thenamsoftwaresolutions-v9w"
               className="social-btn"
             >
               <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
@@ -128,10 +131,11 @@ export default function Footer() {
               </svg>
             </a>
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/916380456410"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="WhatsApp"
+              title="WhatsApp"
               className="social-btn"
             >
               <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
