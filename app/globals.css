@@ -3950,200 +3950,104 @@ html.light .video-wrapper-glass {
 
 
 /* ========================================================
-   TICKER SECTION — OPTION 1: SOFT WHITE + DEEP NAVY
+   FULL-WIDTH CLIENT PORTFOLIO MARQUEE STRIP
    ======================================================== */
 
-.ticker-section-wrap {
-  background: #F5F7FA !important;
-  border-top: 1px solid #D8DEE8;
-  border-bottom: 1px solid #D8DEE8;
-  padding: 14px 0;
-  overflow: hidden;
+.marquee-strip-section {
+  width: 100%;
   position: relative;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Polished edge fade masks to ensure seamless entry/exit */
-.ticker-section-wrap::before,
-.ticker-section-wrap::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 64px;
-  z-index: 3;
-  pointer-events: none;
-}
-
-.ticker-section-wrap::before {
-  left: 0;
-  background: linear-gradient(to right, #F5F7FA 0%, rgba(245, 247, 250, 0) 100%);
-}
-
-.ticker-section-wrap::after {
-  right: 0;
-  background: linear-gradient(to left, #F5F7FA 0%, rgba(245, 247, 250, 0) 100%);
-}
-
-.ticker-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
+  background: linear-gradient(90deg, #00C9F2 0%, #00DFA5 50%, #82E62E 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.45);
+  border-bottom: 1px solid rgba(6, 20, 38, 0.12);
+  border-radius: 0;
+  padding: 16px 0;
   overflow: hidden;
-}
-
-.ticker-row {
   display: flex;
-  width: 100%;
-  overflow: hidden;
-  user-select: none;
-  white-space: nowrap;
+  align-items: center;
+  box-shadow: 0 2px 14px rgba(0, 201, 242, 0.18);
 }
 
-.ticker-track {
+.marquee-track {
   display: flex;
   width: max-content;
-  will-change: transform;
-}
-
-.ticker-track-left .ticker-group {
-  animation: tickerScrollLeft 40s linear infinite;
-}
-
-.ticker-track-right .ticker-group {
-  animation: tickerScrollRight 40s linear infinite;
-}
-
-.ticker-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding-right: 10px;
   flex-shrink: 0;
   will-change: transform;
+  animation: continuousMarqueeScroll 45s linear infinite;
 }
 
-/* Default ticker labels: Deep navy text #17253D with thin navy outlines #233451 */
-.ticker-tag {
+.marquee-strip-section:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-group {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 36px;
+  padding-right: 36px;
+}
+
+.marquee-item {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 5px 13px;
-  height: 28px;
-  box-sizing: border-box;
-  background: transparent;
-  border: 1px solid #233451;
-  border-radius: 4px;
-  color: #17253D !important;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 600;
+  gap: 12px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.marquee-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #061426;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+}
+
+.marquee-name {
+  font-size: 13.5px;
+  font-weight: 750;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  white-space: nowrap;
+  color: #061426;
   line-height: 1;
-  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
-.ticker-tag:hover {
-  background-color: rgba(35, 52, 81, 0.08);
+.marquee-item:hover .marquee-name {
+  color: #000000;
 }
 
-/* Alternate ticker labels: Deep navy filled background #17253D with white text #FFFFFF */
-.ticker-tag.ticker-tag-filled,
-.ticker-tag:nth-child(even) {
-  background: #17253D !important;
-  border-color: #17253D !important;
-  color: #FFFFFF !important;
-}
-
-.ticker-tag.ticker-tag-filled:hover,
-.ticker-tag:nth-child(even):hover {
-  background: #233451 !important;
-  border-color: #233451 !important;
-  color: #FFFFFF !important;
-}
-
-/* Smooth continuous horizontal animation loops */
-@keyframes tickerScrollLeft {
+@keyframes continuousMarqueeScroll {
   0% {
-    transform: translate3d(0, 0, 0);
+    transform: translateX(0);
   }
   100% {
-    transform: translate3d(-100%, 0, 0);
+    transform: translateX(-50%);
   }
 }
 
-@keyframes tickerScrollRight {
-  0% {
-    transform: translate3d(-100%, 0, 0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-/* Light mode support: maintain exact Option 1 palette */
-html.light .ticker-section-wrap {
-  background: #F5F7FA !important;
-  border-top-color: #D8DEE8;
-  border-bottom-color: #D8DEE8;
-}
-
-html.light .ticker-section-wrap::before {
-  background: linear-gradient(to right, #F5F7FA 0%, rgba(245, 247, 250, 0) 100%);
-}
-
-html.light .ticker-section-wrap::after {
-  background: linear-gradient(to left, #F5F7FA 0%, rgba(245, 247, 250, 0) 100%);
-}
-
-html.light .ticker-tag {
-  color: #17253D !important;
-  border-color: #233451;
-  background: transparent;
-}
-
-html.light .ticker-tag.ticker-tag-filled,
-html.light .ticker-tag:nth-child(even) {
-  background: #17253D !important;
-  border-color: #17253D !important;
-  color: #FFFFFF !important;
-}
-
-/* Responsive adjustments */
 @media (max-width: 768px) {
-  .ticker-section-wrap {
-    padding: 10px 0;
+  .marquee-strip-section {
+    padding: 14px 0;
   }
-  .ticker-container {
-    gap: 7px;
+  .marquee-group {
+    gap: 24px;
+    padding-right: 24px;
   }
-  .ticker-tag {
-    height: 25px;
-    padding: 4px 10px;
-    font-size: 9.5px;
-    letter-spacing: 0.04em;
+  .marquee-name {
+    font-size: 12px;
+    font-weight: 800;
   }
-  .ticker-group {
-    gap: 8px;
-    padding-right: 8px;
-  }
-  .ticker-track-left .ticker-group {
-    animation-duration: 30s;
-  }
-  .ticker-track-right .ticker-group {
-    animation-duration: 30s;
+  .marquee-track {
+    animation-duration: 35s;
   }
 }
 
-/* Accessibility: Support reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .ticker-track-left .ticker-group,
-  .ticker-track-right .ticker-group {
-    animation: none !important;
+  .marquee-track {
+    animation: none;
   }
 }
 

@@ -275,58 +275,69 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================
-        {/* ========================================================
-            PROJECT & TECHNOLOGY TICKER (Soft White + Deep Navy)
+            CLIENT PORTFOLIO MARQUEE (Full-width continuous horizontal rectangular band)
             ======================================================== */}
-        <section className="ticker-section-wrap" aria-label="Projects and services showcase">
-          <div className="ticker-container">
-            {/* Top Row: Scrolls continuously from right to left */}
-            <div className="ticker-row ticker-row-top" aria-hidden="true">
-              <div className="ticker-track ticker-track-left">
-                {[0, 1, 2, 3].map((groupIndex) => (
-                  <div key={`group-r1-${groupIndex}`} className="ticker-group" aria-hidden={groupIndex > 0}>
-                    {[
-                      'Swekas Luxe', 'Web Development', 'Chennai Tales', 'AI Solutions',
-                      'Magizh Mahal', 'Cloud Architecture', 'UNI GLO', 'Custom Software',
-                      'Vihdya School', 'Mobile Applications', 'Miox Studio', 'UI/UX Design',
-                      'Zara AI', 'Full-Stack Engineering', 'TT Dry Cleaning', 'Automation Systems',
-                      'TastyLens', 'Next.js & React', 'FinEcho', 'Database Systems',
-                    ].map((item, i) => (
-                      <span
-                        key={`t1-${groupIndex}-${i}`}
-                        className={`ticker-tag ${i % 2 === 1 ? 'ticker-tag-filled' : ''}`}
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                ))}
-              </div>
+        <section className="marquee-strip-section" aria-label="Client portfolio showcase">
+          <div className="marquee-track">
+            <div className="marquee-group">
+              {[
+                'Magizh Mahal',
+                'UNI GLO',
+                'Vidhya School',
+                'Miox Studio',
+                'Zara AI',
+                'TT Dry Cleaning',
+                'TastyLens',
+                'FinEcho',
+                'AgriSmart',
+                'Kudumba Vault',
+                'Swekas Luxe',
+                'Chennai Tales',
+                'BlockBuster',
+                'Dinesh Portfolio',
+                'Red Dragon',
+                'Jayamurugan Portfolio',
+                'Harishwaran Portfolio',
+                'Lokkesh Portfolio',
+                'Zayamazone',
+                'Print Kada',
+                'RootnSpace',
+              ].map((name, i) => (
+                <span key={`group-1-${i}`} className="marquee-item">
+                  <span className="marquee-dot" aria-hidden="true" />
+                  <span className="marquee-name">{name}</span>
+                </span>
+              ))}
             </div>
-
-            {/* Bottom Row: Scrolls continuously from left to right */}
-            <div className="ticker-row ticker-row-bottom" aria-hidden="true">
-              <div className="ticker-track ticker-track-right">
-                {[0, 1, 2, 3].map((groupIndex) => (
-                  <div key={`group-r2-${groupIndex}`} className="ticker-group" aria-hidden={groupIndex > 0}>
-                    {[
-                      'AgriSmart', 'AI Assistants', 'Kudumba Vault', 'REST & GraphQL APIs',
-                      'BlockBuster', 'DevOps & CI/CD', 'Dinesh Portfolio', 'E-Commerce Platforms',
-                      'Red Dragon', 'Enterprise Software', 'Jayamurugan Portfolio', 'SaaS Development',
-                      'Harishwaran Portfolio', 'Performance Optimization', 'Lokkesh Portfolio', 'Cybersecurity & Auth',
-                      'Zayamazone', 'Workflow Automation', 'Print Kada', 'Tailored Solutions',
-                      'RootnSpace', 'Cloud Solutions',
-                    ].map((item, i) => (
-                      <span
-                        key={`t2-${groupIndex}-${i}`}
-                        className={`ticker-tag ${i % 2 === 1 ? 'ticker-tag-filled' : ''}`}
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                ))}
-              </div>
+            <div className="marquee-group" aria-hidden="true">
+              {[
+                'Magizh Mahal',
+                'UNI GLO',
+                'Vidhya School',
+                'Miox Studio',
+                'Zara AI',
+                'TT Dry Cleaning',
+                'TastyLens',
+                'FinEcho',
+                'AgriSmart',
+                'Kudumba Vault',
+                'Swekas Luxe',
+                'Chennai Tales',
+                'BlockBuster',
+                'Dinesh Portfolio',
+                'Red Dragon',
+                'Jayamurugan Portfolio',
+                'Harishwaran Portfolio',
+                'Lokkesh Portfolio',
+                'Zayamazone',
+                'Print Kada',
+                'RootnSpace',
+              ].map((name, i) => (
+                <span key={`group-2-${i}`} className="marquee-item">
+                  <span className="marquee-dot" aria-hidden="true" />
+                  <span className="marquee-name">{name}</span>
+                </span>
+              ))}
             </div>
           </div>
         </section>
