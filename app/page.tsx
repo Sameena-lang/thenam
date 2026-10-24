@@ -275,90 +275,69 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================
-            PROJECT TICKER (between hero & services, in container)
+            CLIENT PORTFOLIO MARQUEE (Full-width continuous horizontal rectangular band)
             ======================================================== */}
-        <section className="ticker-section-wrap" aria-label="Projects showcase">
-          <div className="container">
-            <div className="compact-orbit-track">
-              <div className="compact-orbit-canvas">
-                {/* Compact Rounded Rectangular Track SVG with Subtle Border and Moving Light Accent */}
-                <svg
-                  className="compact-orbit-svg"
-                  viewBox="0 0 1000 68"
-                  preserveAspectRatio="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <defs>
-                    <filter id="compactLightGlow" x="-50%" y="-50%" width="200%" height="200%">
-                      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
-                      <feMerge>
-                        <feMergeNode in="blur" />
-                        <feMergeNode in="SourceGraphic" />
-                      </feMerge>
-                    </filter>
-                    <radialGradient id="compactLightCore" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                      <stop offset="50%" stopColor="#00c9ff" stopOpacity="0.95" />
-                      <stop offset="100%" stopColor="#84cc16" stopOpacity="0.5" />
-                    </radialGradient>
-                  </defs>
-
-                  {/* Clean rounded rectangle border with subtle cyan tint */}
-                  <rect
-                    x="2" y="2"
-                    width="996" height="64"
-                    rx="14" ry="14"
-                    fill="#ffffff"
-                    stroke="rgba(0, 201, 255, 0.42)"
-                    strokeWidth="1.25"
-                  />
-
-                  {/* Subtle corner accent dots */}
-                  <circle cx="16" cy="4" r="2" fill="#00c9ff" opacity="0.75" />
-                  <circle cx="984" cy="4" r="2" fill="#00c9ff" opacity="0.75" />
-                  <circle cx="984" cy="64" r="2" fill="#84cc16" opacity="0.75" />
-                  <circle cx="16" cy="64" r="2" fill="#84cc16" opacity="0.75" />
-
-                  {/* Secondary accent: subtle moving light along the track border */}
-                  <circle r="8" fill="rgba(0, 201, 255, 0.22)" filter="url(#compactLightGlow)">
-                    <animateMotion
-                      dur="12s"
-                      repeatCount="indefinite"
-                      path="M 16,2 H 984 Q 998,2 998,16 V 52 Q 998,66 984,66 H 16 Q 2,66 2,52 V 16 Q 2,2 16,2 Z"
-                    />
-                  </circle>
-                  <circle r="2.5" fill="url(#compactLightCore)">
-                    <animateMotion
-                      dur="12s"
-                      repeatCount="indefinite"
-                      path="M 16,2 H 984 Q 998,2 998,16 V 52 Q 998,66 984,66 H 16 Q 2,66 2,52 V 16 Q 2,2 16,2 Z"
-                    />
-                  </circle>
-                </svg>
-
-                {/* Project Names moving continuously around the perimeter (readable on every side) */}
-                {[
-                  'Swekas Luxe','Chennai Tales','Magizh Mahal','UNI GLO','Vihdya School',
-                  'Miox Studio','Zara AI','TT Dry Cleaning','TastyLens','FinEcho',
-                  'AgriSmart','Kudumba Vault','BlockBuster','Dinesh Portfolio','Red Dragon',
-                  'Jayamurugan Portfolio','Harishwaran Portfolio','Lokkesh Portfolio',
-                  'Zayamazone','Print Kada','RootnSpace',
-                  'Swekas Luxe','Chennai Tales','Magizh Mahal','UNI GLO','Vihdya School',
-                  'Miox Studio','Zara AI','TT Dry Cleaning','TastyLens','FinEcho',
-                  'AgriSmart','Kudumba Vault','BlockBuster','Dinesh Portfolio','Red Dragon',
-                  'Jayamurugan Portfolio','Harishwaran Portfolio','Lokkesh Portfolio',
-                ].map((name, i) => (
-                  <div
-                    key={i}
-                    className="compact-orbit-item"
-                    style={{ '--i': i } as React.CSSProperties}
-                  >
-                    <span className="compact-orbit-dot" aria-hidden="true" />
-                    <span className="compact-orbit-name">{name}</span>
-                  </div>
-                ))}
-              </div>
+        <section className="marquee-strip-section" aria-label="Client portfolio showcase">
+          <div className="marquee-track">
+            <div className="marquee-group">
+              {[
+                'Magizh Mahal',
+                'UNI GLO',
+                'Vidhya School',
+                'Miox Studio',
+                'Zara AI',
+                'TT Dry Cleaning',
+                'TastyLens',
+                'FinEcho',
+                'AgriSmart',
+                'Kudumba Vault',
+                'Swekas Luxe',
+                'Chennai Tales',
+                'BlockBuster',
+                'Dinesh Portfolio',
+                'Red Dragon',
+                'Jayamurugan Portfolio',
+                'Harishwaran Portfolio',
+                'Lokkesh Portfolio',
+                'Zayamazone',
+                'Print Kada',
+                'RootnSpace',
+              ].map((name, i) => (
+                <span key={`group-1-${i}`} className="marquee-item">
+                  <span className="marquee-dot" aria-hidden="true" />
+                  <span className="marquee-name">{name}</span>
+                </span>
+              ))}
+            </div>
+            <div className="marquee-group" aria-hidden="true">
+              {[
+                'Magizh Mahal',
+                'UNI GLO',
+                'Vidhya School',
+                'Miox Studio',
+                'Zara AI',
+                'TT Dry Cleaning',
+                'TastyLens',
+                'FinEcho',
+                'AgriSmart',
+                'Kudumba Vault',
+                'Swekas Luxe',
+                'Chennai Tales',
+                'BlockBuster',
+                'Dinesh Portfolio',
+                'Red Dragon',
+                'Jayamurugan Portfolio',
+                'Harishwaran Portfolio',
+                'Lokkesh Portfolio',
+                'Zayamazone',
+                'Print Kada',
+                'RootnSpace',
+              ].map((name, i) => (
+                <span key={`group-2-${i}`} className="marquee-item">
+                  <span className="marquee-dot" aria-hidden="true" />
+                  <span className="marquee-name">{name}</span>
+                </span>
+              ))}
             </div>
           </div>
         </section>

@@ -3889,226 +3889,104 @@ html.light .video-wrapper-glass {
 
 
 /* ========================================================
-   COMPACT BALANCED ORBIT TICKER SECTION
+   FULL-WIDTH CLIENT PORTFOLIO MARQUEE STRIP
    ======================================================== */
 
-/* Clean white section seamlessly placed immediately above services */
-.ticker-section-wrap {
-  background: #ffffff;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 24px 0 28px;
-  overflow: hidden;
-  position: relative;
-}
-
-/* Compact rounded track aligned with services container width */
-.compact-orbit-track {
-  position: relative;
+.marquee-strip-section {
   width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-  height: 68px;
+  position: relative;
+  background: linear-gradient(90deg, #00C9F2 0%, #00DFA5 50%, #82E62E 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.45);
+  border-bottom: 1px solid rgba(6, 20, 38, 0.12);
+  border-radius: 0;
+  padding: 16px 0;
+  overflow: hidden;
   display: flex;
-  justify-content: center;
   align-items: center;
-  border-radius: 14px;
-  background: #ffffff;
-  box-shadow: 0 2px 12px rgba(0, 201, 255, 0.05);
+  box-shadow: 0 2px 14px rgba(0, 201, 242, 0.18);
 }
 
-/* Smooth pause on hover */
-.compact-orbit-track:hover .compact-orbit-item {
+.marquee-track {
+  display: flex;
+  width: max-content;
+  flex-shrink: 0;
+  will-change: transform;
+  animation: continuousMarqueeScroll 45s linear infinite;
+}
+
+.marquee-strip-section:hover .marquee-track {
   animation-play-state: paused;
 }
 
-/* Fixed 1000x68 canvas with edge fade masking to ensure no text pokes past curved edges */
-.compact-orbit-canvas {
-  width: 1000px;
-  height: 68px;
-  position: relative;
+.marquee-group {
+  display: flex;
+  align-items: center;
   flex-shrink: 0;
-  transform-origin: center center;
-  overflow: hidden;
-  border-radius: 14px;
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 4.5%,
-    black 95.5%,
-    transparent 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 4.5%,
-    black 95.5%,
-    transparent 100%
-  );
+  gap: 36px;
+  padding-right: 36px;
 }
 
-/* SVG border track, corner accents and subtle moving light */
-.compact-orbit-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 68px;
-  display: block;
-  pointer-events: none;
-  overflow: visible;
-}
-
-/* ── Orbiting Project Names (Generous 226px spacing ensures zero collision/overlap) ── */
-.compact-orbit-item {
-  position: absolute;
-  top: 0;
-  left: 0;
-  /* Perfectly centered two-lane path (Top lane: y=22, Bottom lane: y=46 with 20px clearance from borders) */
-  offset-path: path('M 40,22 H 960 Q 975,22 975,34 V 34 Q 975,46 960,46 H 40 Q 25,46 25,34 V 34 Q 25,22 40,22 Z');
-  /* offset-rotate: 0deg ensures all project names stay 100% upright and readable everywhere */
-  offset-rotate: 0deg;
-  offset-anchor: 50% 50%;
+.marquee-item {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 12px;
   white-space: nowrap;
   user-select: none;
-  cursor: default;
-  will-change: transform, offset-path, offset-distance, opacity;
-  animation: compactOrbitCycle 130.65s linear infinite;
-  animation-delay: calc(var(--i) * -3.35s);
 }
 
-/* Small cyan-to-lime accent dot */
-.compact-orbit-dot {
+.marquee-dot {
   display: inline-block;
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #00c9ff, #84cc16);
-  box-shadow: 0 0 5px rgba(0, 201, 255, 0.65);
+  background: #061426;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
   flex-shrink: 0;
 }
 
-/* Dark navy typography matching Thenam brand */
-.compact-orbit-name {
-  font-size: 11px;
-  font-weight: 700;
+.marquee-name {
+  font-size: 13.5px;
+  font-weight: 750;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #0f172a;
+  color: #061426;
   line-height: 1;
-  transition: color 0.2s;
+  transition: color 0.2s ease;
 }
 
-.compact-orbit-item:hover .compact-orbit-name {
-  color: #0284c7;
+.marquee-item:hover .marquee-name {
+  color: #000000;
 }
 
-/* ── Continuous loop cycle: 28s per lap, 226px spacing, guaranteed zero overlaps ── */
-@keyframes compactOrbitCycle {
+@keyframes continuousMarqueeScroll {
   0% {
-    offset-distance: 0%;
-    opacity: 0;
-    visibility: visible;
-  }
-  0.5% {
-    offset-distance: 2.33%;
-    opacity: 1;
-  }
-  20.9% {
-    offset-distance: 97.67%;
-    opacity: 1;
-  }
-  21.431% {
-    offset-distance: 100%;
-    opacity: 0;
-    visibility: hidden;
+    transform: translateX(0);
   }
   100% {
-    offset-distance: 100%;
-    opacity: 0;
-    visibility: hidden;
-  }
-}
-
-/* ── Responsive Scaling across all device sizes ── */
-@media (max-width: 1100px) {
-  .compact-orbit-canvas {
-    transform: scale(0.9);
-  }
-  .compact-orbit-track {
-    height: 60px;
-  }
-}
-
-@media (max-width: 950px) {
-  .compact-orbit-canvas {
-    transform: scale(0.78);
-  }
-  .compact-orbit-track {
-    height: 52px;
+    transform: translateX(-50%);
   }
 }
 
 @media (max-width: 768px) {
-  .compact-orbit-canvas {
-    transform: scale(0.66);
+  .marquee-strip-section {
+    padding: 14px 0;
   }
-  .compact-orbit-track {
-    height: 46px;
+  .marquee-group {
+    gap: 24px;
+    padding-right: 24px;
   }
-  .compact-orbit-name {
+  .marquee-name {
     font-size: 12px;
-  }
-}
-
-@media (max-width: 600px) {
-  .compact-orbit-canvas {
-    transform: scale(0.54);
-  }
-  .compact-orbit-track {
-    height: 42px;
-  }
-  .compact-orbit-name {
-    font-size: 13px;
     font-weight: 800;
   }
-}
-
-@media (max-width: 480px) {
-  .compact-orbit-canvas {
-    transform: scale(0.42);
-  }
-  .compact-orbit-track {
-    height: 38px;
-  }
-  .compact-orbit-name {
-    font-size: 14px;
-    font-weight: 800;
+  .marquee-track {
+    animation-duration: 35s;
   }
 }
 
-@media (max-width: 380px) {
-  .compact-orbit-canvas {
-    transform: scale(0.35);
-  }
-  .compact-orbit-track {
-    height: 34px;
-  }
-  .compact-orbit-name {
-    font-size: 15px;
-    font-weight: 800;
-  }
-}
-
-/* Accessibility: Support reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .compact-orbit-item {
-    animation: none !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    offset-distance: calc(var(--i) * 2.564%) !important;
+  .marquee-track {
+    animation: none;
   }
 }
 
