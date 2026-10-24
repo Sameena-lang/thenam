@@ -62,7 +62,7 @@ export default function Header() {
         <div className="container header-inner">
           {/* Logo */}
           <Link href="/" className="brand-logo" aria-label="Thenam Software Solutions home">
-            <img src="/thenam-logo-white.png" alt="Thenam Logo" className="logo-leaf header-logo-leaf" />
+            <img src="/thenam-leaf-clean.png" alt="Thenam Logo" className="logo-leaf header-logo-leaf" width="38" height="38" />
             <div className="brand-text">
               <span className="brand-name">
                 THEN<span className="brand-name-accent">AM</span>
@@ -71,7 +71,7 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop Nav - Centered with Home highlighted with cyan text & cyan-to-green underline */}
           <nav className="desktop-nav">
             {navLinks.map((link) => {
               const active = clickedHref ? clickedHref === link.href : isActive(link.href)
@@ -81,17 +81,11 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setClickedHref(link.href)}
-                  className={`nav-item-link ${link.pillClass} ${active ? 'is-active-pill' : ''}`}
+                  className={`nav-item-link ${active ? 'is-active-nav' : ''}`}
                   aria-label={link.label}
                 >
-                  <img
-                    src="/thenam-logo-transparent.png"
-                    alt=""
-                    className="nav-pill-leaf"
-                    width="15"
-                    height="15"
-                  />
                   <span className="nav-item-text">{link.label}</span>
+                  {active && <span className="nav-active-bar" aria-hidden="true" />}
                 </Link>
               )
             })}
@@ -99,7 +93,7 @@ export default function Header() {
 
           {/* Right Action */}
           <div className="header-actions">
-            {/* Dark / Light Mode Toggle Button */}
+            {/* Theme Toggle Button (Yellow Sun Icon) */}
             <button
               type="button"
               className="theme-toggle-btn"
@@ -114,7 +108,8 @@ export default function Header() {
               )}
             </button>
 
-            <Link href="/contact" className="quote-btn">
+            {/* Gradient Quote Button */}
+            <Link href="/contact" className="quote-btn header-quote-btn">
               <span>Get a Free Quote</span>
               <ArrowRight size={15} />
             </Link>
