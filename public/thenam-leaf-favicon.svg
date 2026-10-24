@@ -1,0 +1,29 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="leafGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00c9ff"/>
+      <stop offset="100%" stop-color="#84cc16"/>
+    </linearGradient>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0d1a33"/>
+      <stop offset="100%" stop-color="#050b14"/>
+    </radialGradient>
+  </defs>
+  <!-- Rounded square background in Thenam dark navy -->
+  <rect width="32" height="32" rx="7" fill="url(#bgGrad)"/>
+  <!-- Stylised leaf / plant sprout — Thenam leaf mark -->
+  <!-- Right leaf: curves up-right from stem -->
+  <path
+    d="M16 26 C16 26 16 18 16 14 C16 10 20 6 25 6 C25 6 25 10 22 13 C20 15 18 16 16 18 Z"
+    fill="url(#leafGrad)"
+    opacity="0.95"
+  />
+  <!-- Left leaf: mirrors, curves up-left -->
+  <path
+    d="M16 26 C16 26 16 18 16 14 C16 10 12 6 7 6 C7 6 7 10 10 13 C12 15 14 16 16 18 Z"
+    fill="url(#leafGrad)"
+    opacity="0.75"
+  />
+  <!-- Stem -->
+  <line x1="16" y1="28" x2="16" y2="18" stroke="url(#leafGrad)" stroke-width="2" stroke-linecap="round"/>
+</svg>

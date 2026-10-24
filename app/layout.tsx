@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import FloatingButtons from '@/components/FloatingButtons'
 
 export const metadata: Metadata = {
   title: 'Thenam Software Solutions | Technology That Moves Your Business Forward',
@@ -10,16 +11,13 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
+        url: '/thenam-leaf-favicon.svg',
+        type: 'image/svg+xml',
       },
       {
         url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        sizes: '32x32',
+        type: 'image/png',
       },
     ],
     apple: '/apple-icon.png',
@@ -62,6 +60,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <FloatingButtons />
         <Analytics />
       </body>
     </html>

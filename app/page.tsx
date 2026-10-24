@@ -33,6 +33,7 @@ import {
   Maximize2,
   Film,
   Zap,
+  RotateCw,
 } from 'lucide-react'
 
 export default function HomePage() {
@@ -667,125 +668,345 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Right Projects Grid */}
-            <div className="featured-work-grid-4">
+            {/* Right Projects 2x2 Grid with 3D Flip */}
+            <div className="featured-work-grid-2x2">
               {/* Project 1: AgriSmart */}
-              <article className="project-showcase-card">
-                <div className="project-art-preview art-agrismart">
-                  <div className="project-mock-box">
-                    <div className="mock-top-bar" style={{ color: '#166534' }}>
-                      <span>AgriSmart Drone & IoT</span>
-                      <span>● Active</span>
-                    </div>
-                    <div className="mock-content-mini">
-                      <div className="mock-avatar-circle" style={{ background: '#dcfce7', color: '#15803d' }}>
-                        🌾
+              <div
+                className={`project-showcase-card-wrapper ${flippedIndex === 0 ? 'is-flipped' : ''}`}
+                tabIndex={0}
+                role="region"
+                aria-label="AgriSmart — AI-Powered AgriTech Platform. Hover or click to flip for details."
+                aria-expanded={flippedIndex === 0}
+                onClick={() => toggleCardFlip(0)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    toggleCardFlip(0)
+                  }
+                }}
+              >
+                <div className="project-card-flipper">
+                  {/* FRONT */}
+                  <div className="project-card-front">
+                    <div className="project-art-preview art-agrismart">
+                      <div className="project-mock-box">
+                        <div className="mock-top-bar" style={{ color: '#166534' }}>
+                          <span>AgriSmart Drone &amp; IoT</span>
+                          <span className="mock-live-badge">● Active</span>
+                        </div>
+                        <div className="mock-content-mini">
+                          <div className="mock-avatar-circle" style={{ background: '#dcfce7', color: '#15803d' }}>
+                            🌾
+                          </div>
+                          <div className="mock-lines-group">
+                            <div className="mock-line" style={{ background: '#86efac', width: '85%' }} />
+                            <div className="mock-line short" style={{ background: '#bbf7d0', width: '55%' }} />
+                          </div>
+                        </div>
+                        <div className="mock-stat-pill" style={{ background: 'rgba(22, 101, 52, 0.08)', color: '#166534' }}>
+                          <span>Telemetry: 99.2% Accuracy</span>
+                          <span>Sensor Grid Active</span>
+                        </div>
                       </div>
-                      <div className="mock-lines-group">
-                        <div className="mock-line" style={{ background: '#86efac' }} />
-                        <div className="mock-line short" style={{ background: '#bbf7d0' }} />
+                    </div>
+                    <div className="project-meta-bottom">
+                      <div className="project-meta-header">
+                        <h3 className="project-title">AgriSmart</h3>
+                        <span className="project-flip-hint">
+                          <RotateCw size={11} /> 3D Flip
+                        </span>
+                      </div>
+                      <p className="project-desc-mini">AI-Powered AgriTech Platform</p>
+                      <div className="project-tag-row">
+                        <span className="tag-pill">Web App</span>
+                        <span className="tag-pill">AI/ML</span>
+                        <span className="tag-pill">IoT</span>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="project-meta-bottom">
-                  <h3 className="project-title">AgriSmart</h3>
-                  <p className="project-desc-mini">AI-Powered AgriTech Platform</p>
-                  <div className="project-tag-row">
-                    <span className="tag-pill">Web App</span>
-                    <span className="tag-pill">AI/ML</span>
-                    <span className="tag-pill">IoT</span>
+
+                  {/* BACK */}
+                  <div className="project-card-back">
+                    <div className="card-back-header">
+                      <span className="card-back-badge">AGRITECH &amp; AI</span>
+                      <h3 className="card-back-title">AgriSmart</h3>
+                      <p className="card-back-subtitle">AI-Powered AgriTech Platform</p>
+                    </div>
+                    <p className="card-back-desc">
+                      Real-time crop anomaly detection, precision drone analytics, and automated soil sensor diagnostics engineered to maximize agricultural yields.
+                    </p>
+                    <div className="card-back-detail-box">
+                      <span className="detail-box-label">KEY IMPACT &amp; FEATURES</span>
+                      <p className="detail-box-text">Multispectral NDVI imaging, predictive weather modeling, and offline-first edge IoT telemetry saving up to 35% water consumption.</p>
+                    </div>
+                    <div className="card-back-footer">
+                      <div className="project-tag-row">
+                        <span className="tag-pill">Python / PyTorch</span>
+                        <span className="tag-pill">FastAPI</span>
+                        <span className="tag-pill">React</span>
+                        <span className="tag-pill">IoT Edge</span>
+                      </div>
+                      <Link href="/products" className="card-back-cta" onClick={(e) => e.stopPropagation()}>
+                        <span>Explore case study</span>
+                        <ArrowRight size={13} />
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </article>
+              </div>
 
               {/* Project 2: ZaraBot */}
-              <article className="project-showcase-card">
-                <div className="project-art-preview art-zarabot">
-                  <div className="project-mock-box">
-                    <div className="mock-top-bar" style={{ color: '#38bdf8' }}>
-                      <span>ZaraBot AI Voice</span>
-                      <span>⚡ Tamil-first</span>
-                    </div>
-                    <div className="mock-content-mini">
-                      <div className="mock-avatar-circle" style={{ background: '#0c2340', color: '#38bdf8' }}>
-                        🤖
+              <div
+                className={`project-showcase-card-wrapper ${flippedIndex === 1 ? 'is-flipped' : ''}`}
+                tabIndex={0}
+                role="region"
+                aria-label="ZaraBot — Tamil-first AI Assistant. Hover or click to flip for details."
+                aria-expanded={flippedIndex === 1}
+                onClick={() => toggleCardFlip(1)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    toggleCardFlip(1)
+                  }
+                }}
+              >
+                <div className="project-card-flipper">
+                  {/* FRONT */}
+                  <div className="project-card-front">
+                    <div className="project-art-preview art-zarabot">
+                      <div className="project-mock-box">
+                        <div className="mock-top-bar" style={{ color: '#38bdf8' }}>
+                          <span>ZaraBot AI Voice</span>
+                          <span className="mock-live-badge">⚡ Tamil-first</span>
+                        </div>
+                        <div className="mock-content-mini">
+                          <div className="mock-avatar-circle" style={{ background: '#0c2340', color: '#38bdf8' }}>
+                            🤖
+                          </div>
+                          <div className="mock-lines-group">
+                            <div className="mock-line" style={{ background: '#38bdf8', width: '80%' }} />
+                            <div className="mock-line short" style={{ background: '#0284c7', width: '60%' }} />
+                          </div>
+                        </div>
+                        <div className="mock-stat-pill" style={{ background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8' }}>
+                          <span>Latency: &lt;280ms Voice</span>
+                          <span>Bilingual NLP</span>
+                        </div>
                       </div>
-                      <div className="mock-lines-group">
-                        <div className="mock-line" style={{ background: '#38bdf8' }} />
-                        <div className="mock-line short" style={{ background: '#0284c7' }} />
+                    </div>
+                    <div className="project-meta-bottom">
+                      <div className="project-meta-header">
+                        <h3 className="project-title">ZaraBot</h3>
+                        <span className="project-flip-hint">
+                          <RotateCw size={11} /> 3D Flip
+                        </span>
+                      </div>
+                      <p className="project-desc-mini">Tamil-first AI Assistant</p>
+                      <div className="project-tag-row">
+                        <span className="tag-pill">AI</span>
+                        <span className="tag-pill">Chatbot</span>
+                        <span className="tag-pill">Voice</span>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="project-meta-bottom">
-                  <h3 className="project-title">ZaraBot</h3>
-                  <p className="project-desc-mini">Tamil-first AI Assistant</p>
-                  <div className="project-tag-row">
-                    <span className="tag-pill">AI</span>
-                    <span className="tag-pill">Chatbot</span>
-                    <span className="tag-pill">Voice</span>
+
+                  {/* BACK */}
+                  <div className="project-card-back">
+                    <div className="card-back-header">
+                      <span className="card-back-badge">CONVERSATIONAL AI</span>
+                      <h3 className="card-back-title">ZaraBot</h3>
+                      <p className="card-back-subtitle">Tamil-first AI Assistant</p>
+                    </div>
+                    <p className="card-back-desc">
+                      Next-generation conversational assistant with context-aware Tamil &amp; English speech recognition and automated customer self-service workflows.
+                    </p>
+                    <div className="card-back-detail-box">
+                      <span className="detail-box-label">KEY IMPACT &amp; FEATURES</span>
+                      <p className="detail-box-text">Fine-tuned Tamil acoustic models, instant speech-to-text, and omni-channel WhatsApp &amp; web voice integration for enterprises.</p>
+                    </div>
+                    <div className="card-back-footer">
+                      <div className="project-tag-row">
+                        <span className="tag-pill">Whisper ASR</span>
+                        <span className="tag-pill">Llama 3</span>
+                        <span className="tag-pill">WebSockets</span>
+                        <span className="tag-pill">Next.js</span>
+                      </div>
+                      <Link href="/products" className="card-back-cta" onClick={(e) => e.stopPropagation()}>
+                        <span>Explore case study</span>
+                        <ArrowRight size={13} />
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </article>
+              </div>
 
               {/* Project 3: E-Commerce Platform */}
-              <article className="project-showcase-card">
-                <div className="project-art-preview art-ecommerce">
-                  <div className="project-mock-box">
-                    <div className="mock-top-bar" style={{ color: '#92400e' }}>
-                      <span>Fresh Natural Products</span>
-                      <span>🛒 Cart (3)</span>
-                    </div>
-                    <div className="mock-content-mini">
-                      <div className="mock-avatar-circle" style={{ background: '#fef3c7', color: '#b45309' }}>
-                        🛍️
+              <div
+                className={`project-showcase-card-wrapper ${flippedIndex === 2 ? 'is-flipped' : ''}`}
+                tabIndex={0}
+                role="region"
+                aria-label="E-Commerce Platform — Business Website & Storefront. Hover or click to flip for details."
+                aria-expanded={flippedIndex === 2}
+                onClick={() => toggleCardFlip(2)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    toggleCardFlip(2)
+                  }
+                }}
+              >
+                <div className="project-card-flipper">
+                  {/* FRONT */}
+                  <div className="project-card-front">
+                    <div className="project-art-preview art-ecommerce">
+                      <div className="project-mock-box">
+                        <div className="mock-top-bar" style={{ color: '#92400e' }}>
+                          <span>Fresh Natural Products</span>
+                          <span className="mock-live-badge">🛒 Cart (3)</span>
+                        </div>
+                        <div className="mock-content-mini">
+                          <div className="mock-avatar-circle" style={{ background: '#fef3c7', color: '#b45309' }}>
+                            🛍️
+                          </div>
+                          <div className="mock-lines-group">
+                            <div className="mock-line" style={{ background: '#fde68a', width: '88%' }} />
+                            <div className="mock-line short" style={{ background: '#fcd34d', width: '62%' }} />
+                          </div>
+                        </div>
+                        <div className="mock-stat-pill" style={{ background: 'rgba(180, 83, 9, 0.08)', color: '#92400e' }}>
+                          <span>Speed: 0.4s Fast Checkout</span>
+                          <span>Multi-Currency</span>
+                        </div>
                       </div>
-                      <div className="mock-lines-group">
-                        <div className="mock-line" style={{ background: '#fde68a' }} />
-                        <div className="mock-line short" style={{ background: '#fcd34d' }} />
+                    </div>
+                    <div className="project-meta-bottom">
+                      <div className="project-meta-header">
+                        <h3 className="project-title">E-Commerce Platform</h3>
+                        <span className="project-flip-hint">
+                          <RotateCw size={11} /> 3D Flip
+                        </span>
+                      </div>
+                      <p className="project-desc-mini">Business Website &amp; Storefront</p>
+                      <div className="project-tag-row">
+                        <span className="tag-pill">Web Dev</span>
+                        <span className="tag-pill">E-commerce</span>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="project-meta-bottom">
-                  <h3 className="project-title">E-Commerce Platform</h3>
-                  <p className="project-desc-mini">Business Website & Storefront</p>
-                  <div className="project-tag-row">
-                    <span className="tag-pill">Web Dev</span>
-                    <span className="tag-pill">E-commerce</span>
+
+                  {/* BACK */}
+                  <div className="project-card-back">
+                    <div className="card-back-header">
+                      <span className="card-back-badge">DIGITAL COMMERCE</span>
+                      <h3 className="card-back-title">E-Commerce Platform</h3>
+                      <p className="card-back-subtitle">Business Website &amp; Storefront</p>
+                    </div>
+                    <p className="card-back-desc">
+                      Modern headless commerce storefront built for lightning-fast catalog search, frictionless checkout flows, and synchronized inventory across channels.
+                    </p>
+                    <div className="card-back-detail-box">
+                      <span className="detail-box-label">KEY IMPACT &amp; FEATURES</span>
+                      <p className="detail-box-text">Instant search indexing, integrated Stripe/Razorpay gateways, and automated delivery tracking that drove +42% online orders.</p>
+                    </div>
+                    <div className="card-back-footer">
+                      <div className="project-tag-row">
+                        <span className="tag-pill">Next.js 14</span>
+                        <span className="tag-pill">Tailwind CSS</span>
+                        <span className="tag-pill">Stripe API</span>
+                        <span className="tag-pill">PostgreSQL</span>
+                      </div>
+                      <Link href="/products" className="card-back-cta" onClick={(e) => e.stopPropagation()}>
+                        <span>Explore case study</span>
+                        <ArrowRight size={13} />
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </article>
+              </div>
 
               {/* Project 4: Business Management System */}
-              <article className="project-showcase-card">
-                <div className="project-art-preview art-bizmgmt">
-                  <div className="project-mock-box">
-                    <div className="mock-top-bar" style={{ color: '#0369a1' }}>
-                      <span>Enterprise CRM & ERP</span>
-                      <span>📊 Sync</span>
-                    </div>
-                    <div className="mock-content-mini">
-                      <div className="mock-avatar-circle" style={{ background: '#e0f2fe', color: '#0284c7' }}>
-                        📈
+              <div
+                className={`project-showcase-card-wrapper ${flippedIndex === 3 ? 'is-flipped' : ''}`}
+                tabIndex={0}
+                role="region"
+                aria-label="Business Management System — Custom Operations Software. Hover or click to flip for details."
+                aria-expanded={flippedIndex === 3}
+                onClick={() => toggleCardFlip(3)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    toggleCardFlip(3)
+                  }
+                }}
+              >
+                <div className="project-card-flipper">
+                  {/* FRONT */}
+                  <div className="project-card-front">
+                    <div className="project-art-preview art-bizmgmt">
+                      <div className="project-mock-box">
+                        <div className="mock-top-bar" style={{ color: '#0369a1' }}>
+                          <span>Enterprise CRM &amp; ERP</span>
+                          <span className="mock-live-badge">📊 Sync</span>
+                        </div>
+                        <div className="mock-content-mini">
+                          <div className="mock-avatar-circle" style={{ background: '#e0f2fe', color: '#0284c7' }}>
+                            📈
+                          </div>
+                          <div className="mock-lines-group">
+                            <div className="mock-line" style={{ background: '#bae6fd', width: '85%' }} />
+                            <div className="mock-line short" style={{ background: '#7dd3fc', width: '50%' }} />
+                          </div>
+                        </div>
+                        <div className="mock-stat-pill" style={{ background: 'rgba(2, 132, 199, 0.08)', color: '#0369a1' }}>
+                          <span>Efficiency: +60% Ops Speed</span>
+                          <span>Role-Based Access</span>
+                        </div>
                       </div>
-                      <div className="mock-lines-group">
-                        <div className="mock-line" style={{ background: '#bae6fd' }} />
-                        <div className="mock-line short" style={{ background: '#7dd3fc' }} />
+                    </div>
+                    <div className="project-meta-bottom">
+                      <div className="project-meta-header">
+                        <h3 className="project-title">Business Management System</h3>
+                        <span className="project-flip-hint">
+                          <RotateCw size={11} /> 3D Flip
+                        </span>
+                      </div>
+                      <p className="project-desc-mini">Custom Operations Software</p>
+                      <div className="project-tag-row">
+                        <span className="tag-pill">Web App</span>
+                        <span className="tag-pill">Dashboard</span>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="project-meta-bottom">
-                  <h3 className="project-title">Business Management System</h3>
-                  <p className="project-desc-mini">Custom Operations Software</p>
-                  <div className="project-tag-row">
-                    <span className="tag-pill">Web App</span>
-                    <span className="tag-pill">Dashboard</span>
+
+                  {/* BACK */}
+                  <div className="project-card-back">
+                    <div className="card-back-header">
+                      <span className="card-back-badge">OPERATIONS &amp; ERP</span>
+                      <h3 className="card-back-title">Business Management System</h3>
+                      <p className="card-back-subtitle">Custom Operations Software</p>
+                    </div>
+                    <p className="card-back-desc">
+                      Comprehensive enterprise operations dashboard uniting lead tracking, automated GST billing, employee scheduling, and real-time financial reporting.
+                    </p>
+                    <div className="card-back-detail-box">
+                      <span className="detail-box-label">KEY IMPACT &amp; FEATURES</span>
+                      <p className="detail-box-text">Granular role-based security, automated audit trails, and customizable KPI reporting reducing manual administrative hours by 60%.</p>
+                    </div>
+                    <div className="card-back-footer">
+                      <div className="project-tag-row">
+                        <span className="tag-pill">React</span>
+                        <span className="tag-pill">Node.js</span>
+                        <span className="tag-pill">PostgreSQL</span>
+                        <span className="tag-pill">Docker</span>
+                      </div>
+                      <Link href="/products" className="card-back-cta" onClick={(e) => e.stopPropagation()}>
+                        <span>Explore case study</span>
+                        <ArrowRight size={13} />
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </article>
+              </div>
             </div>
           </div>
         </section>
