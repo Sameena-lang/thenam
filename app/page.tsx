@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
@@ -47,6 +48,7 @@ interface MarqueeLogo {
   width: number
   height: number
   className: string
+  href: string
 }
 
 const CLIENT_MARQUEE_LOGOS: MarqueeLogo[] = [
@@ -57,6 +59,7 @@ const CLIENT_MARQUEE_LOGOS: MarqueeLogo[] = [
     width: 34,
     height: 34,
     className: 'marquee-logo-magizh',
+    href: '/projects/magizh-mahal',
   },
   {
     id: 'pink-fish',
@@ -65,6 +68,7 @@ const CLIENT_MARQUEE_LOGOS: MarqueeLogo[] = [
     width: 48,
     height: 34,
     className: 'marquee-logo-pinkfish',
+    href: '/projects/pink-fish',
   },
   {
     id: 'swekas-luxe',
@@ -73,6 +77,7 @@ const CLIENT_MARQUEE_LOGOS: MarqueeLogo[] = [
     width: 34,
     height: 34,
     className: 'marquee-logo-swekas',
+    href: '/projects/swekas-luxe',
   },
   {
     id: 'chennai-tales',
@@ -81,6 +86,7 @@ const CLIENT_MARQUEE_LOGOS: MarqueeLogo[] = [
     width: 76,
     height: 34,
     className: 'marquee-logo-chennai',
+    href: '/projects/chennai-tales',
   },
 ]
 
@@ -93,6 +99,7 @@ const MARQUEE_ITEMS = [
 ]
 
 export default function HomePage() {
+  const router = useRouter()
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPlaying, setIsPlaying] = useState(true)
   const [isMuted, setIsMuted] = useState(true)
@@ -208,16 +215,22 @@ export default function HomePage() {
               {MARQUEE_ITEMS.map((item, i) => (
                 <span key={`group-1-${i}`} className="marquee-item">
                   <span className="marquee-dot" aria-hidden="true" />
-                  <div className={`marquee-logo-frame ${item.className}`} title={item.name}>
-                    <Image
-                      src={item.src}
-                      alt={item.name}
-                      width={item.width}
-                      height={item.height}
-                      className="marquee-logo-image"
-                      priority={i < 4}
-                    />
-                  </div>
+                  <Link
+                    href={item.href}
+                    className="marquee-logo-link"
+                    title={`View ${item.name} project`}
+                  >
+                    <div className={`marquee-logo-frame ${item.className}`}>
+                      <Image
+                        src={item.src}
+                        alt={item.name}
+                        width={item.width}
+                        height={item.height}
+                        className="marquee-logo-image"
+                        priority={i < 4}
+                      />
+                    </div>
+                  </Link>
                 </span>
               ))}
             </div>
@@ -225,15 +238,22 @@ export default function HomePage() {
               {MARQUEE_ITEMS.map((item, i) => (
                 <span key={`group-2-${i}`} className="marquee-item">
                   <span className="marquee-dot" aria-hidden="true" />
-                  <div className={`marquee-logo-frame ${item.className}`} title={item.name}>
-                    <Image
-                      src={item.src}
-                      alt={item.name}
-                      width={item.width}
-                      height={item.height}
-                      className="marquee-logo-image"
-                    />
-                  </div>
+                  <Link
+                    href={item.href}
+                    className="marquee-logo-link"
+                    title={`View ${item.name} project`}
+                    tabIndex={-1}
+                  >
+                    <div className={`marquee-logo-frame ${item.className}`}>
+                      <Image
+                        src={item.src}
+                        alt={item.name}
+                        width={item.width}
+                        height={item.height}
+                        className="marquee-logo-image"
+                      />
+                    </div>
+                  </Link>
                 </span>
               ))}
             </div>
@@ -263,20 +283,20 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="services-grid-4" onMouseLeave={() => setFlippedIndex(null)}>
-              {/* Card 1: Web Development */}
+            <div className="services-grid-4">
+              {/* Card 1: Web Development -> Swekas Luxe Project */}
               <article
-                className={`service-flip-card ${flippedIndex === 0 ? 'is-flipped' : ''}`}
-                onClick={() => toggleCardFlip(0)}
+                className="service-flip-card"
+                onClick={() => router.push('/projects/swekas-luxe')}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault()
-                    toggleCardFlip(0)
+                    router.push('/projects/swekas-luxe')
                   }
                 }}
                 tabIndex={0}
-                role="region"
-                aria-label="Web Development service card - hover or tap to flip for details"
+                role="link"
+                aria-label="Web Development service card - View Swekas Luxe project"
               >
                 <div className="service-flip-inner">
                   {/* Front side - default view */}
@@ -309,11 +329,11 @@ export default function HomePage() {
                       </p>
                     </div>
                     <div className="service-back-foot">
-                      <span className="service-foot-price">From ₹1,999*</span>
+                      <span className="service-foot-link">Explore Project</span>
                       <Link
-                        href="/services#web-development"
+                        href="/projects/swekas-luxe"
                         className="service-circle-btn"
-                        aria-label="Learn about Web Development"
+                        aria-label="Explore Swekas Luxe project"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ArrowRight size={14} />
@@ -323,19 +343,19 @@ export default function HomePage() {
                 </div>
               </article>
 
-              {/* Card 2: AI & Machine Learning */}
+              {/* Card 2: AI & Machine Learning -> Pink Fish Project */}
               <article
-                className={`service-flip-card ${flippedIndex === 1 ? 'is-flipped' : ''}`}
-                onClick={() => toggleCardFlip(1)}
+                className="service-flip-card"
+                onClick={() => router.push('/projects/pink-fish')}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault()
-                    toggleCardFlip(1)
+                    router.push('/projects/pink-fish')
                   }
                 }}
                 tabIndex={0}
-                role="region"
-                aria-label="AI & Machine Learning service card - hover or tap to flip for details"
+                role="link"
+                aria-label="AI & Machine Learning service card - View Pink Fish project"
               >
                 <div className="service-flip-inner">
                   {/* Front side - default view */}
@@ -368,11 +388,11 @@ export default function HomePage() {
                       </p>
                     </div>
                     <div className="service-back-foot">
-                      <span className="service-foot-link">Get a Quote</span>
+                      <span className="service-foot-link">Explore Project</span>
                       <Link
-                        href="/contact"
+                        href="/projects/pink-fish"
                         className="service-circle-btn"
-                        aria-label="Get a quote for AI & Machine Learning"
+                        aria-label="Explore Pink Fish project"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ArrowRight size={14} />
@@ -382,19 +402,19 @@ export default function HomePage() {
                 </div>
               </article>
 
-              {/* Card 3: Custom Software */}
+              {/* Card 3: Custom Software -> Chennai Tales Project */}
               <article
-                className={`service-flip-card ${flippedIndex === 2 ? 'is-flipped' : ''}`}
-                onClick={() => toggleCardFlip(2)}
+                className="service-flip-card"
+                onClick={() => router.push('/projects/chennai-tales')}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault()
-                    toggleCardFlip(2)
+                    router.push('/projects/chennai-tales')
                   }
                 }}
                 tabIndex={0}
-                role="region"
-                aria-label="Custom Software service card - hover or tap to flip for details"
+                role="link"
+                aria-label="Custom Software service card - View Chennai Tales project"
               >
                 <div className="service-flip-inner">
                   {/* Front side - default view */}
@@ -427,11 +447,11 @@ export default function HomePage() {
                       </p>
                     </div>
                     <div className="service-back-foot">
-                      <span className="service-foot-link">Get a Quote</span>
+                      <span className="service-foot-link">Explore Project</span>
                       <Link
-                        href="/contact"
+                        href="/projects/chennai-tales"
                         className="service-circle-btn"
-                        aria-label="Get a quote for Custom Software"
+                        aria-label="Explore Chennai Tales project"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ArrowRight size={14} />
@@ -441,19 +461,19 @@ export default function HomePage() {
                 </div>
               </article>
 
-              {/* Card 4: Business Automation */}
+              {/* Card 4: Business Automation -> Business Automation Project */}
               <article
-                className={`service-flip-card ${flippedIndex === 3 ? 'is-flipped' : ''}`}
-                onClick={() => toggleCardFlip(3)}
+                className="service-flip-card"
+                onClick={() => router.push('/projects/business-automation')}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault()
-                    toggleCardFlip(3)
+                    router.push('/projects/business-automation')
                   }
                 }}
                 tabIndex={0}
-                role="region"
-                aria-label="Business Automation service card - hover or tap to flip for details"
+                role="link"
+                aria-label="Business Automation service card - View Business Automation project"
               >
                 <div className="service-flip-inner">
                   {/* Front side - default view */}
@@ -486,11 +506,11 @@ export default function HomePage() {
                       </p>
                     </div>
                     <div className="service-back-foot">
-                      <span className="service-foot-link">Get a Quote</span>
+                      <span className="service-foot-link">Explore Project</span>
                       <Link
-                        href="/contact"
+                        href="/projects/business-automation"
                         className="service-circle-btn"
-                        aria-label="Get a quote for Business Automation"
+                        aria-label="Explore Business Automation project"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <ArrowRight size={14} />
