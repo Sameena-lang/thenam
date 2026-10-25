@@ -5107,6 +5107,43 @@ html.light .video-wrapper-glass {
   }
 }
 
+/* ========================================================
+   ABOUT US HERO BACKGROUND 3D MOVING CAROUSEL
+   ======================================================== */
+.about-hero-with-bg {
+  min-height: 520px;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes heroCarouselFloat {
+  0%, 100% {
+    transform: translateY(-50%) translateZ(0);
+  }
+  50% {
+    transform: translateY(calc(-50% - 10px)) translateZ(15px);
+  }
+}
+
+.about-hero-bg-carousel-layer {
+  animation: heroCarouselFloat 6s ease-in-out infinite;
+}
+
+@media (max-width: 1024px) {
+  .about-hero-bg-carousel-layer {
+    right: -20% !important;
+    opacity: 0.45 !important;
+    transform: translateY(-50%) scale(0.85) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-hero-bg-carousel-layer {
+    display: none !important;
+  }
+}
+
+
 
 
 

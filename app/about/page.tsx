@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
+import CreativePortfolioCarousel from '@/components/CreativePortfolioCarousel'
 import {
   Sparkles,
   ArrowRight,
@@ -63,12 +64,20 @@ export default function AboutPage() {
 
       <main>
         {/* ========================================================
-            ABOUT HERO SECTION
+            ABOUT HERO SECTION (WITH MOVING 3D CAROUSEL IN BACKGROUND)
             ======================================================== */}
-        <section className="inner-page-hero" aria-label="About Us Header">
+        <section
+          className="inner-page-hero about-hero-with-bg"
+          aria-label="About Us Header"
+          style={{ position: 'relative', overflow: 'hidden', minHeight: '490px', display: 'flex', alignItems: 'center' }}
+        >
           <div className="hero-glow-cyan" aria-hidden="true" />
-          <div className="container">
-            <div className="inner-hero-content">
+          
+          {/* Moving 3D coverflow carousel in the background */}
+          <CreativePortfolioCarousel variant="hero-bg" autoPlay={true} />
+
+          <div className="container" style={{ position: 'relative', zIndex: 10, width: '100%' }}>
+            <div className="inner-hero-content" style={{ maxWidth: '620px' }}>
               <span className="inner-hero-eyebrow">
                 <Sparkles size={13} style={{ display: 'inline', marginRight: '6px' }} />
                 ABOUT THENAM SOFTWARE SOLUTIONS
@@ -111,6 +120,11 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
+
+        {/* ========================================================
+            OUR CREATIVE PORTFOLIO (MOVING SPOTLIGHT CAROUSEL)
+            ======================================================== */}
+        <CreativePortfolioCarousel variant="section" autoPlay={true} />
 
         {/* ========================================================
             OUR STORY & MISSION
