@@ -34,6 +34,9 @@ import {
   Film,
   Zap,
   RotateCw,
+  Search,
+  Bell,
+  User,
 } from 'lucide-react'
 
 export default function HomePage() {
@@ -80,12 +83,14 @@ export default function HomePage() {
         <section className="hero-section" aria-label="Hero Introduction">
           <div className="hero-glow-cyan" aria-hidden="true" />
           <div className="hero-glow-lime" aria-hidden="true" />
+          <div className="hero-plant-left" aria-hidden="true" />
+          <div className="hero-plant-right" aria-hidden="true" />
 
           <div className="container hero-grid">
             {/* Left Copy */}
             <div className="hero-copy-col">
               <span className="hero-eyebrow">
-                <Sparkles size={14} className="accent-cyan" />
+                <Sparkles size={13} className="accent-cyan" />
                 DIGITAL SOLUTIONS FOR A SMARTER TOMORROW
               </span>
 
@@ -105,7 +110,7 @@ export default function HomePage() {
                   <ArrowRight size={15} />
                 </Link>
 
-                <Link href="/contact" className="quote-btn">
+                <Link href="/contact" className="quote-btn hero-quote-btn">
                   <span>Get a Free Quote</span>
                   <ArrowRight size={15} />
                 </Link>
@@ -136,141 +141,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Visual (Realistic Laptop Mockup + Floating UI) */}
-            <div className="hero-visual-wrapper">
-              <div className="laptop-wrapper">
-                <div className="laptop-lid">
-                  <div className="laptop-top-bar">
-                    <span className="camera-dot" />
-                  </div>
-
-                  <div className="laptop-screen-content">
-                    {/* Dashboard Header */}
-                    <div className="screen-header">
-                      <div className="screen-brand">
-                        <img src="/thenam-logo.png" alt="Thenam leaf" width="18" height="18" />
-                        <strong>THENAM</strong>
-                      </div>
-                      <p className="screen-title">Business Overview</p>
-                    </div>
-
-                    {/* 4 KPIs */}
-                    <div className="screen-kpi-grid">
-                      <div className="kpi-card">
-                        <span>Revenue</span>
-                        <strong>₹ 12,48,000</strong>
-                        <small>+12%</small>
-                      </div>
-                      <div className="kpi-card">
-                        <span>Total Users</span>
-                        <strong>1,420</strong>
-                        <small>+18%</small>
-                      </div>
-                      <div className="kpi-card">
-                        <span>Active Projects</span>
-                        <strong>24</strong>
-                        <small>+33%</small>
-                      </div>
-                      <div className="kpi-card">
-                        <span>Satisfaction</span>
-                        <strong>98%</strong>
-                        <small>+2%</small>
-                      </div>
-                    </div>
-
-                    {/* Growth Chart */}
-                    <div className="screen-chart-card">
-                      <div className="chart-header-row">
-                        <span>Growth Overview</span>
-                        <small>Last 12 Months ▾</small>
-                      </div>
-                      <div className="screen-fake-bars">
-                        <i style={{ height: '35%' }} />
-                        <i style={{ height: '42%' }} />
-                        <i style={{ height: '38%' }} />
-                        <i style={{ height: '55%' }} />
-                        <i style={{ height: '62%' }} />
-                        <i style={{ height: '58%' }} />
-                        <i style={{ height: '70%' }} className="active-cyan" />
-                        <i style={{ height: '78%' }} className="active-cyan" />
-                        <i style={{ height: '85%' }} className="active-lime" />
-                        <i style={{ height: '92%' }} className="active-lime" />
-                        <i style={{ height: '96%' }} className="active-lime" />
-                      </div>
-                      <div className="chart-month-labels">
-                        <span>Jan</span><span>Mar</span><span>May</span><span>Jul</span><span>Sep</span><span>Nov</span>
-                      </div>
-                    </div>
-
-                    {/* Recent Projects Table */}
-                    <div className="screen-recent-table">
-                      <div className="recent-row">
-                        <span>Business Website</span>
-                        <span className="status-pill delivered">Delivered</span>
-                        <small style={{ color: '#94a3b8' }}>Oct 10, 2026</small>
-                      </div>
-                      <div className="recent-row">
-                        <span>AI Chatbot</span>
-                        <span className="status-pill progress">In Progress</span>
-                        <small style={{ color: '#94a3b8' }}>Oct 08, 2026</small>
-                      </div>
-                      <div className="recent-row">
-                        <span>Management System</span>
-                        <span className="status-pill planning">Planning</span>
-                        <small style={{ color: '#94a3b8' }}>Oct 05, 2026</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Laptop Bottom Chassis & Shadow */}
-                <div className="laptop-chassis">
-                  <div className="laptop-notch" />
-                </div>
-                <div className="laptop-shadow" />
-              </div>
-
-              {/* Floating Card: AI Assistant */}
-              <div className="float-card-ai" aria-hidden="true">
-                <div className="ai-head-row">
-                  <div className="ai-icon-chip">
-                    <Bot size={13} />
-                  </div>
-                  <span>AI Assistant</span>
-                </div>
-                <p className="ai-prompt-text">How can I help you today?</p>
-                <div className="ai-chips-list">
-                  <button type="button" className="ai-chip-btn">Build a website</button>
-                  <button type="button" className="ai-chip-btn">Get a quote</button>
-                  <button type="button" className="ai-chip-btn">Discuss a project</button>
-                </div>
-              </div>
-
-              {/* Floating Card: Create Solution */}
-              <div className="float-card-solution" aria-hidden="true">
-                <div style={{ color: '#0284c7', marginBottom: '4px' }}>
-                  <Layers size={16} />
-                </div>
-                <strong>Create Solution</strong>
-                <p>Turn your ideas into powerful digital products.</p>
-                <Link href="/contact" className="solution-mini-btn">
-                  <span>Get Started</span>
-                  <ArrowRight size={10} />
-                </Link>
-              </div>
-
-              {/* Floating Card: Phone Preview */}
-              <div className="float-card-phone" aria-hidden="true">
-                <div className="phone-speaker" />
-                <p className="phone-title">Your Ideas</p>
-                <div className="phone-list">
-                  <span className="phone-pill">🌐 Web Dev</span>
-                  <span className="phone-pill">🤖 AI Solutions</span>
-                  <span className="phone-pill">💻 Software</span>
-                  <span className="phone-pill">⚡ Automation</span>
-                </div>
-              </div>
-            </div>
+            {/* Right Spacer Column (Allows background laptop & phone to shine cleanly) */}
+            <div className="hero-visual-spacer" aria-hidden="true" />
           </div>
         </section>
 
@@ -343,7 +215,7 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================
-            SERVICES SECTION ("What We Do" - CLEAN WHITE)
+            SERVICES SECTION ("What We Do" - 3D FLIP CARDS)
             ======================================================== */}
         <section className="services-section" id="services">
           <div className="container">
@@ -351,7 +223,7 @@ export default function HomePage() {
               <div>
                 <span className="section-eyebrow">OUR SERVICES</span>
                 <h2 className="section-title-large">
-                  What <span className="accent-cyan-dark">We</span> <span className="accent-lime-dark">Do</span>
+                  What <span className="accent-gradient-text">We Do</span>
                 </h2>
               </div>
               <div className="section-sub-wrap">
