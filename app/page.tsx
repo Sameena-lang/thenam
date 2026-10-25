@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
@@ -38,6 +39,58 @@ import {
   Bell,
   User,
 } from 'lucide-react'
+
+interface MarqueeLogo {
+  id: string
+  name: string
+  src: string
+  width: number
+  height: number
+  className: string
+}
+
+const CLIENT_MARQUEE_LOGOS: MarqueeLogo[] = [
+  {
+    id: 'magizh-mahal',
+    name: 'Magizh Mahal',
+    src: '/marquee-logos/magizh-mahal.png',
+    width: 54,
+    height: 54,
+    className: 'marquee-logo-magizh',
+  },
+  {
+    id: 'pink-fish',
+    name: 'Pink Fish',
+    src: '/marquee-logos/pink-fish.png',
+    width: 76,
+    height: 54,
+    className: 'marquee-logo-pinkfish',
+  },
+  {
+    id: 'swekas-luxe',
+    name: 'Swekas Luxe',
+    src: '/marquee-logos/swekas-luxe.png',
+    width: 54,
+    height: 54,
+    className: 'marquee-logo-swekas',
+  },
+  {
+    id: 'chennai-tales',
+    name: 'Chennai Tales',
+    src: '/marquee-logos/chennai-tales.png',
+    width: 120,
+    height: 54,
+    className: 'marquee-logo-chennai',
+  },
+]
+
+// Repeat 4x per track group to create a seamless continuous scrolling ribbon
+const MARQUEE_ITEMS = [
+  ...CLIENT_MARQUEE_LOGOS,
+  ...CLIENT_MARQUEE_LOGOS,
+  ...CLIENT_MARQUEE_LOGOS,
+  ...CLIENT_MARQUEE_LOGOS,
+]
 
 export default function HomePage() {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -147,67 +200,40 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================
-            CLIENT PORTFOLIO MARQUEE (Full-width continuous horizontal rectangular band)
+            CLIENT PORTFOLIO MARQUEE (Continuous horizontal logos band)
             ======================================================== */}
         <section className="marquee-strip-section" aria-label="Client portfolio showcase">
           <div className="marquee-track">
             <div className="marquee-group">
-              {[
-                'Magizh Mahal',
-                'UNI GLO',
-                'Vidhya School',
-                'Miox Studio',
-                'Zara AI',
-                'TT Dry Cleaning',
-                'TastyLens',
-                'FinEcho',
-                'AgriSmart',
-                'Kudumba Vault',
-                'Swekas Luxe',
-                'Chennai Tales',
-                'BlockBuster',
-                'Dinesh Portfolio',
-                'Red Dragon',
-                'Jayamurugan Portfolio',
-                'Harishwaran Portfolio',
-                'Lokkesh Portfolio',
-                'Zayamazone',
-                'Print Kada',
-                'RootnSpace',
-              ].map((name, i) => (
+              {MARQUEE_ITEMS.map((item, i) => (
                 <span key={`group-1-${i}`} className="marquee-item">
                   <span className="marquee-dot" aria-hidden="true" />
-                  <span className="marquee-name">{name}</span>
+                  <div className={`marquee-logo-frame ${item.className}`} title={item.name}>
+                    <Image
+                      src={item.src}
+                      alt={item.name}
+                      width={item.width}
+                      height={item.height}
+                      className="marquee-logo-image"
+                      priority={i < 4}
+                    />
+                  </div>
                 </span>
               ))}
             </div>
             <div className="marquee-group" aria-hidden="true">
-              {[
-                'Magizh Mahal',
-                'UNI GLO',
-                'Vidhya School',
-                'Miox Studio',
-                'Zara AI',
-                'TT Dry Cleaning',
-                'TastyLens',
-                'FinEcho',
-                'AgriSmart',
-                'Kudumba Vault',
-                'Swekas Luxe',
-                'Chennai Tales',
-                'BlockBuster',
-                'Dinesh Portfolio',
-                'Red Dragon',
-                'Jayamurugan Portfolio',
-                'Harishwaran Portfolio',
-                'Lokkesh Portfolio',
-                'Zayamazone',
-                'Print Kada',
-                'RootnSpace',
-              ].map((name, i) => (
+              {MARQUEE_ITEMS.map((item, i) => (
                 <span key={`group-2-${i}`} className="marquee-item">
                   <span className="marquee-dot" aria-hidden="true" />
-                  <span className="marquee-name">{name}</span>
+                  <div className={`marquee-logo-frame ${item.className}`} title={item.name}>
+                    <Image
+                      src={item.src}
+                      alt={item.name}
+                      width={item.width}
+                      height={item.height}
+                      className="marquee-logo-image"
+                    />
+                  </div>
                 </span>
               ))}
             </div>
