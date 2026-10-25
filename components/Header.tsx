@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ArrowRight, Menu, X, Sparkles, Sun, Moon } from 'lucide-react'
+import { ArrowRight, Menu, X, Sparkles } from 'lucide-react'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -93,21 +93,6 @@ export default function Header() {
 
           {/* Right Action */}
           <div className="header-actions">
-            {/* Theme Toggle Button (Yellow Sun Icon) */}
-            <button
-              type="button"
-              className="theme-toggle-btn"
-              onClick={toggleTheme}
-              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              {mounted && theme === 'light' ? (
-                <Moon size={18} className="theme-toggle-icon moon" />
-              ) : (
-                <Sun size={18} className="theme-toggle-icon sun" />
-              )}
-            </button>
-
             {/* Gradient Quote Button */}
             <Link href="/contact" className="quote-btn header-quote-btn">
               <span>Get a Free Quote</span>
@@ -160,22 +145,6 @@ export default function Header() {
                 })}
               </nav>
               <div className="mobile-drawer-footer">
-                <button
-                  type="button"
-                  className="mobile-theme-toggle"
-                  onClick={toggleTheme}
-                  aria-label="Toggle theme"
-                >
-                  <span className="mobile-theme-label">
-                    Appearance: <strong>{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</strong>
-                  </span>
-                  {mounted && theme === 'light' ? (
-                    <Moon size={17} style={{ color: '#0284c7' }} />
-                  ) : (
-                    <Sun size={17} style={{ color: '#fbbf24' }} />
-                  )}
-                </button>
-
                 <Link
                   href="/contact"
                   className="quote-btn full-width"
