@@ -4,7 +4,6 @@ import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
-import CollaborationSection from '@/components/CollaborationSection'
 import {
   Sparkles,
   ArrowRight,
@@ -86,18 +85,6 @@ export default function AboutPage() {
                   <span>Start a Conversation</span>
                   <ArrowRight size={15} />
                 </Link>
-                <a
-                  href="#collaboration"
-                  className="explore-btn"
-                  style={{
-                    borderColor: 'rgba(0, 201, 242, 0.5)',
-                    background: 'rgba(0, 201, 242, 0.08)',
-                    color: '#ffffff',
-                  }}
-                >
-                  <Users2 size={15} style={{ color: '#00c9f2' }} />
-                  <span>How We Collaborate</span>
-                </a>
                 <Link href="/services" className="explore-btn">
                   <span>Explore What We Do</span>
                   <ArrowRight size={15} />
@@ -243,11 +230,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-
-        {/* ========================================================
-            STRATEGIC COLLABORATION & PARTNERSHIPS
-            ======================================================== */}
-        <CollaborationSection />
 
         <CtaBanner />
       </main>

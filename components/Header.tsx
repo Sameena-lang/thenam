@@ -48,6 +48,7 @@ export default function Header() {
     { label: 'Projects', href: '/projects', pillClass: 'pill-projects' },
     { label: 'About Us', href: '/about', pillClass: 'pill-about' },
     { label: 'Careers', href: '/careers', pillClass: 'pill-careers' },
+    { label: 'Collaboration', href: '/collaboration', pillClass: 'pill-collaboration' },
   ]
 
   const isActive = (href: string) => {
