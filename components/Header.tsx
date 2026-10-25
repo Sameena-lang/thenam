@@ -45,13 +45,14 @@ export default function Header() {
   const navLinks = [
     { label: 'Home', href: '/', pillClass: 'pill-home' },
     { label: 'Services', href: '/services', pillClass: 'pill-services' },
-    { label: 'Products', href: '/products', pillClass: 'pill-products' },
+    { label: 'Projects', href: '/projects', pillClass: 'pill-projects' },
     { label: 'About Us', href: '/about', pillClass: 'pill-about' },
     { label: 'Careers', href: '/careers', pillClass: 'pill-careers' },
   ]
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
+    if (href === '/projects') return pathname.startsWith('/projects') || pathname.startsWith('/products')
     return pathname.startsWith(href)
   }
 
