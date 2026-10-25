@@ -570,7 +570,7 @@ export default function HomePage() {
               >
                 <div className="featured-card-thumb-wrap">
                   <img
-                    src="/projects/thumb-agrismart-retina.png"
+                    src="/projects/featured-agrismart-hq.png"
                     alt="AgriSmart platform preview"
                     className="featured-card-img"
                   />
@@ -594,7 +594,7 @@ export default function HomePage() {
               >
                 <div className="featured-card-thumb-wrap">
                   <img
-                    src="/projects/thumb-zarabot-retina.png"
+                    src="/projects/featured-zarabot-hq.png"
                     alt="ZaraBot AI Voice preview"
                     className="featured-card-img"
                   />
@@ -618,7 +618,7 @@ export default function HomePage() {
               >
                 <div className="featured-card-thumb-wrap">
                   <img
-                    src="/projects/thumb-ecommerce-retina.png"
+                    src="/projects/featured-ecommerce-hq.png"
                     alt="E-Commerce Platform preview"
                     className="featured-card-img"
                   />
@@ -641,7 +641,7 @@ export default function HomePage() {
               >
                 <div className="featured-card-thumb-wrap">
                   <img
-                    src="/projects/thumb-bizmgmt-retina.png"
+                    src="/projects/featured-bizmgmt-hq.png"
                     alt="Business Management System preview"
                     className="featured-card-img"
                   />

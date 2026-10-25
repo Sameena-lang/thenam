@@ -1940,12 +1940,12 @@ button {
 .featured-normal-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 8px;
+  border-radius: 16px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   text-decoration: none;
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
   cursor: pointer;
   height: 100%;
@@ -1953,16 +1953,16 @@ button {
 
 .featured-normal-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.1);
   border-color: #cbd5e1;
 }
 
 .featured-card-thumb-wrap {
   width: 100%;
-  aspect-ratio: 16 / 10;
-  border-radius: 9px;
+  aspect-ratio: 499 / 243;
+  border-radius: 10px;
   overflow: hidden;
-  background: #0b1528;
+  background: #f8fafc;
   display: flex;
   align-items: center;
   justify-content: center;
