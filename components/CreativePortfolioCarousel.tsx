@@ -41,6 +41,18 @@ const CARDS: PortfolioCard[] = [
     image: '/about-portfolio/card-5.png',
     alt: 'Glowing Red Dragon Creative Artwork',
   },
+  {
+    id: 6,
+    title: 'Creative Strategy & Design',
+    image: '/about-portfolio/card-6.jpg',
+    alt: 'Portrait in White Knit Sweater',
+  },
+  {
+    id: 7,
+    title: 'Executive & Digital Direction',
+    image: '/about-portfolio/card-7.png',
+    alt: 'Executive Character in Hijab and Suit',
+  },
 ]
 
 export default function CreativePortfolioCarousel({
@@ -77,10 +89,11 @@ export default function CreativePortfolioCarousel({
 
   // Calculate 3D coverflow styling for each card
   const getCardStyle = (index: number) => {
-    // Relative position distance from activeIndex (-2 to +2)
-    let offset = index - activeIndex
-    if (offset > 2) offset -= 5
-    if (offset < -2) offset += 5
+    const total = CARDS.length
+    // Relative position distance wrapped around (-3 to +3)
+    let offset = (index - activeIndex) % total
+    if (offset > Math.floor(total / 2)) offset -= total
+    if (offset < -Math.floor(total / 2)) offset += total
 
     // Base card dimensions
     const isHero = variant === 'hero-bg'
@@ -93,6 +106,7 @@ export default function CreativePortfolioCarousel({
         transform: 'translate3d(0, 0, 90px) scale(1.08)',
         zIndex: 10,
         opacity: 1,
+        pointerEvents: 'auto' as const,
         filter: 'brightness(1.05)',
         borderColor: '#38bdf8',
         boxShadow:
@@ -106,6 +120,7 @@ export default function CreativePortfolioCarousel({
         transform: `translate3d(${isHero ? 160 : 210}px, 0, -25px) rotateY(-22deg) scale(0.88)`,
         zIndex: 5,
         opacity: 0.88,
+        pointerEvents: 'auto' as const,
         filter: 'brightness(0.82)',
         borderColor: 'rgba(255, 255, 255, 0.12)',
         boxShadow: '0 15px 35px rgba(0,0,0,0.65)',
@@ -118,6 +133,7 @@ export default function CreativePortfolioCarousel({
         transform: `translate3d(${isHero ? 290 : 380}px, 0, -85px) rotateY(-34deg) scale(0.76)`,
         zIndex: 2,
         opacity: 0.65,
+        pointerEvents: 'auto' as const,
         filter: 'brightness(0.65)',
         borderColor: 'rgba(255, 255, 255, 0.08)',
         boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
@@ -130,21 +146,37 @@ export default function CreativePortfolioCarousel({
         transform: `translate3d(${isHero ? -160 : -210}px, 0, -25px) rotateY(22deg) scale(0.88)`,
         zIndex: 5,
         opacity: 0.88,
+        pointerEvents: 'auto' as const,
         filter: 'brightness(0.82)',
         borderColor: 'rgba(255, 255, 255, 0.12)',
         boxShadow: '0 15px 35px rgba(0,0,0,0.65)',
         width: `${baseW}px`,
         height: `${baseH}px`,
       }
-    } else {
-      // Far-Left (offset === -2)
+    } else if (offset === -2) {
+      // Far-Left
       return {
         transform: `translate3d(${isHero ? -290 : -380}px, 0, -85px) rotateY(34deg) scale(0.76)`,
         zIndex: 2,
         opacity: 0.65,
+        pointerEvents: 'auto' as const,
         filter: 'brightness(0.65)',
         borderColor: 'rgba(255, 255, 255, 0.08)',
         boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+        width: `${baseW}px`,
+        height: `${baseH}px`,
+      }
+    } else {
+      // Backstage cards (offset > 2 or < -2) - gracefully hidden in 3D depth
+      const dir = offset > 0 ? 1 : -1
+      return {
+        transform: `translate3d(${dir * (isHero ? 360 : 470)}px, 0, -140px) scale(0.6)`,
+        zIndex: 1,
+        opacity: 0,
+        pointerEvents: 'none' as const,
+        filter: 'brightness(0.5)',
+        borderColor: 'transparent',
+        boxShadow: 'none',
         width: `${baseW}px`,
         height: `${baseH}px`,
       }
@@ -209,11 +241,10 @@ export default function CreativePortfolioCarousel({
                   position: 'absolute',
                   borderRadius: '20px',
                   background: '#040914',
-                  border: `2px solid ${style.borderColor}`,
                   overflow: 'hidden',
                   cursor: 'pointer',
                   transition: 'all 0.65s cubic-bezier(0.25, 1, 0.5, 1)',
-                  boxShadow: style.boxShadow,
+                  border: `2px solid ${style.borderColor}`,
                   ...style,
                 }}
               >
@@ -365,11 +396,10 @@ export default function CreativePortfolioCarousel({
                     position: 'absolute',
                     borderRadius: '20px',
                     background: '#040914',
-                    border: `2px solid ${style.borderColor}`,
                     overflow: 'hidden',
                     cursor: 'pointer',
                     transition: 'all 0.65s cubic-bezier(0.25, 1, 0.5, 1)',
-                    boxShadow: style.boxShadow,
+                    border: `2px solid ${style.borderColor}`,
                     ...style,
                   }}
                   onKeyDown={(e) => {
