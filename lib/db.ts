@@ -68,6 +68,69 @@ export interface AuditLog {
   created_at: string
 }
 
+export interface ServiceItem {
+  id: string
+  title: string
+  subtitle: string
+  badge: string
+  description: string
+  color_class: string
+  icon_name: string
+  features: string // JSON array
+  sort_order: number
+  is_active: number
+  image_url?: string | null
+  image_alt?: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ProductItem {
+  id: string
+  name: string
+  category: string
+  badge: string
+  badge_color: string
+  icon_name: string
+  icon_color: string
+  icon_bg: string
+  tagline: string
+  description: string
+  tags: string // JSON array
+  metrics: string // JSON array
+  features: string // JSON array
+  sort_order: number
+  is_active: number
+  image_url?: string | null
+  image_alt?: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface MediaItem {
+  id: string
+  filename: string
+  original_name: string
+  url: string
+  alt_text: string
+  mime_type: string
+  file_size: number
+  width: number
+  height: number
+  section_tag: string // 'hero' | 'services' | 'products' | 'team' | 'portfolio' | 'general'
+  usage_ref: string | null
+  is_system: number
+  created_at: string
+  updated_at: string
+}
+
+export interface SiteSetting {
+  key: string
+  value: string
+  description: string | null
+  updated_at: string
+}
+
 export interface AdminNotification {
   id: string
   type: 'inquiry' | 'quote' | 'user' | 'application' | 'audit' | 'system'
@@ -86,26 +149,28 @@ declare global {
 }
 
 function getDatabase(): DatabaseSync {
-  if (globalThis.__thenam_db__) {
-    return globalThis.__thenam_db__
+  let db = globalThis.__thenam_db__
+
+  if (!db) {
+    const dbPath = process.env.DATABASE_PATH || path.join(process.cwd(), 'data', 'thenam.db')
+    const dbDir = path.dirname(dbPath)
+
+    if (!fs.existsSync(dbDir)) {
+      fs.mkdirSync(dbDir, { recursive: true })
+    }
+
+    db = new DatabaseSync(dbPath)
+
+    // Configure SQLite WAL mode & foreign keys for performance and integrity
+    db.exec('PRAGMA journal_mode = WAL;')
+    db.exec('PRAGMA foreign_keys = ON;')
+
+    globalThis.__thenam_db__ = db
   }
 
-  const dbPath = process.env.DATABASE_PATH || path.join(process.cwd(), 'data', 'thenam.db')
-  const dbDir = path.dirname(dbPath)
-
-  if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true })
-  }
-
-  const db = new DatabaseSync(dbPath)
-
-  // Configure SQLite WAL mode & foreign keys for performance and integrity
-  db.exec('PRAGMA journal_mode = WAL;')
-  db.exec('PRAGMA foreign_keys = ON;')
-
+  // Ensure all schema tables and initial seeds exist (safe and idempotent)
   initializeSchema(db)
 
-  globalThis.__thenam_db__ = db
   return db
 }
 
@@ -218,7 +283,84 @@ function initializeSchema(db: DatabaseSync) {
     );
   `)
 
-  // 8. Admin Notifications Table
+  // 8. Services Table (Offerings displayed on public website and manageable via Admin)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS services (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      subtitle TEXT NOT NULL,
+      badge TEXT NOT NULL,
+      description TEXT NOT NULL,
+      color_class TEXT NOT NULL,
+      icon_name TEXT NOT NULL,
+      features TEXT NOT NULL,
+      sort_order INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+  `)
+
+  // 9. Products Table (Proprietary software platforms displayed on public website and manageable via Admin)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS products (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      category TEXT NOT NULL,
+      badge TEXT NOT NULL,
+      badge_color TEXT NOT NULL,
+      icon_name TEXT NOT NULL,
+      icon_color TEXT NOT NULL,
+      icon_bg TEXT NOT NULL,
+      tagline TEXT NOT NULL,
+      description TEXT NOT NULL,
+      tags TEXT NOT NULL,
+      metrics TEXT NOT NULL,
+      features TEXT NOT NULL,
+      sort_order INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+  `)
+
+  // Ensure image_url and image_alt columns exist on services and products
+  try { db.exec('ALTER TABLE services ADD COLUMN image_url TEXT;') } catch { /* exists */ }
+  try { db.exec('ALTER TABLE services ADD COLUMN image_alt TEXT;') } catch { /* exists */ }
+  try { db.exec('ALTER TABLE products ADD COLUMN image_url TEXT;') } catch { /* exists */ }
+  try { db.exec('ALTER TABLE products ADD COLUMN image_alt TEXT;') } catch { /* exists */ }
+
+  // 10. Media Library Table (Persistent picture storage metadata & references)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS media (
+      id TEXT PRIMARY KEY,
+      filename TEXT NOT NULL,
+      original_name TEXT NOT NULL,
+      url TEXT UNIQUE NOT NULL,
+      alt_text TEXT NOT NULL DEFAULT '',
+      mime_type TEXT NOT NULL,
+      file_size INTEGER NOT NULL,
+      width INTEGER DEFAULT 0,
+      height INTEGER DEFAULT 0,
+      section_tag TEXT DEFAULT 'general',
+      usage_ref TEXT,
+      is_system INTEGER DEFAULT 0,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+  `)
+
+  // 11. Site Settings Table (Configurable image references & homepage content keys)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS site_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      description TEXT,
+      updated_at TEXT NOT NULL
+    );
+  `)
+
+  // 12. Admin Notifications Table
   db.exec(`
     CREATE TABLE IF NOT EXISTS admin_notifications (
       id TEXT PRIMARY KEY,
@@ -243,6 +385,11 @@ function initializeSchema(db: DatabaseSync) {
     CREATE INDEX IF NOT EXISTS idx_sessions_token_hash ON admin_sessions(token_hash);
     CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs(created_at);
     CREATE INDEX IF NOT EXISTS idx_login_attempts ON login_attempts(ip_address, attempted_at);
+    CREATE INDEX IF NOT EXISTS idx_services_active_sort ON services(is_active, sort_order);
+    CREATE INDEX IF NOT EXISTS idx_products_active_sort ON products(is_active, sort_order);
+    CREATE INDEX IF NOT EXISTS idx_media_created ON media(created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_media_section ON media(section_tag);
+    CREATE INDEX IF NOT EXISTS idx_media_url ON media(url);
     CREATE INDEX IF NOT EXISTS idx_notifications_created ON admin_notifications(created_at);
     CREATE INDEX IF NOT EXISTS idx_notifications_read ON admin_notifications(is_read);
   `)
@@ -400,6 +547,556 @@ function initializeSchema(db: DatabaseSync) {
     }
   }
 
+  // Seed Services if table is empty
+  const checkServices = db.prepare('SELECT COUNT(*) as count FROM services').get() as { count: number }
+  if (checkServices.count === 0) {
+    const now = new Date().toISOString()
+    const seedServices = [
+      {
+        id: 'web-development',
+        title: 'Web Development',
+        subtitle: 'Modern, high-conversion websites and custom web applications.',
+        badge: 'From ₹1,999*',
+        description:
+          'We engineer responsive, blazing-fast websites and web applications with Next.js, React, and Tailwind CSS. Built with clean code, SEO optimization, and intuitive UX.',
+        color_class: 'cyan',
+        icon_name: 'Monitor',
+        features: JSON.stringify([
+          'Single Page & Landing Pages (Starting ₹1,999*)',
+          'Corporate & Business Portals',
+          'E-Commerce & Payment Gateway Integration',
+          'SEO-optimized, ultra-fast Lighthouse 95+ score',
+          'Mobile-first responsive design for all devices',
+        ]),
+        sort_order: 1,
+        is_active: 1,
+        created_at: now,
+        updated_at: now,
+      },
+      {
+        id: 'ai-machine-learning',
+        title: 'AI & Machine Learning',
+        subtitle: 'Practical AI tools that automate work and deliver smart decisions.',
+        badge: 'High Impact',
+        description:
+          'Turn state-of-the-art language models and computer vision into business productivity. We build conversational agents, predictive tools, and intelligent data pipelines.',
+        color_class: 'green',
+        icon_name: 'Cpu',
+        features: JSON.stringify([
+          'Custom AI Assistants & Support Chatbots (Tamil & Multilingual)',
+          'Document Processing & OCR Extraction',
+          'Predictive Analytics & Customer Churn Modeling',
+          'Fine-tuned LLM agents & RAG knowledge bases',
+          'Seamless integration into your existing CRM/ERP',
+        ]),
+        sort_order: 2,
+        is_active: 1,
+        created_at: now,
+        updated_at: now,
+      },
+      {
+        id: 'custom-software',
+        title: 'Custom Software Development',
+        subtitle: 'Tailored software crafted around your specific operational workflows.',
+        badge: 'Enterprise Grade',
+        description:
+          'Eliminate repetitive spreadsheet chaos with secure, scalable custom software. We build internal business tools, client portals, and cloud-native SaaS systems.',
+        color_class: 'blue',
+        icon_name: 'Code2',
+        features: JSON.stringify([
+          'Business Management & Operations Dashboards',
+          'Customer Relationship Management (CRM) Systems',
+          'Inventory & Supply Chain Tracking Portals',
+          'Role-based Access Control (RBAC) & Enterprise Security',
+          'RESTful & GraphQL API Architecture',
+        ]),
+        sort_order: 3,
+        is_active: 1,
+        created_at: now,
+        updated_at: now,
+      },
+      {
+        id: 'business-automation',
+        title: 'Business Automation',
+        subtitle: 'Connect your business tools and let workflows run automatically.',
+        badge: 'Save 20+ hrs/wk',
+        description:
+          'Stop doing manual data entry. We design automated workflows connecting WhatsApp, email, payment systems, databases, and accounting software.',
+        color_class: 'lime',
+        icon_name: 'Cog',
+        features: JSON.stringify([
+          'WhatsApp Business Automated Lead Capture & Booking',
+          'Automated Invoicing, GST & Payment Reminders',
+          'Multi-app Sync (Zapier, Make, Custom Webhooks)',
+          'Database Sync & Automated Reporting Pipelines',
+          'Zero-error validation & automated alerts',
+        ]),
+        sort_order: 4,
+        is_active: 1,
+        created_at: now,
+        updated_at: now,
+      },
+      {
+        id: 'mobile-apps',
+        title: 'Mobile App Development',
+        subtitle: 'Cross-platform mobile apps with native speed and fluid animations.',
+        badge: 'iOS & Android',
+        description:
+          'Deliver your services directly to customers’ pockets. We develop high-performance iOS and Android applications with React Native and modern native bridges.',
+        color_class: 'cyan',
+        icon_name: 'Smartphone',
+        features: JSON.stringify([
+          'Cross-Platform iOS & Android from a single codebase',
+          'Offline-first architecture with local cache sync',
+          'Push notifications & in-app engagement tools',
+          'Secure biometric authentication (FaceID / Fingerprint)',
+          'App Store & Play Store publication assistance',
+        ]),
+        sort_order: 5,
+        is_active: 1,
+        created_at: now,
+        updated_at: now,
+      },
+      {
+        id: 'cloud-devops',
+        title: 'Cloud & DevOps Solutions',
+        subtitle: 'Secure, cost-optimized cloud infrastructure on AWS, GCP & Vercel.',
+        badge: '99.99% Uptime',
+        description:
+          'Ensure your digital products stay online, fast, and secure under peak traffic. We design automated CI/CD pipelines, containerized microservices, and managed backups.',
+        color_class: 'green',
+        icon_name: 'Cloud',
+        features: JSON.stringify([
+          'Cloud Architecture on AWS, Google Cloud & Vercel',
+          'Automated CI/CD Deployment Pipelines (GitHub Actions)',
+          'Containerization with Docker & Kubernetes',
+          'Database Optimization, Backups & Disaster Recovery',
+          'Cloud Cost Optimization & Security Auditing',
+        ]),
+        sort_order: 6,
+        is_active: 1,
+        created_at: now,
+        updated_at: now,
+      },
+    ]
+
+    const insertService = db.prepare(`
+      INSERT INTO services (id, title, subtitle, badge, description, color_class, icon_name, features, sort_order, is_active, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `)
+
+    for (const s of seedServices) {
+      insertService.run(
+        s.id,
+        s.title,
+        s.subtitle,
+        s.badge,
+        s.description,
+        s.color_class,
+        s.icon_name,
+        s.features,
+        s.sort_order,
+        s.is_active,
+        s.created_at,
+        s.updated_at
+      )
+    }
+  }
+
+  // Seed Products if table is empty
+  const checkProducts = db.prepare('SELECT COUNT(*) as count FROM products').get() as { count: number }
+  if (checkProducts.count === 0) {
+    const now = new Date().toISOString()
+    const seedProducts = [
+      {
+        id: 'agrismart',
+        name: 'AgriSmart',
+        category: 'AI-Powered AgriTech Platform',
+        badge: 'Active Deployment',
+        badge_color: 'lime',
+        icon_name: 'Wheat',
+        icon_color: '#15803d',
+        icon_bg: '#dcfce7',
+        tagline: 'Precision agricultural intelligence for farmers, cooperatives, and agribusinesses.',
+        description:
+          'AgriSmart blends satellite remote sensing, localized weather forecasting, and drone vision AI to identify crop diseases before they spread. Built with offline-first capabilities and multilingual advisory.',
+        tags: JSON.stringify(['Web App', 'AI/ML', 'Computer Vision', 'IoT']),
+        metrics: JSON.stringify([
+          { label: 'Yield Increase', val: '+24%' },
+          { label: 'Pesticide Reduction', val: '-35%' },
+          { label: 'Active Acres', val: '12,000+' },
+        ]),
+        features: JSON.stringify([
+          'Early crop blight and pest detection via smartphone camera',
+          'Soil moisture and micro-climate sensor telemetry',
+          'Voice alerts in Tamil and regional Indian languages',
+          'Direct market price tracking & harvest logistics sync',
+        ]),
+        sort_order: 1,
+        is_active: 1,
+        created_at: now,
+        updated_at: now,
+      },
+      {
+        id: 'zarabot',
+        name: 'ZaraBot',
+        category: 'Tamil-First Conversational AI Assistant',
+        badge: 'Trending Product',
+        badge_color: 'cyan',
+        icon_name: 'Bot',
+        icon_color: '#0284c7',
+        icon_bg: '#e0f2fe',
+        tagline: 'Natural conversational customer support in Tamil and Indian English.',
+        description:
+          'ZaraBot handles complex customer queries, appointment scheduling, and order status tracking over WhatsApp, web chat, and voice telephony. Trained specifically on colloquial Tamil nuances.',
+        tags: JSON.stringify(['AI Agent', 'Chatbot', 'Voice AI', 'WhatsApp API']),
+        metrics: JSON.stringify([
+          { label: 'Resolution Rate', val: '88%' },
+          { label: 'Response Time', val: '< 1.2s' },
+          { label: 'Hours Saved/Mo', val: '140 hrs' },
+        ]),
+        features: JSON.stringify([
+          'Natural language understanding in Tamil script and Tanglish',
+          'Official WhatsApp Business API native integration',
+          'Automated lead qualification and CRM database sync',
+          'Instant human handoff when complex escalation is needed',
+        ]),
+        sort_order: 2,
+        is_active: 1,
+        created_at: now,
+        updated_at: now,
+      },
+      {
+        id: 'commerceflow',
+        name: 'E-Commerce Platform',
+        category: 'High-Conversion D2C Storefront Engine',
+        badge: 'Turnkey Solution',
+        badge_color: 'yellow',
+        icon_name: 'ShoppingBag',
+        icon_color: '#b45309',
+        icon_bg: '#fef3c7',
+        tagline: 'Lightning-fast online stores engineered for maximum checkout conversion.',
+        description:
+          'Built for fresh organic brands, regional manufacturers, and direct-to-consumer businesses. Out-of-the-box UPI 1-click checkout, local pincode delivery checks, and automated WhatsApp order notifications.',
+        tags: JSON.stringify(['Next.js 16', 'UPI / Razorpay', 'E-commerce', 'SEO Fast']),
+        metrics: JSON.stringify([
+          { label: 'Lighthouse Score', val: '99/100' },
+          { label: 'Cart Abandonment', val: '-28%' },
+          { label: 'Avg Setup Time', val: '48 hrs' },
+        ]),
+        features: JSON.stringify([
+          'Blazing-fast mobile storefront with zero page reloads',
+          'Instant UPI, PhonePe, Google Pay, and COD checkout',
+          'Automated shipping label printing and WhatsApp tracking',
+          'Inventory alerts and multi-warehouse support',
+        ]),
+        sort_order: 3,
+        is_active: 1,
+        created_at: now,
+        updated_at: now,
+      },
+      {
+        id: 'pulse-core',
+        name: 'Business Management System',
+        category: 'Operations, CRM & Resource Cockpit',
+        badge: 'Enterprise SaaS',
+        badge_color: 'blue',
+        icon_name: 'BarChart2',
+        icon_color: '#0284c7',
+        icon_bg: '#e0f2fe',
+        tagline: 'The all-in-one operations operating system for ambitious businesses.',
+        description:
+          'Replace 5 disconnected tools with a single unified workspace. Track client milestones, monitor team velocity, automate recurring invoicing, and view real-time profit and loss metrics at a glance.',
+        tags: JSON.stringify(['Dashboard', 'CRM / ERP', 'Analytics', 'Role-Based RBAC']),
+        metrics: JSON.stringify([
+          { label: 'Sync Speed', val: 'Realtime' },
+          { label: 'Data Accuracy', val: '100%' },
+          { label: 'Tools Replaced', val: '4 to 6' },
+        ]),
+        features: JSON.stringify([
+          'Executive business overview KPI cards and dynamic growth charts',
+          'Client project milestones with automated deadline reminders',
+          'GST-ready automated invoice generator and payment logging',
+          'Encrypted role-based access for managers, staff, and accountants',
+        ]),
+        sort_order: 4,
+        is_active: 1,
+        created_at: now,
+        updated_at: now,
+      },
+    ]
+
+    const insertProduct = db.prepare(`
+      INSERT INTO products (id, name, category, badge, badge_color, icon_name, icon_color, icon_bg, tagline, description, tags, metrics, features, sort_order, is_active, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `)
+
+    for (const p of seedProducts) {
+      insertProduct.run(
+        p.id,
+        p.name,
+        p.category,
+        p.badge,
+        p.badge_color,
+        p.icon_name,
+        p.icon_color,
+        p.icon_bg,
+        p.tagline,
+        p.description,
+        p.tags,
+        p.metrics,
+        p.features,
+        p.sort_order,
+        p.is_active,
+        p.created_at,
+        p.updated_at
+      )
+    }
+  }
+
+  // Seed Site Settings if table is empty
+  const checkSettings = db.prepare('SELECT COUNT(*) as count FROM site_settings').get() as { count: number }
+  if (checkSettings.count === 0) {
+    const now = new Date().toISOString()
+    const defaultSettings = [
+      { key: 'homepage_hero_bg', value: '/hero-bg.png', description: 'Homepage Hero Section Background Image' },
+      { key: 'homepage_hero_alt', value: 'THENAM Software Solutions Hero Background', description: 'Homepage Hero Alt Text' },
+      { key: 'service_img_web_development', value: '/services/web-development.jpg', description: 'Homepage Service Card: Web Development' },
+      { key: 'service_img_ai_machine_learning', value: '/services/ai-machine-learning.jpg', description: 'Homepage Service Card: AI & Machine Learning' },
+      { key: 'service_img_custom_software', value: '/services/custom-software.jpg', description: 'Homepage Service Card: Custom Software' },
+      { key: 'service_img_business_automation', value: '/services/business-automation.jpg', description: 'Homepage Service Card: Business Automation' },
+      { key: 'product_img_agrismart', value: '/projects/featured-agrismart-hq.png', description: 'Homepage Featured Product: AgriSmart' },
+      { key: 'product_img_zarabot', value: '/projects/featured-zarabot-hq.png', description: 'Homepage Featured Product: ZaraBot' },
+      { key: 'product_img_commerceflow', value: '/projects/featured-ecommerce-hq.png', description: 'Homepage Featured Product: E-Commerce Platform' },
+      { key: 'product_img_pulse_core', value: '/projects/featured-bizmgmt-hq.png', description: 'Homepage Featured Product: Business Management System' },
+      { key: 'team_img_tharun', value: '/about-portfolio/team-curly-jacket.jpg', description: 'Leadership Portrait: Tharun Varshan U (CEO)' },
+      { key: 'team_img_yuvan', value: '/about-portfolio/team-glasses-chair.jpg', description: 'Leadership Portrait: Yuvan Dharshan U (Co-Founder)' },
+    ]
+
+    const insertSetting = db.prepare(`
+      INSERT INTO site_settings (key, value, description, updated_at)
+      VALUES (?, ?, ?, ?)
+    `)
+
+    for (const s of defaultSettings) {
+      insertSetting.run(s.key, s.value, s.description, now)
+    }
+  }
+
+  // Seed Media Table if table is empty
+  const checkMedia = db.prepare('SELECT COUNT(*) as count FROM media').get() as { count: number }
+  if (checkMedia.count === 0) {
+    const now = new Date().toISOString()
+    const defaultMedia = [
+      {
+        id: 'med_hero_bg',
+        filename: 'hero-bg.png',
+        original_name: 'hero-bg.png',
+        url: '/hero-bg.png',
+        alt_text: 'THENAM Software Solutions Hero Background with Laptop and Digital Interface',
+        mime_type: 'image/png',
+        file_size: 972582,
+        width: 1024,
+        height: 575,
+        section_tag: 'hero',
+        usage_ref: 'homepage_hero_bg',
+        is_system: 1,
+      },
+      {
+        id: 'med_srv_web',
+        filename: 'web-development.jpg',
+        original_name: 'web-development.jpg',
+        url: '/services/web-development.jpg',
+        alt_text: 'Web Development - Responsive Desktop, Tablet, Mobile',
+        mime_type: 'image/jpeg',
+        file_size: 89217,
+        width: 702,
+        height: 531,
+        section_tag: 'services',
+        usage_ref: 'service:web-development',
+        is_system: 1,
+      },
+      {
+        id: 'med_srv_ai',
+        filename: 'ai-machine-learning.jpg',
+        original_name: 'ai-machine-learning.jpg',
+        url: '/services/ai-machine-learning.jpg',
+        alt_text: 'AI & Machine Learning - Intelligent Automation & Models',
+        mime_type: 'image/jpeg',
+        file_size: 81275,
+        width: 702,
+        height: 531,
+        section_tag: 'services',
+        usage_ref: 'service:ai-machine-learning',
+        is_system: 1,
+      },
+      {
+        id: 'med_srv_custom',
+        filename: 'custom-software.jpg',
+        original_name: 'custom-software.jpg',
+        url: '/services/custom-software.jpg',
+        alt_text: 'Custom Software Development - Dashboards & Scalable Systems',
+        mime_type: 'image/jpeg',
+        file_size: 80030,
+        width: 702,
+        height: 531,
+        section_tag: 'services',
+        usage_ref: 'service:custom-software',
+        is_system: 1,
+      },
+      {
+        id: 'med_srv_bizauto',
+        filename: 'business-automation.jpg',
+        original_name: 'business-automation.jpg',
+        url: '/services/business-automation.jpg',
+        alt_text: 'Business Automation - Streamline Processes & Workflows',
+        mime_type: 'image/jpeg',
+        file_size: 221053,
+        width: 702,
+        height: 531,
+        section_tag: 'services',
+        usage_ref: 'service:business-automation',
+        is_system: 1,
+      },
+      {
+        id: 'med_prod_agrismart',
+        filename: 'featured-agrismart-hq.png',
+        original_name: 'featured-agrismart-hq.png',
+        url: '/projects/featured-agrismart-hq.png',
+        alt_text: 'AgriSmart platform preview and crop telemetry dashboard',
+        mime_type: 'image/png',
+        file_size: 199711,
+        width: 499,
+        height: 243,
+        section_tag: 'products',
+        usage_ref: 'product:agrismart',
+        is_system: 1,
+      },
+      {
+        id: 'med_prod_zarabot',
+        filename: 'featured-zarabot-hq.png',
+        original_name: 'featured-zarabot-hq.png',
+        url: '/projects/featured-zarabot-hq.png',
+        alt_text: 'ZaraBot Tamil-first AI Assistant interface mockup',
+        mime_type: 'image/png',
+        file_size: 147305,
+        width: 499,
+        height: 243,
+        section_tag: 'products',
+        usage_ref: 'product:zarabot',
+        is_system: 1,
+      },
+      {
+        id: 'med_prod_ecom',
+        filename: 'featured-ecommerce-hq.png',
+        original_name: 'featured-ecommerce-hq.png',
+        url: '/projects/featured-ecommerce-hq.png',
+        alt_text: 'High-conversion D2C storefront engine preview',
+        mime_type: 'image/png',
+        file_size: 202263,
+        width: 499,
+        height: 243,
+        section_tag: 'products',
+        usage_ref: 'product:commerceflow',
+        is_system: 1,
+      },
+      {
+        id: 'med_prod_bizmgmt',
+        filename: 'featured-bizmgmt-hq.png',
+        original_name: 'featured-bizmgmt-hq.png',
+        url: '/projects/featured-bizmgmt-hq.png',
+        alt_text: 'Business Management System unified cockpit',
+        mime_type: 'image/png',
+        file_size: 129173,
+        width: 499,
+        height: 243,
+        section_tag: 'products',
+        usage_ref: 'product:pulse-core',
+        is_system: 1,
+      },
+      {
+        id: 'med_team_tharun',
+        filename: 'team-curly-jacket.jpg',
+        original_name: 'team-curly-jacket.jpg',
+        url: '/about-portfolio/team-curly-jacket.jpg',
+        alt_text: 'Tharun Varshan U - Founder & CEO',
+        mime_type: 'image/jpeg',
+        file_size: 310522,
+        width: 776,
+        height: 1024,
+        section_tag: 'team',
+        usage_ref: 'team:tharun',
+        is_system: 1,
+      },
+      {
+        id: 'med_team_yuvan',
+        filename: 'team-glasses-chair.jpg',
+        original_name: 'team-glasses-chair.jpg',
+        url: '/about-portfolio/team-glasses-chair.jpg',
+        alt_text: 'Yuvan Dharshan U - Co-Founder',
+        mime_type: 'image/jpeg',
+        file_size: 329940,
+        width: 776,
+        height: 1024,
+        section_tag: 'team',
+        usage_ref: 'team:yuvan',
+        is_system: 1,
+      },
+      {
+        id: 'med_brand_logo',
+        filename: 'thenam-logo.png',
+        original_name: 'thenam-logo.png',
+        url: '/thenam-logo.png',
+        alt_text: 'THENAM Software Solutions Official Logo',
+        mime_type: 'image/png',
+        file_size: 106002,
+        width: 512,
+        height: 512,
+        section_tag: 'branding',
+        usage_ref: 'branding:logo',
+        is_system: 1,
+      },
+      {
+        id: 'med_brand_leaf',
+        filename: 'thenam-leaf-icon.png',
+        original_name: 'thenam-leaf-icon.png',
+        url: '/thenam-leaf-icon.png',
+        alt_text: 'THENAM Iconic Leaf Emblem',
+        mime_type: 'image/png',
+        file_size: 41362,
+        width: 256,
+        height: 256,
+        section_tag: 'branding',
+        usage_ref: 'branding:leaf',
+        is_system: 1,
+      },
+    ]
+
+    const insertMedia = db.prepare(`
+      INSERT INTO media (id, filename, original_name, url, alt_text, mime_type, file_size, width, height, section_tag, usage_ref, is_system, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `)
+
+    for (const m of defaultMedia) {
+      insertMedia.run(
+        m.id,
+        m.filename,
+        m.original_name,
+        m.url,
+        m.alt_text,
+        m.mime_type,
+        m.file_size,
+        m.width,
+        m.height,
+        m.section_tag,
+        m.usage_ref,
+        m.is_system,
+        now,
+        now
+      )
+    }
+  }
+
   // Seed sample initial notifications if admin_notifications table is empty
   const checkNotifs = db.prepare('SELECT COUNT(*) as count FROM admin_notifications').get() as { count: number }
   if (checkNotifs.count === 0) {
@@ -462,6 +1159,74 @@ function initializeSchema(db: DatabaseSync) {
 }
 
 export const db = getDatabase()
+
+/**
+ * Check if an image URL is in active use across the website
+ */
+export function isMediaInUse(url: string): { inUse: boolean; locations: string[] } {
+  const locations: string[] = []
+
+  // Check site_settings
+  const settingRows = (db
+    .prepare('SELECT key, description FROM site_settings WHERE value = ?')
+    .all(url) as unknown) as Array<{ key: string; description: string | null }>
+  for (const s of settingRows) {
+    locations.push(`Site Setting: ${s.description || s.key}`)
+  }
+
+  // Check services
+  const serviceRows = (db
+    .prepare('SELECT title FROM services WHERE image_url = ?')
+    .all(url) as unknown) as Array<{ title: string }>
+  for (const s of serviceRows) {
+    locations.push(`Service Offering: ${s.title}`)
+  }
+
+  // Check products
+  const productRows = (db
+    .prepare('SELECT name FROM products WHERE image_url = ?')
+    .all(url) as unknown) as Array<{ name: string }>
+  for (const p of productRows) {
+    locations.push(`Proprietary Product: ${p.name}`)
+  }
+
+  // Check if it's marked as a core system asset
+  const mediaRow = (db
+    .prepare('SELECT is_system, usage_ref FROM media WHERE url = ?')
+    .get(url) as unknown) as { is_system: number; usage_ref: string | null } | undefined
+  if (mediaRow && mediaRow.is_system === 1) {
+    locations.push('Core System Asset')
+  }
+
+  return {
+    inUse: locations.length > 0,
+    locations,
+  }
+}
+
+/**
+ * Get all current site settings as a key-value map
+ */
+export function getAllSiteSettings(): Record<string, string> {
+  const rows = (db.prepare('SELECT key, value FROM site_settings').all() as unknown) as SiteSetting[]
+  const map: Record<string, string> = {}
+  for (const r of rows) {
+    map[r.key] = r.value
+  }
+  return map
+}
+
+/**
+ * Update a site setting key-value
+ */
+export function updateSiteSetting(key: string, value: string): void {
+  const now = new Date().toISOString()
+  db.prepare(`
+    INSERT INTO site_settings (key, value, updated_at)
+    VALUES (?, ?, ?)
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+  `).run(key, value, now)
+}
 
 export function recordNotification(options: {
   type: 'inquiry' | 'quote' | 'user' | 'application' | 'audit' | 'system'

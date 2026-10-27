@@ -15,6 +15,9 @@ import {
   X,
   ExternalLink,
   ShieldAlert,
+  Layers,
+  Package,
+  Image as LucideImage,
 } from 'lucide-react'
 import NotificationBell from './NotificationBell'
 
@@ -71,6 +74,9 @@ export default function AdminShell({
 
   const navLinks = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/admin/services', label: 'Services', icon: Layers },
+    { href: '/admin/products', label: 'Products', icon: Package },
+    { href: '/admin/media', label: 'Image Library', icon: LucideImage },
     { href: '/admin/users', label: 'Users & Clients', icon: Users },
     { href: '/admin/inquiries', label: 'Inquiries & Quotes', icon: MessageSquareText },
     { href: '/admin/applications', label: 'Applications', icon: Briefcase },

@@ -22,6 +22,14 @@ export async function GET() {
     const totalApplications = (db.prepare('SELECT COUNT(*) as count FROM applications').get() as { count: number }).count
     const newApplications = (db.prepare("SELECT COUNT(*) as count FROM applications WHERE status = 'submitted'").get() as { count: number }).count
 
+    const totalServices = (db.prepare('SELECT COUNT(*) as count FROM services').get() as { count: number }).count
+    const activeServices = (db.prepare('SELECT COUNT(*) as count FROM services WHERE is_active = 1').get() as { count: number }).count
+
+    const totalProducts = (db.prepare('SELECT COUNT(*) as count FROM products').get() as { count: number }).count
+    const activeProducts = (db.prepare('SELECT COUNT(*) as count FROM products WHERE is_active = 1').get() as { count: number }).count
+
+    const totalMedia = (db.prepare('SELECT COUNT(*) as count FROM media').get() as { count: number }).count
+
     // Recent user records
     const recentUsers = db.prepare('SELECT id, name, email, company, role, status, created_at FROM users ORDER BY created_at DESC LIMIT 5').all()
 
@@ -42,6 +50,11 @@ export async function GET() {
         contactedInquiries,
         totalApplications,
         newApplications,
+        totalServices,
+        activeServices,
+        totalProducts,
+        activeProducts,
+        totalMedia,
       },
       recentUsers,
       recentInquiries,

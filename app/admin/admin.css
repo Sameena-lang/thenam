@@ -675,18 +675,134 @@
   color: #dc2626;
 }
 
-.adm-btn-danger:hover {
-  background: #fee2e2;
-}
-
-/* Pagination */
-.adm-pagination {
-  padding: 16px 24px;
+/* Modals & Dialogs */
+.adm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 20, 38, 0.7);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid var(--adm-border);
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.adm-modal {
+  width: 100%;
+  max-width: 560px;
   background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: admModalFadeIn 0.2s ease-out;
+}
+
+@keyframes admModalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.adm-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.adm-modal-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.adm-modal-desc {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+.adm-modal-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.adm-modal-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.adm-modal-body {
+  padding: 24px;
+}
+
+.adm-modal-footer {
+  padding: 16px 24px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.adm-form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.adm-form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+.adm-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.adm-input-field {
+  width: 100%;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: #0f172a;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.adm-input-field:focus {
+  border-color: var(--adm-cyan);
+  box-shadow: 0 0 0 3px rgba(0, 201, 242, 0.15);
+}
+
+.adm-input-field::placeholder {
+  color: #94a3b8;
 }
 
 /* Mobile responsive */
