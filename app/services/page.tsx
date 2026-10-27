@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -21,113 +21,181 @@ import {
   Coins,
 } from 'lucide-react'
 
+const DEFAULT_SERVICE_CATEGORIES = [
+  {
+    id: 'web-development',
+    icon: Monitor,
+    colorClass: 'cyan',
+    title: 'Web Development',
+    badge: 'From ₹1,999*',
+    subtitle: 'Modern, high-conversion websites and custom web applications.',
+    description:
+      'We engineer responsive, blazing-fast websites and web applications with Next.js, React, and Tailwind CSS. Built with clean code, SEO optimization, and intuitive UX.',
+    features: [
+      'Single Page & Landing Pages (Starting ₹1,999*)',
+      'Corporate & Business Portals',
+      'E-Commerce & Payment Gateway Integration',
+      'SEO-optimized, ultra-fast Lighthouse 95+ score',
+      'Mobile-first responsive design for all devices',
+    ],
+  },
+  {
+    id: 'ai-machine-learning',
+    icon: Cpu,
+    colorClass: 'green',
+    title: 'AI & Machine Learning',
+    badge: 'High Impact',
+    subtitle: 'Practical AI tools that automate work and deliver smart decisions.',
+    description:
+      'Turn state-of-the-art language models and computer vision into business productivity. We build conversational agents, predictive tools, and intelligent data pipelines.',
+    features: [
+      'Custom AI Assistants & Support Chatbots (Tamil & Multilingual)',
+      'Document Processing & OCR Extraction',
+      'Predictive Analytics & Customer Churn Modeling',
+      'Fine-tuned LLM agents & RAG knowledge bases',
+      'Seamless integration into your existing CRM/ERP',
+    ],
+  },
+  {
+    id: 'custom-software',
+    icon: Code2,
+    colorClass: 'blue',
+    title: 'Custom Software Development',
+    badge: 'Enterprise Grade',
+    subtitle: 'Tailored software crafted around your specific operational workflows.',
+    description:
+      'Eliminate repetitive spreadsheet chaos with secure, scalable custom software. We build internal business tools, client portals, and cloud-native SaaS systems.',
+    features: [
+      'Business Management & Operations Dashboards',
+      'Customer Relationship Management (CRM) Systems',
+      'Inventory & Supply Chain Tracking Portals',
+      'Role-based Access Control (RBAC) & Enterprise Security',
+      'RESTful & GraphQL API Architecture',
+    ],
+  },
+  {
+    id: 'business-automation',
+    icon: Cog,
+    colorClass: 'lime',
+    title: 'Business Automation',
+    badge: 'Save 20+ hrs/wk',
+    subtitle: 'Connect your business tools and let workflows run automatically.',
+    description:
+      'Stop doing manual data entry. We design automated workflows connecting WhatsApp, email, payment systems, databases, and accounting software.',
+    features: [
+      'WhatsApp Business Automated Lead Capture & Booking',
+      'Automated Invoicing, GST & Payment Reminders',
+      'Multi-app Sync (Zapier, Make, Custom Webhooks)',
+      'Database Sync & Automated Reporting Pipelines',
+      'Zero-error validation & automated alerts',
+    ],
+  },
+  {
+    id: 'mobile-apps',
+    icon: Smartphone,
+    colorClass: 'cyan',
+    title: 'Mobile App Development',
+    badge: 'iOS & Android',
+    subtitle: 'Cross-platform mobile apps with native speed and fluid animations.',
+    description:
+      'Deliver your services directly to customers’ pockets. We develop high-performance iOS and Android applications with React Native and modern native bridges.',
+    features: [
+      'Cross-Platform iOS & Android from a single codebase',
+      'Offline-first architecture with local cache sync',
+      'Push notifications & in-app engagement tools',
+      'Secure biometric authentication (FaceID / Fingerprint)',
+      'App Store & Play Store publication assistance',
+    ],
+  },
+  {
+    id: 'cloud-devops',
+    icon: Cloud,
+    colorClass: 'green',
+    title: 'Cloud & DevOps Solutions',
+    badge: '99.99% Uptime',
+    subtitle: 'Secure, cost-optimized cloud infrastructure on AWS, GCP & Vercel.',
+    description:
+      'Ensure your digital products stay online, fast, and secure under peak traffic. We design automated CI/CD pipelines, containerized microservices, and managed backups.',
+    features: [
+      'Cloud Architecture on AWS, Google Cloud & Vercel',
+      'Automated CI/CD Deployment Pipelines (GitHub Actions)',
+      'Containerization with Docker & Kubernetes',
+      'Database Optimization, Backups & Disaster Recovery',
+      'Cloud Cost Optimization & Security Auditing',
+    ],
+  },
+]
+
+const ICON_MAP: Record<string, React.ComponentType<{ size?: number | string; style?: React.CSSProperties; className?: string }>> = {
+  Monitor,
+  Cpu,
+  Code2,
+  Cog,
+  Smartphone,
+  Cloud,
+}
+
+interface ServiceCategoryItem {
+  id: string
+  icon: React.ComponentType<{ size?: number | string; style?: React.CSSProperties; className?: string }>
+  colorClass: string
+  title: string
+  badge: string
+  subtitle: string
+  description: string
+  features: string[]
+  imageUrl?: string | null
+  imageAlt?: string | null
+}
+
 export default function ServicesPage() {
   const [selectedService, setSelectedService] = useState('web')
+  const [serviceCategories, setServiceCategories] = useState<ServiceCategoryItem[]>(DEFAULT_SERVICE_CATEGORIES)
 
-  const serviceCategories = [
-    {
-      id: 'web-development',
-      icon: Monitor,
-      colorClass: 'cyan',
-      title: 'Web Development',
-      badge: 'From ₹1,999*',
-      subtitle: 'Modern, high-conversion websites and custom web applications.',
-      description:
-        'We engineer responsive, blazing-fast websites and web applications with Next.js, React, and Tailwind CSS. Built with clean code, SEO optimization, and intuitive UX.',
-      features: [
-        'Single Page & Landing Pages (Starting ₹1,999*)',
-        'Corporate & Business Portals',
-        'E-Commerce & Payment Gateway Integration',
-        'SEO-optimized, ultra-fast Lighthouse 95+ score',
-        'Mobile-first responsive design for all devices',
-      ],
-    },
-    {
-      id: 'ai-machine-learning',
-      icon: Cpu,
-      colorClass: 'green',
-      title: 'AI & Machine Learning',
-      badge: 'High Impact',
-      subtitle: 'Practical AI tools that automate work and deliver smart decisions.',
-      description:
-        'Turn state-of-the-art language models and computer vision into business productivity. We build conversational agents, predictive tools, and intelligent data pipelines.',
-      features: [
-        'Custom AI Assistants & Support Chatbots (Tamil & Multilingual)',
-        'Document Processing & OCR Extraction',
-        'Predictive Analytics & Customer Churn Modeling',
-        'Fine-tuned LLM agents & RAG knowledge bases',
-        'Seamless integration into your existing CRM/ERP',
-      ],
-    },
-    {
-      id: 'custom-software',
-      icon: Code2,
-      colorClass: 'blue',
-      title: 'Custom Software Development',
-      badge: 'Enterprise Grade',
-      subtitle: 'Tailored software crafted around your specific operational workflows.',
-      description:
-        'Eliminate repetitive spreadsheet chaos with secure, scalable custom software. We build internal business tools, client portals, and cloud-native SaaS systems.',
-      features: [
-        'Business Management & Operations Dashboards',
-        'Customer Relationship Management (CRM) Systems',
-        'Inventory & Supply Chain Tracking Portals',
-        'Role-based Access Control (RBAC) & Enterprise Security',
-        'RESTful & GraphQL API Architecture',
-      ],
-    },
-    {
-      id: 'business-automation',
-      icon: Cog,
-      colorClass: 'lime',
-      title: 'Business Automation',
-      badge: 'Save 20+ hrs/wk',
-      subtitle: 'Connect your business tools and let workflows run automatically.',
-      description:
-        'Stop doing manual data entry. We design automated workflows connecting WhatsApp, email, payment systems, databases, and accounting software.',
-      features: [
-        'WhatsApp Business Automated Lead Capture & Booking',
-        'Automated Invoicing, GST & Payment Reminders',
-        'Multi-app Sync (Zapier, Make, Custom Webhooks)',
-        'Database Sync & Automated Reporting Pipelines',
-        'Zero-error validation & automated alerts',
-      ],
-    },
-    {
-      id: 'mobile-apps',
-      icon: Smartphone,
-      colorClass: 'cyan',
-      title: 'Mobile App Development',
-      badge: 'iOS & Android',
-      subtitle: 'Cross-platform mobile apps with native speed and fluid animations.',
-      description:
-        'Deliver your services directly to customers’ pockets. We develop high-performance iOS and Android applications with React Native and modern native bridges.',
-      features: [
-        'Cross-Platform iOS & Android from a single codebase',
-        'Offline-first architecture with local cache sync',
-        'Push notifications & in-app engagement tools',
-        'Secure biometric authentication (FaceID / Fingerprint)',
-        'App Store & Play Store publication assistance',
-      ],
-    },
-    {
-      id: 'cloud-devops',
-      icon: Cloud,
-      colorClass: 'green',
-      title: 'Cloud & DevOps Solutions',
-      badge: '99.99% Uptime',
-      subtitle: 'Secure, cost-optimized cloud infrastructure on AWS, GCP & Vercel.',
-      description:
-        'Ensure your digital products stay online, fast, and secure under peak traffic. We design automated CI/CD pipelines, containerized microservices, and managed backups.',
-      features: [
-        'Cloud Architecture on AWS, Google Cloud & Vercel',
-        'Automated CI/CD Deployment Pipelines (GitHub Actions)',
-        'Containerization with Docker & Kubernetes',
-        'Database Optimization, Backups & Disaster Recovery',
-        'Cloud Cost Optimization & Security Auditing',
-      ],
-    },
-  ]
+  // Fetch live services from database with fallback to default categories
+  useEffect(() => {
+    let isMounted = true
+    fetch('/api/services')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load services')
+        return res.json()
+      })
+      .then((data) => {
+        if (isMounted && data.services && Array.isArray(data.services) && data.services.length > 0) {
+          const mapped = data.services.map((s: {
+            id: string
+            icon_name?: string
+            color_class?: string
+            title: string
+            badge: string
+            subtitle: string
+            description: string
+            features: string[]
+            image_url?: string | null
+            image_alt?: string | null
+          }) => ({
+            id: s.id,
+            icon: (s.icon_name && ICON_MAP[s.icon_name]) ? ICON_MAP[s.icon_name] : Monitor,
+            colorClass: s.color_class || 'cyan',
+            title: s.title,
+            badge: s.badge,
+            subtitle: s.subtitle,
+            description: s.description,
+            features: Array.isArray(s.features) ? s.features : [],
+            imageUrl: s.image_url || null,
+            imageAlt: s.image_alt || null,
+          }))
+          setServiceCategories(mapped)
+        }
+      })
+      .catch((err) => {
+        console.warn('Services live fetch error; using fallback:', err)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   return (
     <>
@@ -209,6 +277,24 @@ export default function ServicesPage() {
 
                       <h3 className="service-card-title" style={{ fontSize: '20px', marginBottom: '6px' }}>{service.title}</h3>
                       <p style={{ fontSize: '13px', color: '#0284c7', fontWeight: '600', marginBottom: '12px' }}>{service.subtitle}</p>
+
+                      {service.imageUrl && (
+                        <div style={{
+                          marginBottom: '16px',
+                          borderRadius: '8px',
+                          overflow: 'hidden',
+                          height: '140px',
+                          background: '#070f1e',
+                          border: '1px solid #e2e8f0',
+                        }}>
+                          <img
+                            src={service.imageUrl}
+                            alt={service.imageAlt || service.title}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                          />
+                        </div>
+                      )}
+
                       <p className="service-card-desc" style={{ fontSize: '13px', lineHeight: '1.65', marginBottom: '20px' }}>{service.description}</p>
 
                       <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>

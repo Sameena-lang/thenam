@@ -13,6 +13,9 @@ import {
   AlertCircle,
   RefreshCw,
   Sparkles,
+  Layers,
+  Package,
+  Image as LucideImage,
 } from 'lucide-react'
 
 interface DashboardData {
@@ -26,6 +29,11 @@ interface DashboardData {
     contactedInquiries: number
     totalApplications: number
     newApplications: number
+    totalServices?: number
+    activeServices?: number
+    totalProducts?: number
+    activeProducts?: number
+    totalMedia?: number
   }
   recentUsers: Array<{
     id: string
@@ -182,6 +190,48 @@ export default function AdminDashboardPage() {
             <Briefcase size={22} />
           </div>
         </div>
+
+        {/* Public Services */}
+        <Link href="/admin/services" className="adm-stat-card" style={{ textDecoration: 'none' }}>
+          <div>
+            <span className="adm-stat-label">Public Services</span>
+            <div className="adm-stat-number">{loading ? '—' : data?.stats.totalServices ?? 6}</div>
+            <div style={{ fontSize: '11px', color: '#0284c7', fontWeight: '700', marginTop: '4px' }}>
+              {loading ? '' : `${data?.stats.activeServices ?? 6} active on live site`}
+            </div>
+          </div>
+          <div className="adm-stat-icon-wrap cyan">
+            <Layers size={22} />
+          </div>
+        </Link>
+
+        {/* Proprietary Products */}
+        <Link href="/admin/products" className="adm-stat-card" style={{ textDecoration: 'none' }}>
+          <div>
+            <span className="adm-stat-label">Proprietary Products</span>
+            <div className="adm-stat-number">{loading ? '—' : data?.stats.totalProducts ?? 4}</div>
+            <div style={{ fontSize: '11px', color: '#059669', fontWeight: '700', marginTop: '4px' }}>
+              {loading ? '' : `${data?.stats.activeProducts ?? 4} active on live site`}
+            </div>
+          </div>
+          <div className="adm-stat-icon-wrap green">
+            <Package size={22} />
+          </div>
+        </Link>
+
+        {/* Media Library */}
+        <Link href="/admin/media" className="adm-stat-card" style={{ textDecoration: 'none' }}>
+          <div>
+            <span className="adm-stat-label">Image Library</span>
+            <div className="adm-stat-number">{loading ? '—' : data?.stats.totalMedia ?? 13}</div>
+            <div style={{ fontSize: '11px', color: '#0284c7', fontWeight: '700', marginTop: '4px' }}>
+              {loading ? '' : `Manage website pictures`}
+            </div>
+          </div>
+          <div className="adm-stat-icon-wrap cyan">
+            <LucideImage size={22} />
+          </div>
+        </Link>
       </div>
 
       {/* Two Column Section: Recent Users & Recent Inquiries */}

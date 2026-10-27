@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -18,109 +19,197 @@ import {
   Zap,
 } from 'lucide-react'
 
+const DEFAULT_PRODUCTS = [
+  {
+    id: 'agrismart',
+    name: 'AgriSmart',
+    category: 'AI-Powered AgriTech Platform',
+    badge: 'Active Deployment',
+    badgeColor: 'lime',
+    icon: Wheat,
+    iconColor: '#15803d',
+    iconBg: '#dcfce7',
+    tagline: 'Precision agricultural intelligence for farmers, cooperatives, and agribusinesses.',
+    description:
+      'AgriSmart blends satellite remote sensing, localized weather forecasting, and drone vision AI to identify crop diseases before they spread. Built with offline-first capabilities and multilingual advisory.',
+    tags: ['Web App', 'AI/ML', 'Computer Vision', 'IoT'],
+    metrics: [
+      { label: 'Yield Increase', val: '+24%' },
+      { label: 'Pesticide Reduction', val: '-35%' },
+      { label: 'Active Acres', val: '12,000+' },
+    ],
+    features: [
+      'Early crop blight and pest detection via smartphone camera',
+      'Soil moisture and micro-climate sensor telemetry',
+      'Voice alerts in Tamil and regional Indian languages',
+      'Direct market price tracking & harvest logistics sync',
+    ],
+  },
+  {
+    id: 'zarabot',
+    name: 'ZaraBot',
+    category: 'Tamil-First Conversational AI Assistant',
+    badge: 'Trending Product',
+    badgeColor: 'cyan',
+    icon: Bot,
+    iconColor: '#0284c7',
+    iconBg: '#e0f2fe',
+    tagline: 'Natural conversational customer support in Tamil and Indian English.',
+    description:
+      'ZaraBot handles complex customer queries, appointment scheduling, and order status tracking over WhatsApp, web chat, and voice telephony. Trained specifically on colloquial Tamil nuances.',
+    tags: ['AI Agent', 'Chatbot', 'Voice AI', 'WhatsApp API'],
+    metrics: [
+      { label: 'Resolution Rate', val: '88%' },
+      { label: 'Response Time', val: '< 1.2s' },
+      { label: 'Hours Saved/Mo', val: '140 hrs' },
+    ],
+    features: [
+      'Natural language understanding in Tamil script and Tanglish',
+      'Official WhatsApp Business API native integration',
+      'Automated lead qualification and CRM database sync',
+      'Instant human handoff when complex escalation is needed',
+    ],
+  },
+  {
+    id: 'commerceflow',
+    name: 'E-Commerce Platform',
+    category: 'High-Conversion D2C Storefront Engine',
+    badge: 'Turnkey Solution',
+    badgeColor: 'yellow',
+    icon: ShoppingBag,
+    iconColor: '#b45309',
+    iconBg: '#fef3c7',
+    tagline: 'Lightning-fast online stores engineered for maximum checkout conversion.',
+    description:
+      'Built for fresh organic brands, regional manufacturers, and direct-to-consumer businesses. Out-of-the-box UPI 1-click checkout, local pincode delivery checks, and automated WhatsApp order notifications.',
+    tags: ['Next.js 16', 'UPI / Razorpay', 'E-commerce', 'SEO Fast'],
+    metrics: [
+      { label: 'Lighthouse Score', val: '99/100' },
+      { label: 'Cart Abandonment', val: '-28%' },
+      { label: 'Avg Setup Time', val: '48 hrs' },
+    ],
+    features: [
+      'Blazing-fast mobile storefront with zero page reloads',
+      'Instant UPI, PhonePe, Google Pay, and COD checkout',
+      'Automated shipping label printing and WhatsApp tracking',
+      'Inventory alerts and multi-warehouse support',
+    ],
+  },
+  {
+    id: 'pulse-core',
+    name: 'Business Management System',
+    category: 'Operations, CRM & Resource Cockpit',
+    badge: 'Enterprise SaaS',
+    badgeColor: 'blue',
+    icon: BarChart2,
+    iconColor: '#0284c7',
+    iconBg: '#e0f2fe',
+    tagline: 'The all-in-one operations operating system for ambitious businesses.',
+    description:
+      'Replace 5 disconnected tools with a single unified workspace. Track client milestones, monitor team velocity, automate recurring invoicing, and view real-time profit and loss metrics at a glance.',
+    tags: ['Dashboard', 'CRM / ERP', 'Analytics', 'Role-Based RBAC'],
+    metrics: [
+      { label: 'Sync Speed', val: 'Realtime' },
+      { label: 'Data Accuracy', val: '100%' },
+      { label: 'Tools Replaced', val: '4 to 6' },
+    ],
+    features: [
+      'Executive business overview KPI cards and dynamic growth charts',
+      'Client project milestones with automated deadline reminders',
+      'GST-ready automated invoice generator and payment logging',
+      'Encrypted role-based access for managers, staff, and accountants',
+    ],
+  },
+]
+
+const PRODUCT_ICON_MAP: Record<string, React.ComponentType<{ size?: number | string; style?: React.CSSProperties; className?: string }>> = {
+  Wheat,
+  Bot,
+  ShoppingBag,
+  BarChart2,
+  Cpu,
+  Layers,
+  Zap,
+}
+
+interface ProductCardItem {
+  id: string
+  name: string
+  category: string
+  badge: string
+  badgeColor: string
+  icon: React.ComponentType<{ size?: number | string; style?: React.CSSProperties; className?: string }>
+  iconColor: string
+  iconBg: string
+  tagline: string
+  description: string
+  tags: string[]
+  metrics: Array<{ label: string; val: string }>
+  features: string[]
+  image_url?: string | null
+  image_alt?: string | null
+}
+
 export default function ProductsPage() {
-  const products = [
-    {
-      id: 'agrismart',
-      name: 'AgriSmart',
-      category: 'AI-Powered AgriTech Platform',
-      badge: 'Active Deployment',
-      badgeColor: 'lime',
-      icon: Wheat,
-      iconColor: '#15803d',
-      iconBg: '#dcfce7',
-      tagline: 'Precision agricultural intelligence for farmers, cooperatives, and agribusinesses.',
-      description:
-        'AgriSmart blends satellite remote sensing, localized weather forecasting, and drone vision AI to identify crop diseases before they spread. Built with offline-first capabilities and multilingual advisory.',
-      tags: ['Web App', 'AI/ML', 'Computer Vision', 'IoT'],
-      metrics: [
-        { label: 'Yield Increase', val: '+24%' },
-        { label: 'Pesticide Reduction', val: '-35%' },
-        { label: 'Active Acres', val: '12,000+' },
-      ],
-      features: [
-        'Early crop blight and pest detection via smartphone camera',
-        'Soil moisture and micro-climate sensor telemetry',
-        'Voice alerts in Tamil and regional Indian languages',
-        'Direct market price tracking & harvest logistics sync',
-      ],
-    },
-    {
-      id: 'zarabot',
-      name: 'ZaraBot',
-      category: 'Tamil-First Conversational AI Assistant',
-      badge: 'Trending Product',
-      badgeColor: 'cyan',
-      icon: Bot,
-      iconColor: '#0284c7',
-      iconBg: '#e0f2fe',
-      tagline: 'Natural conversational customer support in Tamil and Indian English.',
-      description:
-        'ZaraBot handles complex customer queries, appointment scheduling, and order status tracking over WhatsApp, web chat, and voice telephony. Trained specifically on colloquial Tamil nuances.',
-      tags: ['AI Agent', 'Chatbot', 'Voice AI', 'WhatsApp API'],
-      metrics: [
-        { label: 'Resolution Rate', val: '88%' },
-        { label: 'Response Time', val: '< 1.2s' },
-        { label: 'Hours Saved/Mo', val: '140 hrs' },
-      ],
-      features: [
-        'Natural language understanding in Tamil script and Tanglish',
-        'Official WhatsApp Business API native integration',
-        'Automated lead qualification and CRM database sync',
-        'Instant human handoff when complex escalation is needed',
-      ],
-    },
-    {
-      id: 'commerceflow',
-      name: 'E-Commerce Platform',
-      category: 'High-Conversion D2C Storefront Engine',
-      badge: 'Turnkey Solution',
-      badgeColor: 'yellow',
-      icon: ShoppingBag,
-      iconColor: '#b45309',
-      iconBg: '#fef3c7',
-      tagline: 'Lightning-fast online stores engineered for maximum checkout conversion.',
-      description:
-        'Built for fresh organic brands, regional manufacturers, and direct-to-consumer businesses. Out-of-the-box UPI 1-click checkout, local pincode delivery checks, and automated WhatsApp order notifications.',
-      tags: ['Next.js 16', 'UPI / Razorpay', 'E-commerce', 'SEO Fast'],
-      metrics: [
-        { label: 'Lighthouse Score', val: '99/100' },
-        { label: 'Cart Abandonment', val: '-28%' },
-        { label: 'Avg Setup Time', val: '48 hrs' },
-      ],
-      features: [
-        'Blazing-fast mobile storefront with zero page reloads',
-        'Instant UPI, PhonePe, Google Pay, and COD checkout',
-        'Automated shipping label printing and WhatsApp tracking',
-        'Inventory alerts and multi-warehouse support',
-      ],
-    },
-    {
-      id: 'pulse-core',
-      name: 'Business Management System',
-      category: 'Operations, CRM & Resource Cockpit',
-      badge: 'Enterprise SaaS',
-      badgeColor: 'blue',
-      icon: BarChart2,
-      iconColor: '#0284c7',
-      iconBg: '#e0f2fe',
-      tagline: 'The all-in-one operations operating system for ambitious businesses.',
-      description:
-        'Replace 5 disconnected tools with a single unified workspace. Track client milestones, monitor team velocity, automate recurring invoicing, and view real-time profit and loss metrics at a glance.',
-      tags: ['Dashboard', 'CRM / ERP', 'Analytics', 'Role-Based RBAC'],
-      metrics: [
-        { label: 'Sync Speed', val: 'Realtime' },
-        { label: 'Data Accuracy', val: '100%' },
-        { label: 'Tools Replaced', val: '4 to 6' },
-      ],
-      features: [
-        'Executive business overview KPI cards and dynamic growth charts',
-        'Client project milestones with automated deadline reminders',
-        'GST-ready automated invoice generator and payment logging',
-        'Encrypted role-based access for managers, staff, and accountants',
-      ],
-    },
-  ]
+  const [products, setProducts] = useState<ProductCardItem[]>(DEFAULT_PRODUCTS)
+
+  // Fetch live products from database with fallback to default products
+  useEffect(() => {
+    let isMounted = true
+    fetch('/api/products')
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load products')
+        return res.json()
+      })
+      .then((data) => {
+        if (isMounted && data.products && Array.isArray(data.products) && data.products.length > 0) {
+          const mapped = data.products.map((p: {
+            id: string
+            name: string
+            category: string
+            badge: string
+            badgeColor?: string
+            badge_color?: string
+            icon_name?: string
+            iconColor?: string
+            icon_color?: string
+            iconBg?: string
+            icon_bg?: string
+            tagline: string
+            description: string
+            tags: string[]
+            metrics: Array<{ label: string; val: string }>
+            features: string[]
+            image_url?: string | null
+            image_alt?: string | null
+          }) => ({
+            id: p.id,
+            name: p.name,
+            category: p.category,
+            badge: p.badge,
+            badgeColor: p.badgeColor || p.badge_color || 'cyan',
+            icon: (p.icon_name && PRODUCT_ICON_MAP[p.icon_name]) ? PRODUCT_ICON_MAP[p.icon_name] : Bot,
+            iconColor: p.iconColor || p.icon_color || '#0284c7',
+            iconBg: p.iconBg || p.icon_bg || '#e0f2fe',
+            tagline: p.tagline,
+            description: p.description,
+            tags: Array.isArray(p.tags) ? p.tags : [],
+            metrics: Array.isArray(p.metrics) ? p.metrics : [],
+            features: Array.isArray(p.features) ? p.features : [],
+            image_url: p.image_url || null,
+            image_alt: p.image_alt || null,
+          }))
+          setProducts(mapped)
+        }
+      })
+      .catch((err) => {
+        console.warn('Products live fetch error; using fallback:', err)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   return (
     <>
@@ -210,6 +299,23 @@ export default function ProductsPage() {
 
                       {/* Mock UI Preview Box */}
                       <div style={{ background: '#0b162b', borderRadius: '10px', padding: '16px', border: '1px solid #1c2e4d' }}>
+                        {product.image_url && (
+                          <div style={{
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                            border: '1px solid #1c2e4d',
+                            marginBottom: '14px',
+                            maxHeight: '170px',
+                            background: '#070f1e',
+                          }}>
+                            <img
+                              src={product.image_url}
+                              alt={product.image_alt || product.name}
+                              style={{ width: '100%', height: 'auto', maxHeight: '170px', objectFit: 'cover', display: 'block' }}
+                            />
+                          </div>
+                        )}
+
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                           <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: product.iconBg, color: product.iconColor, display: 'grid', placeItems: 'center' }}>
                             <Icon size={20} />

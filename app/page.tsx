@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -127,6 +127,50 @@ export default function HomePage() {
       videoRef.current.requestFullscreen()
     }
   }
+
+  // Live configurable images from site settings with default fallbacks
+  const [siteImages, setSiteImages] = useState({
+    heroBg: '/hero-bg.png',
+    heroAlt: 'THENAM Software Solutions Hero Background with Laptop and Digital Interface',
+    serviceWeb: '/services/web-development.jpg',
+    serviceAi: '/services/ai-machine-learning.jpg',
+    serviceCustom: '/services/custom-software.jpg',
+    serviceAuto: '/services/business-automation.jpg',
+    productAgri: '/projects/featured-agrismart-hq.png',
+    productZara: '/projects/featured-zarabot-hq.png',
+    productEcom: '/projects/featured-ecommerce-hq.png',
+    productPulse: '/projects/featured-bizmgmt-hq.png',
+  })
+
+  useEffect(() => {
+    let isMounted = true
+    fetch('/api/site-settings')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data && data.settings) {
+          const s = data.settings
+          setSiteImages({
+            heroBg: s.homepage_hero_bg || '/hero-bg.png',
+            heroAlt: s.homepage_hero_alt || 'THENAM Software Solutions Hero Background',
+            serviceWeb: s.service_img_web_development || '/services/web-development.jpg',
+            serviceAi: s.service_img_ai_machine_learning || '/services/ai-machine-learning.jpg',
+            serviceCustom: s.service_img_custom_software || '/services/custom-software.jpg',
+            serviceAuto: s.service_img_business_automation || '/services/business-automation.jpg',
+            productAgri: s.product_img_agrismart || '/projects/featured-agrismart-hq.png',
+            productZara: s.product_img_zarabot || '/projects/featured-zarabot-hq.png',
+            productEcom: s.product_img_commerceflow || '/projects/featured-ecommerce-hq.png',
+            productPulse: s.product_img_pulse_core || '/projects/featured-bizmgmt-hq.png',
+          })
+        }
+      })
+      .catch((err) => {
+        console.warn('Site settings fetch error; using default images:', err)
+      })
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   return (
     <>
       <Header />
@@ -135,7 +179,11 @@ export default function HomePage() {
         {/* ========================================================
             HERO SECTION (DARK NAVY WITH LAPTOP & FLOATING CARDS)
             ======================================================== */}
-        <section className="hero-section" aria-label="Hero Introduction">
+        <section
+          className="hero-section"
+          aria-label="Hero Introduction"
+          style={{ backgroundImage: `url('${siteImages.heroBg}')` }}
+        >
           <div className="hero-glow-cyan" aria-hidden="true" />
           <div className="hero-glow-lime" aria-hidden="true" />
           <div className="hero-plant-left" aria-hidden="true" />
@@ -301,7 +349,7 @@ export default function HomePage() {
                   <div className="service-flip-front">
                     <div className="service-card-media-wrap">
                       <img
-                        src="/services/web-development.jpg"
+                        src={siteImages.serviceWeb}
                         alt="Web Development - Responsive Desktop, Tablet, Mobile"
                         className="service-card-img"
                         loading="lazy"
@@ -360,7 +408,7 @@ export default function HomePage() {
                   <div className="service-flip-front">
                     <div className="service-card-media-wrap">
                       <img
-                        src="/services/ai-machine-learning.jpg"
+                        src={siteImages.serviceAi}
                         alt="AI & Machine Learning - Intelligent Automation & Models"
                         className="service-card-img"
                         loading="lazy"
@@ -419,7 +467,7 @@ export default function HomePage() {
                   <div className="service-flip-front">
                     <div className="service-card-media-wrap">
                       <img
-                        src="/services/custom-software.jpg"
+                        src={siteImages.serviceCustom}
                         alt="Custom Software Development - Dashboards & Scalable Systems"
                         className="service-card-img"
                         loading="lazy"
@@ -478,7 +526,7 @@ export default function HomePage() {
                   <div className="service-flip-front">
                     <div className="service-card-media-wrap">
                       <img
-                        src="/services/business-automation.jpg"
+                        src={siteImages.serviceAuto}
                         alt="Business Automation - Streamline Processes & Workflows"
                         className="service-card-img"
                         loading="lazy"
@@ -573,7 +621,7 @@ export default function HomePage() {
               >
                 <div className="featured-card-thumb-wrap">
                   <img
-                    src="/projects/featured-agrismart-hq.png"
+                    src={siteImages.productAgri}
                     alt="AgriSmart platform preview"
                     className="featured-card-img"
                   />
@@ -597,7 +645,7 @@ export default function HomePage() {
               >
                 <div className="featured-card-thumb-wrap">
                   <img
-                    src="/projects/featured-zarabot-hq.png"
+                    src={siteImages.productZara}
                     alt="ZaraBot AI Voice preview"
                     className="featured-card-img"
                   />
@@ -621,7 +669,7 @@ export default function HomePage() {
               >
                 <div className="featured-card-thumb-wrap">
                   <img
-                    src="/projects/featured-ecommerce-hq.png"
+                    src={siteImages.productEcom}
                     alt="E-Commerce Platform preview"
                     className="featured-card-img"
                   />
@@ -644,7 +692,7 @@ export default function HomePage() {
               >
                 <div className="featured-card-thumb-wrap">
                   <img
-                    src="/projects/featured-bizmgmt-hq.png"
+                    src={siteImages.productPulse}
                     alt="Business Management System preview"
                     className="featured-card-img"
                   />
