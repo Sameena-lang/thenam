@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, recordNotification } from '@/lib/db'
 import crypto from 'node:crypto'
 
 export async function POST(request: Request) {
@@ -13,6 +13,8 @@ export async function POST(request: Request) {
 
     const id = 'app_' + crypto.randomBytes(8).toString('hex')
     const now = new Date().toISOString()
+    const cleanName = String(fullName).trim()
+    const cleanRole = String(role).trim()
 
     db.prepare(`
       INSERT INTO applications (
@@ -21,15 +23,27 @@ export async function POST(request: Request) {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'submitted', ?)
     `).run(
       id,
-      String(fullName).trim(),
+      cleanName,
       String(email).trim().toLowerCase(),
       String(phone).trim(),
-      String(role).trim(),
+      cleanRole,
       portfolioLink ? String(portfolioLink).trim() : null,
       experienceLevel ? String(experienceLevel).trim() : null,
       message ? String(message).trim() : null,
       now
     )
+
+    // Trigger Admin Notification for Career Application
+    recordNotification({
+      type: 'application',
+      title: `Career Application: ${cleanName}`,
+      message: `${cleanName} applied for ${cleanRole}${experienceLevel ? ` (${experienceLevel})` : ''}. Review and screening pending.`,
+      link: '/admin/applications',
+      referenceId: id,
+      referenceType: 'applications',
+      isRead: 0,
+      createdAt: now,
+    })
 
     return NextResponse.json({
       success: true,

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getAuthenticatedAdmin, recordAuditLog } from '@/lib/auth'
-import { db, WebsiteUser } from '@/lib/db'
+import { db, WebsiteUser, recordNotification } from '@/lib/db'
 import crypto from 'node:crypto'
 
 export async function GET(request: Request) {
@@ -104,6 +104,16 @@ export async function POST(request: Request) {
     `).run(id, cleanName, cleanEmail, phone ? String(phone).trim() : null, company ? String(company).trim() : null, role, status, now, notes ? String(notes).trim() : null)
 
     recordAuditLog('CREATE_USER', 'users', id, `Created user record for ${cleanName} (${cleanEmail})`, admin.id, admin.email)
+
+    recordNotification({
+      type: 'user',
+      title: `Client Account Created: ${cleanName}`,
+      message: `New ${role} profile created for ${cleanName} (${company || 'Individual Client'}).`,
+      link: `/admin/users/${id}`,
+      referenceId: id,
+      referenceType: 'users',
+      isRead: 1,
+    })
 
     const newUser = (db.prepare('SELECT * FROM users WHERE id = ?').get(id) as unknown) as WebsiteUser
 

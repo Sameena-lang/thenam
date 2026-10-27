@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getAuthenticatedAdmin, recordAuditLog } from '@/lib/auth'
-import { db, Inquiry } from '@/lib/db'
+import { db, Inquiry, recordNotification } from '@/lib/db'
 
 export async function PATCH(
   request: Request,
@@ -35,6 +35,16 @@ export async function PATCH(
       admin.id,
       admin.email
     )
+
+    recordNotification({
+      type: 'quote',
+      title: `Quote / Inquiry Updated: ${inquiry.full_name}`,
+      message: `Status for ${inquiry.service_name} proposal requested by ${inquiry.full_name} changed to "${status}".`,
+      link: '/admin/inquiries',
+      referenceId: id,
+      referenceType: 'inquiries',
+      isRead: 1,
+    })
 
     const updated = db.prepare('SELECT * FROM inquiries WHERE id = ?').get(id)
     return NextResponse.json({ success: true, inquiry: updated })
