@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
@@ -203,8 +204,186 @@ export default function AboutPage() {
         </section>
 
         {/* ========================================================
-            FOUR CORE VALUES
+            LEADERSHIP & CREATIVE ARCHITECTS (FOUNDING MINDS)
             ======================================================== */}
+        <section className="inner-white-section" id="leadership" style={{ borderTop: '1px solid #e2e8f0', padding: '80px 0' }}>
+          <div className="container">
+            <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 52px' }}>
+              <span className="section-eyebrow">LEADERSHIP &amp; VISION</span>
+              <h2 className="section-title-large">
+                The minds <span className="accent-cyan-dark">architecting</span> our{' '}
+                <span className="accent-lime-dark">technology.</span>
+              </h2>
+              <p className="section-desc-light" style={{ margin: '14px auto 0', fontSize: '15px', lineHeight: '1.65' }}>
+                Meet the engineering leaders and product designers turning ambitious technical roadmaps into scalable, high-converting digital realities.
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '36px', maxWidth: '960px', margin: '0 auto' }}>
+              {/* Leader 1: Tharun Varshan U */}
+              <div
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '20px',
+                  overflow: 'hidden',
+                  boxShadow: '0 10px 30px rgba(6, 20, 38, 0.05)',
+                  transition: 'transform 0.28s ease, box-shadow 0.28s ease',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <div style={{ position: 'relative', width: '100%', height: '380px', background: '#061426', overflow: 'hidden' }}>
+                  <Image
+                    src="/about-portfolio/team-curly-jacket.jpg"
+                    alt="Tharun Varshan U - Founder & CEO"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 480px"
+                    style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
+                    priority
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(180deg, transparent 65%, rgba(6, 20, 38, 0.85) 100%)',
+                    }}
+                  />
+                  <div style={{ position: 'absolute', bottom: '16px', left: '20px', right: '20px' }}>
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        padding: '4px 10px',
+                        background: 'rgba(0, 201, 242, 0.2)',
+                        backdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(0, 201, 242, 0.5)',
+                        color: '#38bdf8',
+                        borderRadius: '20px',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                        marginBottom: '6px',
+                      }}
+                    >
+                      Founder &amp; CEO
+                    </span>
+                    <h3 style={{ margin: 0, fontSize: '22px', fontWeight: '800', color: '#ffffff' }}>
+                      Tharun Varshan U
+                    </h3>
+                  </div>
+                </div>
+
+                <div style={{ padding: '24px 24px 28px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <span style={{ fontSize: '12.5px', fontWeight: '700', color: '#0284c7', display: 'block', marginBottom: '8px' }}>
+                      Systems Architecture &amp; Engineering Lead
+                    </span>
+                    <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.7', margin: '0 0 20px' }}>
+                      Leading Thenam&apos;s architectural vision and engineering squads. Dedicated to crafting ultra-fast web platforms, cloud automation pipelines, and high-performance applications designed to scale effortlessly.
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
+                    <span style={{ fontSize: '11.5px', fontWeight: '600', background: '#f0f9ff', color: '#0369a1', padding: '4px 10px', borderRadius: '6px' }}>
+                      Next.js 16
+                    </span>
+                    <span style={{ fontSize: '11.5px', fontWeight: '600', background: '#f0fdf4', color: '#15803d', padding: '4px 10px', borderRadius: '6px' }}>
+                      TypeScript
+                    </span>
+                    <span style={{ fontSize: '11.5px', fontWeight: '600', background: '#faf5ff', color: '#7e22ce', padding: '4px 10px', borderRadius: '6px' }}>
+                      AI Architecture
+                    </span>
+                    <span style={{ fontSize: '11.5px', fontWeight: '600', background: '#f8fafc', color: '#475569', padding: '4px 10px', borderRadius: '6px' }}>
+                      Cloud Infrastructure
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Leader 2: Yuvan Dharshan U */}
+              <div
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '20px',
+                  overflow: 'hidden',
+                  boxShadow: '0 10px 30px rgba(6, 20, 38, 0.05)',
+                  transition: 'transform 0.28s ease, box-shadow 0.28s ease',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <div style={{ position: 'relative', width: '100%', height: '380px', background: '#061426', overflow: 'hidden' }}>
+                  <Image
+                    src="/about-portfolio/team-glasses-chair.jpg"
+                    alt="Yuvan Dharshan U - Co-Founder"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 480px"
+                    style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
+                    priority
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(180deg, transparent 65%, rgba(6, 20, 38, 0.85) 100%)',
+                    }}
+                  />
+                  <div style={{ position: 'absolute', bottom: '16px', left: '20px', right: '20px' }}>
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        padding: '4px 10px',
+                        background: 'rgba(130, 230, 46, 0.2)',
+                        backdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(130, 230, 46, 0.5)',
+                        color: '#82e62e',
+                        borderRadius: '20px',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                        marginBottom: '6px',
+                      }}
+                    >
+                      Co-Founder
+                    </span>
+                    <h3 style={{ margin: 0, fontSize: '22px', fontWeight: '800', color: '#ffffff' }}>
+                      Yuvan Dharshan U
+                    </h3>
+                  </div>
+                </div>
+
+                <div style={{ padding: '24px 24px 28px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <span style={{ fontSize: '12.5px', fontWeight: '700', color: '#059669', display: 'block', marginBottom: '8px' }}>
+                      Product Design &amp; Creative Technology
+                    </span>
+                    <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.7', margin: '0 0 20px' }}>
+                      Directing product design systems, user experience journeys, and full-stack digital transformations. Blending aesthetic precision with technical rigor to help startups and enterprises establish modern digital dominance.
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
+                    <span style={{ fontSize: '11.5px', fontWeight: '600', background: '#f0fdf4', color: '#15803d', padding: '4px 10px', borderRadius: '6px' }}>
+                      Product Strategy
+                    </span>
+                    <span style={{ fontSize: '11.5px', fontWeight: '600', background: '#f0f9ff', color: '#0369a1', padding: '4px 10px', borderRadius: '6px' }}>
+                      UI/UX Design Systems
+                    </span>
+                    <span style={{ fontSize: '11.5px', fontWeight: '600', background: '#faf5ff', color: '#7e22ce', padding: '4px 10px', borderRadius: '6px' }}>
+                      Full-Stack Dev
+                    </span>
+                    <span style={{ fontSize: '11.5px', fontWeight: '600', background: '#f8fafc', color: '#475569', padding: '4px 10px', borderRadius: '6px' }}>
+                      Figma &amp; Prototyping
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
         <section className="inner-pale-section">
           <div className="container">
             <div style={{ textAlign: 'center', maxWidth: '620px', margin: '0 auto 50px' }}>
