@@ -108,9 +108,29 @@ export default function ContactPage() {
 
   const currentServiceObj = services.find((s) => s.id === selectedService) || services[0]
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitted(true)
+    try {
+      await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName,
+          email,
+          phone,
+          company,
+          serviceId: currentServiceObj.id,
+          serviceName: currentServiceObj.name,
+          budgetTier: budgetTiers.find((b) => b.id === selectedBudget)?.label || selectedBudget,
+          timeline: timelineOptions.find((t) => t.id === selectedTimeline)?.label || selectedTimeline,
+          message,
+          needNda,
+        }),
+      })
+    } catch (err) {
+      console.error('Inquiry submission error:', err)
+    }
   }
 
   const faqs = [

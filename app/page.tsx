@@ -202,54 +202,57 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================
-            CLIENT PORTFOLIO MARQUEE (Continuous horizontal logos band)
+            TRUSTED SHOWCASE (Modern Card Carousel inspired by Image 1)
             ======================================================== */}
-        <section className="marquee-strip-section" aria-label="Client portfolio showcase">
+        <section className="trusted-showcase-section" aria-label="Trusted by institutions and partners">
+          <div className="trusted-showcase-header">
+            <h2 className="trusted-showcase-title">
+              Trusted by <span className="trusted-showcase-highlight">colleges</span> across India
+            </h2>
+          </div>
           <div className="marquee-track">
             <div className="marquee-group">
               {MARQUEE_ITEMS.map((item, i) => (
-                <span key={`group-1-${i}`} className="marquee-item">
-                  <span className="marquee-dot" aria-hidden="true" />
+                <div key={`group-1-${i}`} className="trusted-logo-card">
                   <Link
                     href={item.href}
-                    className="marquee-logo-link"
+                    className="trusted-logo-link"
                     title={`View ${item.name} project`}
                   >
-                    <div className={`marquee-logo-frame ${item.className}`}>
+                    <div className="trusted-logo-inner">
                       <Image
                         src={item.src}
                         alt={item.name}
                         width={item.width}
                         height={item.height}
-                        className="marquee-logo-image"
+                        className="trusted-logo-image"
                         priority={i < 4}
                       />
                     </div>
                   </Link>
-                </span>
+                </div>
               ))}
             </div>
             <div className="marquee-group" aria-hidden="true">
               {MARQUEE_ITEMS.map((item, i) => (
-                <span key={`group-2-${i}`} className="marquee-item">
-                  <span className="marquee-dot" aria-hidden="true" />
+                <div key={`group-2-${i}`} className="trusted-logo-card">
                   <Link
                     href={item.href}
-                    className="marquee-logo-link"
+                    className="trusted-logo-link"
                     title={`View ${item.name} project`}
                     tabIndex={-1}
                   >
-                    <div className={`marquee-logo-frame ${item.className}`}>
+                    <div className="trusted-logo-inner">
                       <Image
                         src={item.src}
                         alt={item.name}
                         width={item.width}
                         height={item.height}
-                        className="marquee-logo-image"
+                        className="trusted-logo-image"
                       />
                     </div>
                   </Link>
-                </span>
+                </div>
               ))}
             </div>
           </div>

@@ -9,6 +9,11 @@ __v0_jsx-dev-runtime.ts
 
 # Environment variables
 .env*.local
+.env
+
+# Database & runtime data
+data/*
+!data/.gitkeep
 
 # Common ignores
 node_modules

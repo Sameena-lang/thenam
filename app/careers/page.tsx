@@ -89,9 +89,26 @@ export default function CareersPage() {
     },
   ]
 
-  const handleApply = (e: React.FormEvent) => {
+  const handleApply = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setSubmitted(true)
+    try {
+      const formData = new FormData(e.currentTarget)
+      await fetch('/api/applications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: formData.get('fullName'),
+          email: formData.get('email'),
+          phone: formData.get('phone'),
+          role: selectedRole || formData.get('role'),
+          portfolioLink: formData.get('portfolio'),
+          message: formData.get('message'),
+        }),
+      })
+    } catch (err) {
+      console.error('Application submission error:', err)
+    }
     setTimeout(() => setSubmitted(false), 8000)
   }
 
@@ -276,35 +293,35 @@ export default function CareersPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#334155' }}>
                     Full Name *
-                    <input required placeholder="Your full name" style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }} />
+                    <input name="fullName" required placeholder="Your full name" style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }} />
                   </label>
 
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#334155' }}>
                     Email Address *
-                    <input required type="email" placeholder="you@example.com" style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }} />
+                    <input name="email" required type="email" placeholder="you@example.com" style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }} />
                   </label>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#334155' }}>
                     Phone / WhatsApp *
-                    <input required placeholder="+91 98765 43210" style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }} />
+                    <input name="phone" required placeholder="+91 98765 43210" style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }} />
                   </label>
 
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#334155' }}>
                     Role Applying For *
-                    <input required value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)} placeholder="e.g. Full Stack Engineer" style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }} />
+                    <input name="role" required value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)} placeholder="e.g. Full Stack Engineer" style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }} />
                   </label>
                 </div>
 
                 <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#334155' }}>
                   LinkedIn / GitHub / Portfolio Link *
-                  <input required placeholder="https://github.com/yourhandle or portfolio" style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }} />
+                  <input name="portfolio" required placeholder="https://github.com/yourhandle or portfolio" style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }} />
                 </label>
 
                 <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#334155' }}>
                   Brief Note About Yourself &amp; Projects
-                  <textarea rows={3} placeholder="Tell us about the most interesting thing you have built..." style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px', resize: 'vertical' }} />
+                  <textarea name="message" rows={3} placeholder="Tell us about the most interesting thing you have built..." style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px', resize: 'vertical' }} />
                 </label>
 
                 <button type="submit" className="quote-btn" style={{ justifyContent: 'center', padding: '14px', fontSize: '13.5px' }}>
