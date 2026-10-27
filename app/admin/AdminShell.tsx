@@ -16,6 +16,7 @@ import {
   ExternalLink,
   ShieldAlert,
 } from 'lucide-react'
+import NotificationBell from './NotificationBell'
 
 interface AdminUserSummary {
   id: string
@@ -145,6 +146,7 @@ export default function AdminShell({
           </div>
 
           <div className="adm-topbar-right">
+            <NotificationBell />
             <Link href="/" target="_blank" className="adm-view-site-btn">
               <span>View Public Website</span>
               <ExternalLink size={13} />

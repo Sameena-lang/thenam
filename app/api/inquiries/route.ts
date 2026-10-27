@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, recordNotification } from '@/lib/db'
 import crypto from 'node:crypto'
 
 export async function POST(request: Request) {
@@ -64,6 +64,18 @@ export async function POST(request: Request) {
         `Inquiry submitted for ${serviceName}`
       )
     }
+
+    // Trigger Admin Notification for the incoming inquiry/quote request
+    recordNotification({
+      type: 'inquiry',
+      title: `New Proposal Request: ${cleanName}`,
+      message: `${cleanName} requested a quote for ${serviceName}${budgetTier ? ` (${budgetTier})` : ''}. Follow-up required.`,
+      link: '/admin/inquiries',
+      referenceId: id,
+      referenceType: 'inquiries',
+      isRead: 0,
+      createdAt: now,
+    })
 
     return NextResponse.json({
       success: true,

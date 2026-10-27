@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getAuthenticatedAdmin, recordAuditLog } from '@/lib/auth'
-import { db, CareerApplication } from '@/lib/db'
+import { db, CareerApplication, recordNotification } from '@/lib/db'
 
 export async function PATCH(
   request: Request,
@@ -35,6 +35,16 @@ export async function PATCH(
       admin.id,
       admin.email
     )
+
+    recordNotification({
+      type: 'application',
+      title: `Application Status: ${app.full_name}`,
+      message: `Career candidate ${app.full_name} (${app.role}) moved to "${status}".`,
+      link: '/admin/applications',
+      referenceId: id,
+      referenceType: 'applications',
+      isRead: 1,
+    })
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -68,6 +68,18 @@ export interface AuditLog {
   created_at: string
 }
 
+export interface AdminNotification {
+  id: string
+  type: 'inquiry' | 'quote' | 'user' | 'application' | 'audit' | 'system'
+  title: string
+  message: string
+  link: string
+  reference_id: string | null
+  reference_type: string | null
+  is_read: number
+  created_at: string
+}
+
 declare global {
   // eslint-disable-next-line no-var
   var __thenam_db__: DatabaseSync | undefined
@@ -206,6 +218,21 @@ function initializeSchema(db: DatabaseSync) {
     );
   `)
 
+  // 8. Admin Notifications Table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS admin_notifications (
+      id TEXT PRIMARY KEY,
+      type TEXT NOT NULL,
+      title TEXT NOT NULL,
+      message TEXT NOT NULL,
+      link TEXT NOT NULL,
+      reference_id TEXT,
+      reference_type TEXT,
+      is_read INTEGER DEFAULT 0,
+      created_at TEXT NOT NULL
+    );
+  `)
+
   // Indexes for fast lookup
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
@@ -216,6 +243,8 @@ function initializeSchema(db: DatabaseSync) {
     CREATE INDEX IF NOT EXISTS idx_sessions_token_hash ON admin_sessions(token_hash);
     CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs(created_at);
     CREATE INDEX IF NOT EXISTS idx_login_attempts ON login_attempts(ip_address, attempted_at);
+    CREATE INDEX IF NOT EXISTS idx_notifications_created ON admin_notifications(created_at);
+    CREATE INDEX IF NOT EXISTS idx_notifications_read ON admin_notifications(is_read);
   `)
 
   // Seed Initial Admin User if none exists
@@ -370,6 +399,95 @@ function initializeSchema(db: DatabaseSync) {
       )
     }
   }
+
+  // Seed sample initial notifications if admin_notifications table is empty
+  const checkNotifs = db.prepare('SELECT COUNT(*) as count FROM admin_notifications').get() as { count: number }
+  if (checkNotifs.count === 0) {
+    const seedNotifications = [
+      {
+        id: 'notif_init01',
+        type: 'inquiry',
+        title: 'New Proposal Request: Rajesh Kannan',
+        message: 'Rajesh Kannan requested an AI & Machine Learning proposal (Growth Tier, ₹15k - ₹50k). Follow-up pending response.',
+        link: '/admin/inquiries',
+        reference_id: 'inq_init01',
+        reference_type: 'inquiries',
+        is_read: 0,
+        created_at: '2026-04-20T08:30:00Z',
+      },
+      {
+        id: 'notif_init02',
+        type: 'quote',
+        title: 'Inquiry Contacted: Priyanka Sundaram',
+        message: 'Proposal request for Web Development marked contacted with Vogue Boutique.',
+        link: '/admin/inquiries',
+        reference_id: 'inq_init02',
+        reference_type: 'inquiries',
+        is_read: 1,
+        created_at: '2026-04-18T14:45:00Z',
+      },
+      {
+        id: 'notif_init03',
+        type: 'user',
+        title: 'Client Registered: AgriSmart Telemetry',
+        message: 'Kavitha S. successfully verified client account under founder role.',
+        link: '/admin/users',
+        reference_id: 'usr_agrismart05',
+        reference_type: 'users',
+        is_read: 1,
+        created_at: '2026-04-12T11:00:00Z',
+      },
+      {
+        id: 'notif_init04',
+        type: 'audit',
+        title: 'Admin Security: Administrator Provisioned',
+        message: 'Initial administrator credentials generated and registered.',
+        link: '/admin/settings',
+        reference_id: 'adm_bbe50737c06ea410',
+        reference_type: 'admin_users',
+        is_read: 1,
+        created_at: '2026-04-01T00:00:00Z',
+      },
+    ]
+
+    const insertNotif = db.prepare(`
+      INSERT INTO admin_notifications (id, type, title, message, link, reference_id, reference_type, is_read, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `)
+
+    for (const n of seedNotifications) {
+      insertNotif.run(n.id, n.type, n.title, n.message, n.link, n.reference_id, n.reference_type, n.is_read, n.created_at)
+    }
+  }
 }
 
 export const db = getDatabase()
+
+export function recordNotification(options: {
+  type: 'inquiry' | 'quote' | 'user' | 'application' | 'audit' | 'system'
+  title: string
+  message: string
+  link: string
+  referenceId?: string | null
+  referenceType?: string | null
+  isRead?: number
+  createdAt?: string
+}): string {
+  const id = 'notif_' + crypto.randomBytes(8).toString('hex')
+  const now = options.createdAt || new Date().toISOString()
+  db.prepare(`
+    INSERT INTO admin_notifications (id, type, title, message, link, reference_id, reference_type, is_read, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    id,
+    options.type,
+    options.title,
+    options.message,
+    options.link,
+    options.referenceId || null,
+    options.referenceType || null,
+    options.isRead ?? 0,
+    now
+  )
+  return id
+}
