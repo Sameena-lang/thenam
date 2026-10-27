@@ -30,8 +30,8 @@ export default function ServicesPage() {
       icon: Monitor,
       colorClass: 'cyan',
       title: 'Web Development',
-      badge: 'From ₹1,999*',
       subtitle: 'Modern, high-conversion websites and custom web applications.',
+      image: '/services/media_1793106283542.jpg',
       description:
         'We engineer responsive, blazing-fast websites and web applications with Next.js, React, and Tailwind CSS. Built with clean code, SEO optimization, and intuitive UX.',
       features: [
@@ -49,6 +49,7 @@ export default function ServicesPage() {
       title: 'AI & Machine Learning',
       badge: 'High Impact',
       subtitle: 'Practical AI tools that automate work and deliver smart decisions.',
+      image: '/services/media_1793106312913.png',
       description:
         'Turn state-of-the-art language models and computer vision into business productivity. We build conversational agents, predictive tools, and intelligent data pipelines.',
       features: [
@@ -66,6 +67,7 @@ export default function ServicesPage() {
       title: 'Custom Software Development',
       badge: 'Enterprise Grade',
       subtitle: 'Tailored software crafted around your specific operational workflows.',
+      image: '/services/media_1793106316411.png',
       description:
         'Eliminate repetitive spreadsheet chaos with secure, scalable custom software. We build internal business tools, client portals, and cloud-native SaaS systems.',
       features: [
@@ -83,6 +85,7 @@ export default function ServicesPage() {
       title: 'Business Automation',
       badge: 'Save 20+ hrs/wk',
       subtitle: 'Connect your business tools and let workflows run automatically.',
+      image: '/services/media_1793106381649.jpg',
       description:
         'Stop doing manual data entry. We design automated workflows connecting WhatsApp, email, payment systems, databases, and accounting software.',
       features: [
@@ -100,6 +103,7 @@ export default function ServicesPage() {
       title: 'Mobile App Development',
       badge: 'iOS & Android',
       subtitle: 'Cross-platform mobile apps with native speed and fluid animations.',
+      image: '/services/media_1793106579086.jpg',
       description:
         'Deliver your services directly to customers’ pockets. We develop high-performance iOS and Android applications with React Native and modern native bridges.',
       features: [
@@ -117,6 +121,7 @@ export default function ServicesPage() {
       title: 'Cloud & DevOps Solutions',
       badge: '99.99% Uptime',
       subtitle: 'Secure, cost-optimized cloud infrastructure on AWS, GCP & Vercel.',
+      image: '/services/cloud-devops.png',
       description:
         'Ensure your digital products stay online, fast, and secure under peak traffic. We design automated CI/CD pipelines, containerized microservices, and managed backups.',
       features: [
@@ -194,21 +199,36 @@ export default function ServicesPage() {
                         <div className={`service-icon-wrap ${service.colorClass}`} style={{ margin: 0 }}>
                           <Icon size={24} />
                         </div>
-                        <span style={{
-                          fontSize: '11px',
-                          fontWeight: '800',
-                          padding: '4px 10px',
-                          borderRadius: '20px',
-                          background: service.badge.includes('₹') ? '#ecfdf5' : '#f1f5f9',
-                          color: service.badge.includes('₹') ? '#059669' : '#0284c7',
-                          border: '1px solid currentColor',
-                        }}>
-                          {service.badge}
-                        </span>
+                        {service.badge && (
+                          <span style={{
+                            fontSize: '11px',
+                            fontWeight: '800',
+                            padding: '4px 10px',
+                            borderRadius: '20px',
+                            background: service.badge?.includes('₹') ? '#ecfdf5' : '#f1f5f9',
+                            color: service.badge?.includes('₹') ? '#059669' : '#0284c7',
+                            border: '1px solid currentColor',
+                          }}>
+                            {service.badge}
+                          </span>
+                        )}
                       </div>
 
                       <h3 className="service-card-title" style={{ fontSize: '20px', marginBottom: '6px' }}>{service.title}</h3>
                       <p style={{ fontSize: '13px', color: '#0284c7', fontWeight: '600', marginBottom: '12px' }}>{service.subtitle}</p>
+
+                      {'image' in service && service.image && (
+                        <div className="service-card-media-wrap" style={{ height: '180px', marginBottom: '18px', borderRadius: '10px', overflow: 'hidden' }}>
+                          <img
+                            src={service.image}
+                            alt={`${service.title} - Thenam Software Solutions`}
+                            className="service-card-img"
+                            loading="lazy"
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
+                        </div>
+                      )}
+
                       <p className="service-card-desc" style={{ fontSize: '13px', lineHeight: '1.65', marginBottom: '20px' }}>{service.description}</p>
 
                       <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
