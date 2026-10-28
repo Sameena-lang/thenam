@@ -1,7 +1,9 @@
+import { Suspense } from 'react'
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import FloatingButtons from '@/components/FloatingButtons'
+import AnalyticsTracker from '@/components/AnalyticsTracker'
 
 export const metadata: Metadata = {
   title: 'Thenam Software Solutions | Technology That Moves Your Business Forward',
@@ -49,6 +51,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
+        <Suspense fallback={null}>
+          <AnalyticsTracker />
+        </Suspense>
         {children}
         <FloatingButtons />
         <Analytics />

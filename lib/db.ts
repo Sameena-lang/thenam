@@ -143,6 +143,34 @@ export interface AdminNotification {
   created_at: string
 }
 
+export interface PageViewRecord {
+  id: string
+  visitor_id: string
+  session_id: string
+  path: string
+  title: string | null
+  referrer: string | null
+  service_id: string | null
+  product_id: string | null
+  device_type: string
+  browser: string | null
+  os: string | null
+  created_at: string
+  date: string
+}
+
+export interface AnalyticsEventRecord {
+  id: string
+  visitor_id: string
+  session_id: string
+  event_name: string
+  event_category: string
+  resource_id: string | null
+  resource_name: string | null
+  created_at: string
+  date: string
+}
+
 declare global {
   // eslint-disable-next-line no-var
   var __thenam_db__: DatabaseSync | undefined
@@ -375,6 +403,43 @@ function initializeSchema(db: DatabaseSync) {
     );
   `)
 
+  // 13. Website Analytics Pageviews Table (Lightweight First-Party Tracking)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS analytics_pageviews (
+      id TEXT PRIMARY KEY,
+      visitor_id TEXT NOT NULL,
+      session_id TEXT NOT NULL,
+      path TEXT NOT NULL,
+      title TEXT,
+      referrer TEXT,
+      service_id TEXT,
+      product_id TEXT,
+      device_type TEXT DEFAULT 'desktop',
+      browser TEXT,
+      os TEXT,
+      created_at TEXT NOT NULL,
+      date TEXT NOT NULL
+    );
+  `)
+
+  // 14. Website Analytics Events Table (Conversions, Enquiries, Interactions)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS analytics_events (
+      id TEXT PRIMARY KEY,
+      visitor_id TEXT NOT NULL,
+      session_id TEXT NOT NULL,
+      event_name TEXT NOT NULL,
+      event_category TEXT DEFAULT 'conversion',
+      resource_id TEXT,
+      resource_name TEXT,
+      created_at TEXT NOT NULL,
+      date TEXT NOT NULL
+    );
+  `)
+
+  // Ensure visitor_id column exists on inquiries for conversion tracking
+  try { db.exec('ALTER TABLE inquiries ADD COLUMN visitor_id TEXT;') } catch { /* exists */ }
+
   // Indexes for fast lookup
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
@@ -382,6 +447,7 @@ function initializeSchema(db: DatabaseSync) {
     CREATE INDEX IF NOT EXISTS idx_users_created_at ON users(created_at);
     CREATE INDEX IF NOT EXISTS idx_inquiries_created_at ON inquiries(created_at);
     CREATE INDEX IF NOT EXISTS idx_inquiries_status ON inquiries(status);
+    CREATE INDEX IF NOT EXISTS idx_inquiries_visitor ON inquiries(visitor_id);
     CREATE INDEX IF NOT EXISTS idx_sessions_token_hash ON admin_sessions(token_hash);
     CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs(created_at);
     CREATE INDEX IF NOT EXISTS idx_login_attempts ON login_attempts(ip_address, attempted_at);
@@ -392,6 +458,12 @@ function initializeSchema(db: DatabaseSync) {
     CREATE INDEX IF NOT EXISTS idx_media_url ON media(url);
     CREATE INDEX IF NOT EXISTS idx_notifications_created ON admin_notifications(created_at);
     CREATE INDEX IF NOT EXISTS idx_notifications_read ON admin_notifications(is_read);
+    CREATE INDEX IF NOT EXISTS idx_analytics_pv_date ON analytics_pageviews(date);
+    CREATE INDEX IF NOT EXISTS idx_analytics_pv_visitor ON analytics_pageviews(visitor_id);
+    CREATE INDEX IF NOT EXISTS idx_analytics_pv_path ON analytics_pageviews(path);
+    CREATE INDEX IF NOT EXISTS idx_analytics_pv_created ON analytics_pageviews(created_at);
+    CREATE INDEX IF NOT EXISTS idx_analytics_ev_name_date ON analytics_events(event_name, date);
+    CREATE INDEX IF NOT EXISTS idx_analytics_ev_visitor ON analytics_events(visitor_id);
   `)
 
   // Seed Initial Admin User if none exists
@@ -1255,4 +1327,440 @@ export function recordNotification(options: {
     now
   )
   return id
+}
+
+/* ========================================================
+   WEBSITE ANALYTICS & REPORTING REPOSITORY FUNCTIONS
+   ======================================================== */
+
+/**
+ * Record a pageview event with privacy safeguards (no raw IP or PII)
+ */
+export function recordPageView(data: {
+  visitorId: string
+  sessionId: string
+  path: string
+  title?: string | null
+  referrer?: string | null
+  serviceId?: string | null
+  productId?: string | null
+  deviceType?: string | null
+  browser?: string | null
+  os?: string | null
+  createdAt?: string | null
+}): string {
+  const id = 'pv_' + crypto.randomBytes(8).toString('hex')
+  const now = data.createdAt || new Date().toISOString()
+  const date = now.slice(0, 10)
+
+  // Sanitize path (strip origin, limit 250 chars)
+  let cleanPath = (data.path || '/').trim()
+  if (cleanPath.startsWith('http')) {
+    try {
+      cleanPath = new URL(cleanPath).pathname
+    } catch {
+      cleanPath = cleanPath.slice(0, 120)
+    }
+  }
+  cleanPath = cleanPath.slice(0, 250)
+
+  db.prepare(`
+    INSERT INTO analytics_pageviews (
+      id, visitor_id, session_id, path, title, referrer, service_id, product_id, device_type, browser, os, created_at, date
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    id,
+    data.visitorId.slice(0, 64),
+    data.sessionId.slice(0, 64),
+    cleanPath,
+    data.title ? data.title.slice(0, 200) : null,
+    data.referrer ? data.referrer.slice(0, 200) : null,
+    data.serviceId ? data.serviceId.slice(0, 64) : null,
+    data.productId ? data.productId.slice(0, 64) : null,
+    data.deviceType || 'desktop',
+    data.browser ? data.browser.slice(0, 60) : null,
+    data.os ? data.os.slice(0, 60) : null,
+    now,
+    date
+  )
+
+  return id
+}
+
+/**
+ * Record an analytics interaction or conversion event
+ */
+export function recordAnalyticsEvent(data: {
+  visitorId: string
+  sessionId: string
+  eventName: string
+  eventCategory?: string | null
+  resourceId?: string | null
+  resourceName?: string | null
+  createdAt?: string | null
+}): string {
+  const id = 'ev_' + crypto.randomBytes(8).toString('hex')
+  const now = data.createdAt || new Date().toISOString()
+  const date = now.slice(0, 10)
+
+  db.prepare(`
+    INSERT INTO analytics_events (
+      id, visitor_id, session_id, event_name, event_category, resource_id, resource_name, created_at, date
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    id,
+    data.visitorId.slice(0, 64),
+    data.sessionId.slice(0, 64),
+    data.eventName.slice(0, 80),
+    data.eventCategory || 'conversion',
+    data.resourceId ? data.resourceId.slice(0, 80) : null,
+    data.resourceName ? data.resourceName.slice(0, 120) : null,
+    now,
+    date
+  )
+
+  return id
+}
+
+/**
+ * Fetch analytics overview summary for a specific date range
+ */
+export function getAnalyticsOverview(startDate: string, endDate: string) {
+  // 1. Total Page Views
+  const pvRow = db.prepare(`
+    SELECT COUNT(*) as count 
+    FROM analytics_pageviews 
+    WHERE date >= ? AND date <= ?
+  `).get(startDate, endDate) as { count: number }
+  const totalPageViews = pvRow?.count || 0
+
+  // 2. Unique Visitors (distinct visitor_id)
+  const uvRow = db.prepare(`
+    SELECT COUNT(DISTINCT visitor_id) as count 
+    FROM analytics_pageviews 
+    WHERE date >= ? AND date <= ?
+  `).get(startDate, endDate) as { count: number }
+  const uniqueVisitors = uvRow?.count || 0
+
+  // 3. Total Website Visits / Sessions
+  const sessRow = db.prepare(`
+    SELECT COUNT(DISTINCT session_id) as count 
+    FROM analytics_pageviews 
+    WHERE date >= ? AND date <= ?
+  `).get(startDate, endDate) as { count: number }
+  const totalVisitors = sessRow?.count || 0
+
+  // 4. Total Enquiries in period
+  const inqRow = db.prepare(`
+    SELECT COUNT(*) as count 
+    FROM inquiries 
+    WHERE substr(created_at, 1, 10) >= ? AND substr(created_at, 1, 10) <= ?
+  `).get(startDate, endDate) as { count: number }
+  const totalEnquiries = inqRow?.count || 0
+
+  // 5. Number of website visitors who submitted an enquiry (deduplicated by visitor_id)
+  // Cross-reference visitors from analytics_events and inquiries.visitor_id
+  const enquiringVisitorsRow = db.prepare(`
+    SELECT COUNT(DISTINCT visitor_id) as count 
+    FROM (
+      SELECT visitor_id FROM analytics_events 
+      WHERE event_name = 'enquiry_submitted' AND date >= ? AND date <= ?
+      UNION 
+      SELECT visitor_id FROM inquiries 
+      WHERE visitor_id IS NOT NULL AND visitor_id != '' AND substr(created_at, 1, 10) >= ? AND substr(created_at, 1, 10) <= ?
+    )
+  `).get(startDate, endDate, startDate, endDate) as { count: number }
+  
+  // Note: if enquiries were submitted prior to tracking or by direct submissions without cookie,
+  // we count the verified distinct enquiring visitors, capped at totalEnquiries and uniqueVisitors
+  let enquiringVisitors = enquiringVisitorsRow?.count || 0
+  if (enquiringVisitors === 0 && totalEnquiries > 0 && uniqueVisitors > 0) {
+    // If enquiries exist in the date range but no visitor_id was tagged yet, treat matching count as estimated
+    enquiringVisitors = Math.min(totalEnquiries, uniqueVisitors)
+  }
+
+  // 6. Enquiry Conversion Rate: (Visitors who submitted enquiry / Unique visitors) * 100
+  const conversionRate = uniqueVisitors > 0 
+    ? Number(((enquiringVisitors / uniqueVisitors) * 100).toFixed(2)) 
+    : 0
+
+  return {
+    totalVisitors,
+    uniqueVisitors,
+    totalPageViews,
+    totalEnquiries,
+    enquiringVisitors,
+    conversionRate,
+    startDate,
+    endDate,
+  }
+}
+
+/**
+ * Helper to generate all dates between startDate and endDate in YYYY-MM-DD
+ */
+function getDateRangeArray(startDate: string, endDate: string): string[] {
+  const dates: string[] = []
+  const current = new Date(startDate + 'T00:00:00Z')
+  const last = new Date(endDate + 'T00:00:00Z')
+
+  if (isNaN(current.getTime()) || isNaN(last.getTime()) || current > last) {
+    return [startDate]
+  }
+
+  // Cap at 366 days max for safety
+  let count = 0
+  while (current <= last && count < 366) {
+    dates.push(current.toISOString().slice(0, 10))
+    current.setUTCDate(current.getUTCDate() + 1)
+    count++
+  }
+  return dates
+}
+
+/**
+ * Fetch daily traffic series for interactive charting
+ */
+export function getDailyTrafficSeries(startDate: string, endDate: string) {
+  const dateList = getDateRangeArray(startDate, endDate)
+
+  // Query daily pageviews & unique visitors
+  const pvRows = db.prepare(`
+    SELECT date, COUNT(*) as page_views, COUNT(DISTINCT visitor_id) as unique_visitors
+    FROM analytics_pageviews
+    WHERE date >= ? AND date <= ?
+    GROUP BY date
+  `).all(startDate, endDate) as Array<{ date: string; page_views: number; unique_visitors: number }>
+
+  // Query daily inquiries
+  const inqRows = db.prepare(`
+    SELECT substr(created_at, 1, 10) as date, COUNT(*) as enquiries
+    FROM inquiries
+    WHERE substr(created_at, 1, 10) >= ? AND substr(created_at, 1, 10) <= ?
+    GROUP BY substr(created_at, 1, 10)
+  `).all(startDate, endDate) as Array<{ date: string; enquiries: number }>
+
+  const pvMap = new Map<string, { pageViews: number; uniqueVisitors: number }>()
+  for (const r of pvRows) {
+    pvMap.set(r.date, { pageViews: r.page_views, uniqueVisitors: r.unique_visitors })
+  }
+
+  const inqMap = new Map<string, number>()
+  for (const r of inqRows) {
+    inqMap.set(r.date, r.enquiries)
+  }
+
+  return dateList.map((d) => {
+    const pv = pvMap.get(d) || { pageViews: 0, uniqueVisitors: 0 }
+    const enq = inqMap.get(d) || 0
+    return {
+      date: d,
+      pageViews: pv.pageViews,
+      uniqueVisitors: pv.uniqueVisitors,
+      enquiries: enq,
+    }
+  })
+}
+
+/**
+ * Fetch most visited pages
+ */
+export function getTopPages(startDate: string, endDate: string, limit = 10) {
+  const rows = db.prepare(`
+    SELECT 
+      path, 
+      MAX(title) as title,
+      COUNT(*) as views, 
+      COUNT(DISTINCT visitor_id) as unique_visitors
+    FROM analytics_pageviews
+    WHERE date >= ? AND date <= ?
+    GROUP BY path
+    ORDER BY views DESC
+    LIMIT ?
+  `).all(startDate, endDate, limit) as Array<{
+    path: string
+    title: string | null
+    views: number
+    unique_visitors: number
+  }>
+
+  const totalViews = rows.reduce((sum, r) => sum + r.views, 0)
+
+  return rows.map((r) => ({
+    path: r.path,
+    title: r.title || r.path,
+    views: r.views,
+    uniqueVisitors: r.unique_visitors,
+    percentage: totalViews > 0 ? Number(((r.views / totalViews) * 100).toFixed(1)) : 0,
+  }))
+}
+
+/**
+ * Fetch popular services and products
+ */
+export function getPopularServicesAndProducts(startDate: string, endDate: string) {
+  // 1. Most Viewed Services
+  // From direct service page visits or service_id tags
+  const serviceViewRows = db.prepare(`
+    SELECT 
+      service_id, 
+      COUNT(*) as views, 
+      COUNT(DISTINCT visitor_id) as unique_visitors
+    FROM analytics_pageviews
+    WHERE date >= ? AND date <= ? AND service_id IS NOT NULL AND service_id != ''
+    GROUP BY service_id
+    ORDER BY views DESC
+  `).all(startDate, endDate) as Array<{ service_id: string; views: number; unique_visitors: number }>
+
+  // Also query all active services from DB to correlate titles
+  const allServices = db.prepare('SELECT id, title, badge, icon_name FROM services').all() as Array<{
+    id: string
+    title: string
+    badge: string
+    icon_name: string
+  }>
+
+  // Enquiries per service
+  const serviceInqRows = db.prepare(`
+    SELECT service_id, service_name, COUNT(*) as inq_count
+    FROM inquiries
+    WHERE substr(created_at, 1, 10) >= ? AND substr(created_at, 1, 10) <= ?
+    GROUP BY service_id
+  `).all(startDate, endDate) as Array<{ service_id: string; service_name: string; inq_count: number }>
+
+  const inqCountByService = new Map<string, number>()
+  for (const row of serviceInqRows) {
+    inqCountByService.set(row.service_id, row.inq_count)
+  }
+
+  const serviceViewsMap = new Map<string, { views: number; uniqueVisitors: number }>()
+  for (const row of serviceViewRows) {
+    serviceViewsMap.set(row.service_id, { views: row.views, uniqueVisitors: row.unique_visitors })
+  }
+
+  const services = allServices.map((s) => {
+    const stats = serviceViewsMap.get(s.id) || { views: 0, uniqueVisitors: 0 }
+    const enquiries = inqCountByService.get(s.id) || 0
+    return {
+      id: s.id,
+      title: s.title,
+      badge: s.badge,
+      views: stats.views,
+      uniqueVisitors: stats.uniqueVisitors,
+      enquiries,
+    }
+  }).sort((a, b) => (b.views + b.enquiries * 5) - (a.views + a.enquiries * 5))
+
+  // 2. Most Viewed Products
+  const productViewRows = db.prepare(`
+    SELECT 
+      product_id, 
+      COUNT(*) as views, 
+      COUNT(DISTINCT visitor_id) as unique_visitors
+    FROM analytics_pageviews
+    WHERE date >= ? AND date <= ? AND product_id IS NOT NULL AND product_id != ''
+    GROUP BY product_id
+    ORDER BY views DESC
+  `).all(startDate, endDate) as Array<{ product_id: string; views: number; unique_visitors: number }>
+
+  const allProducts = db.prepare('SELECT id, name, category, badge FROM products').all() as Array<{
+    id: string
+    name: string
+    category: string
+    badge: string
+  }>
+
+  const productViewsMap = new Map<string, { views: number; uniqueVisitors: number }>()
+  for (const row of productViewRows) {
+    productViewsMap.set(row.product_id, { views: row.views, uniqueVisitors: row.unique_visitors })
+  }
+
+  const products = allProducts.map((p) => {
+    const stats = productViewsMap.get(p.id) || { views: 0, uniqueVisitors: 0 }
+    return {
+      id: p.id,
+      name: p.name,
+      category: p.category,
+      badge: p.badge,
+      views: stats.views,
+      uniqueVisitors: stats.uniqueVisitors,
+    }
+  }).sort((a, b) => b.views - a.views)
+
+  return { services, products }
+}
+
+/**
+ * Fetch enquiry performance metrics and trends
+ */
+export function getEnquiryPerformanceData(startDate: string, endDate: string) {
+  // Monthly trend for last 6 months
+  const monthlyRows = db.prepare(`
+    SELECT 
+      substr(created_at, 1, 7) as month,
+      COUNT(*) as count
+    FROM inquiries
+    GROUP BY substr(created_at, 1, 7)
+    ORDER BY month DESC
+    LIMIT 6
+  `).all() as Array<{ month: string; count: number }>
+
+  // Daily inquiries in current period
+  const dailyRows = db.prepare(`
+    SELECT 
+      substr(created_at, 1, 10) as date,
+      COUNT(*) as count
+    FROM inquiries
+    WHERE substr(created_at, 1, 10) >= ? AND substr(created_at, 1, 10) <= ?
+    GROUP BY substr(created_at, 1, 10)
+    ORDER BY date ASC
+  `).all(startDate, endDate) as Array<{ date: string; count: number }>
+
+  // Breakdown by service in current period
+  const serviceBreakdown = db.prepare(`
+    SELECT 
+      service_name, 
+      COUNT(*) as count
+    FROM inquiries
+    WHERE substr(created_at, 1, 10) >= ? AND substr(created_at, 1, 10) <= ?
+    GROUP BY service_name
+    ORDER BY count DESC
+  `).all(startDate, endDate) as Array<{ service_name: string; count: number }>
+
+  // Budget Tier Breakdown
+  const budgetBreakdown = db.prepare(`
+    SELECT 
+      COALESCE(budget_tier, 'Not Specified') as tier,
+      COUNT(*) as count
+    FROM inquiries
+    WHERE substr(created_at, 1, 10) >= ? AND substr(created_at, 1, 10) <= ?
+    GROUP BY tier
+    ORDER BY count DESC
+  `).all(startDate, endDate) as Array<{ tier: string; count: number }>
+
+  // Status breakdown
+  const statusBreakdown = db.prepare(`
+    SELECT 
+      status,
+      COUNT(*) as count
+    FROM inquiries
+    WHERE substr(created_at, 1, 10) >= ? AND substr(created_at, 1, 10) <= ?
+    GROUP BY status
+  `).all(startDate, endDate) as Array<{ status: string; count: number }>
+
+  // NDA Requests
+  const ndaRow = db.prepare(`
+    SELECT COUNT(*) as count 
+    FROM inquiries 
+    WHERE need_nda = 1 AND substr(created_at, 1, 10) >= ? AND substr(created_at, 1, 10) <= ?
+  `).get(startDate, endDate) as { count: number }
+
+  return {
+    monthlyTrend: monthlyRows.reverse(),
+    dailyTrend: dailyRows,
+    serviceBreakdown,
+    budgetBreakdown,
+    statusBreakdown,
+    ndaRequests: ndaRow?.count || 0,
+  }
 }

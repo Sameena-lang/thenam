@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -28,7 +28,7 @@ const DEFAULT_SERVICE_CATEGORIES = [
     colorClass: 'cyan',
     title: 'Web Development',
     subtitle: 'Modern, high-conversion websites and custom web applications.',
-    imageUrl: '/services/media_1793106283542.jpg',
+    imageUrl: '/services/media_1793177571454_be4ff352.jpg',
     imageAlt: 'Web Development - Thenam Software Solutions',
     description:
       'We engineer responsive, blazing-fast websites and web applications with Next.js, React, and Tailwind CSS. Built with clean code, SEO optimization, and intuitive UX.',
@@ -47,7 +47,7 @@ const DEFAULT_SERVICE_CATEGORIES = [
     title: 'AI & Machine Learning',
     badge: 'High Impact',
     subtitle: 'Practical AI tools that automate work and deliver smart decisions.',
-    imageUrl: '/services/media_1793106312913.png',
+    imageUrl: '/services/media_1793177581773_ebe5ac2e.jpg',
     imageAlt: 'AI & Machine Learning - Thenam Software Solutions',
     description:
       'Turn state-of-the-art language models and computer vision into business productivity. We build conversational agents, predictive tools, and intelligent data pipelines.',
@@ -66,7 +66,7 @@ const DEFAULT_SERVICE_CATEGORIES = [
     title: 'Custom Software Development',
     badge: 'Enterprise Grade',
     subtitle: 'Tailored software crafted around your specific operational workflows.',
-    imageUrl: '/services/media_1793106316411.png',
+    imageUrl: '/services/media_1793177606591_2777dffe.jpg',
     imageAlt: 'Custom Software Development - Thenam Software Solutions',
     description:
       'Eliminate repetitive spreadsheet chaos with secure, scalable custom software. We build internal business tools, client portals, and cloud-native SaaS systems.',
@@ -85,7 +85,7 @@ const DEFAULT_SERVICE_CATEGORIES = [
     title: 'Business Automation',
     badge: 'Save 20+ hrs/wk',
     subtitle: 'Connect your business tools and let workflows run automatically.',
-    imageUrl: '/services/media_1793106381649.jpg',
+    imageUrl: '/services/media_1793177731362_e9e3a465.jpg',
     imageAlt: 'Business Automation - Thenam Software Solutions',
     description:
       'Stop doing manual data entry. We design automated workflows connecting WhatsApp, email, payment systems, databases, and accounting software.',
@@ -104,7 +104,7 @@ const DEFAULT_SERVICE_CATEGORIES = [
     title: 'Mobile App Development',
     badge: 'iOS & Android',
     subtitle: 'Cross-platform mobile apps with native speed and fluid animations.',
-    imageUrl: '/services/media_1793106579086.jpg',
+    imageUrl: '/services/media_1793177742676_42188474.jpg',
     imageAlt: 'Mobile App Development - Thenam Software Solutions',
     description:
       "Deliver your services directly to customers' pockets. We develop high-performance iOS and Android applications with React Native and modern native bridges.",
@@ -184,18 +184,21 @@ export default function ServicesPage() {
             features: string[]
             image_url?: string | null
             image_alt?: string | null
-          }) => ({
-            id: s.id,
-            icon: (s.icon_name && ICON_MAP[s.icon_name]) ? ICON_MAP[s.icon_name] : Monitor,
-            colorClass: s.color_class || 'cyan',
-            title: s.title,
-            badge: s.badge,
-            subtitle: s.subtitle,
-            description: s.description,
-            features: Array.isArray(s.features) ? s.features : [],
-            imageUrl: s.image_url || null,
-            imageAlt: s.image_alt || null,
-          }))
+          }) => {
+            const defaultMatch = DEFAULT_SERVICE_CATEGORIES.find((d) => d.id === s.id)
+            return {
+              id: s.id,
+              icon: (s.icon_name && ICON_MAP[s.icon_name]) ? ICON_MAP[s.icon_name] : Monitor,
+              colorClass: s.color_class || 'cyan',
+              title: s.title,
+              badge: s.badge,
+              subtitle: s.subtitle,
+              description: s.description,
+              features: Array.isArray(s.features) ? s.features : [],
+              imageUrl: s.image_url || defaultMatch?.imageUrl || null,
+              imageAlt: s.image_alt || defaultMatch?.imageAlt || null,
+            }
+          })
           setServiceCategories(mapped)
         }
       })
@@ -288,9 +291,6 @@ export default function ServicesPage() {
                         )}
                       </div>
 
-                      <h3 className="service-card-title" style={{ fontSize: '20px', marginBottom: '6px' }}>{service.title}</h3>
-                      <p style={{ fontSize: '13px', color: '#0284c7', fontWeight: '600', marginBottom: '12px' }}>{service.subtitle}</p>
-
                       {service.imageUrl && (
                         <div className="service-card-media-wrap" style={{ height: '180px', marginBottom: '18px', borderRadius: '10px', overflow: 'hidden' }}>
                           <img
@@ -302,6 +302,9 @@ export default function ServicesPage() {
                           />
                         </div>
                       )}
+
+                      <h3 className="service-card-title" style={{ fontSize: '20px', marginBottom: '6px' }}>{service.title}</h3>
+                      <p style={{ fontSize: '13px', color: '#0284c7', fontWeight: '600', marginBottom: '12px' }}>{service.subtitle}</p>
 
                       <p className="service-card-desc" style={{ fontSize: '13px', lineHeight: '1.65', marginBottom: '20px' }}>{service.description}</p>
 

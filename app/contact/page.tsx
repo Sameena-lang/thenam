@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
+import { getOrCreateVisitorId, getOrCreateSessionId, trackClientEvent } from '@/components/AnalyticsTracker'
 import {
   Sparkles,
   ArrowRight,
@@ -110,9 +111,10 @@ export default function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
     try {
-      await fetch('/api/inquiries', {
+      const vid = getOrCreateVisitorId()
+      const sid = getOrCreateSessionId()
+      const res = await fetch('/api/inquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -126,10 +128,27 @@ export default function ContactPage() {
           timeline: timelineOptions.find((t) => t.id === selectedTimeline)?.label || selectedTimeline,
           message,
           needNda,
+          visitorId: vid,
+          sessionId: sid,
         }),
       })
+
+      if (res.ok) {
+        setSubmitted(true)
+        // Track successful enquiry submission ONLY after backend confirms saved
+        trackClientEvent({
+          eventName: 'enquiry_submitted',
+          eventCategory: 'conversion',
+          resourceId: currentServiceObj.id,
+          resourceName: currentServiceObj.name,
+        })
+      } else {
+        const errData = await res.json().catch(() => null)
+        alert(errData?.error || 'Failed to submit enquiry. Please try again.')
+      }
     } catch (err) {
       console.error('Inquiry submission error:', err)
+      alert('Failed to submit enquiry. Please check your connection and try again.')
     }
   }
 
