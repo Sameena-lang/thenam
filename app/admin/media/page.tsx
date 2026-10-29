@@ -59,6 +59,9 @@ export default function AdminMediaPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [successNotice, setSuccessNotice] = useState<string | null>(null)
+  const [sectionCounts, setSectionCounts] = useState<Record<string, number>>({})
+  const [totalAssetsCount, setTotalAssetsCount] = useState<number>(0)
+  const [syncing, setSyncing] = useState(false)
 
   // Filtering & Search
   const [search, setSearch] = useState('')
@@ -438,7 +441,7 @@ export default function AdminMediaPage() {
           }}
         >
           <LucideImage size={16} />
-          <span>Media Library ({mediaList.length})</span>
+          <span>Media Library ({totalAssetsCount || mediaList.length})</span>
         </button>
 
         <button

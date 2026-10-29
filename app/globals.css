@@ -3559,8 +3559,14 @@ button {
 .community-cards-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-  align-items: stretch;
+  gap: 24px;
+  align-items: start;
+  justify-items: center;
+}
+
+.community-cards-grid.single-tab-active {
+  display: flex;
+  justify-content: center;
 }
 
 .social-feed-card {
@@ -3580,6 +3586,28 @@ button {
   box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6);
 }
 
+
+.social-feed-card.card-instagram {
+  aspect-ratio: 1 / 1;
+  max-width: 380px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.social-feed-card.card-linkedin,
+.social-feed-card.card-youtube {
+  width: 100%;
+  max-width: 380px;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0 auto;
+}
+
 .card-instagram:hover {
   border-color: rgba(225, 48, 108, 0.4);
 }
@@ -3594,7 +3622,7 @@ button {
 
 /* Card Banner */
 .social-card-banner {
-  padding: 16px 20px;
+  padding: 10px 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -3672,8 +3700,8 @@ button {
 .social-profile-row {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px 20px;
+  gap: 10px;
+  padding: 10px 14px;
   background: #0a1426;
   border-bottom: 1px solid #142136;
 }
@@ -3882,6 +3910,187 @@ button {
   color: #94a3b8;
   line-height: 1.4;
 }
+
+
+/* ========================================================
+   COMPACT INSTAGRAM CARD & GALLERY (BALANCED WITH LINKEDIN & YOUTUBE)
+   ======================================================== */
+.ig-mini-handle {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.ig-compact-bio-bar {
+  padding: 8px 16px;
+  background: #060e1c;
+  border-bottom: 1px solid #142136;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.ig-compact-bio-text {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: #cbd5e1;
+  margin-bottom: 2px;
+}
+
+.ig-lead-badge {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(0, 201, 242, 0.15);
+  color: #00c9f2;
+  border: 1px solid rgba(0, 201, 242, 0.3);
+}
+
+.ig-compact-bio-sub {
+  color: #94a3b8;
+  font-size: 10.5px;
+}
+
+.ig-compact-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px 14px;
+  background: #081120;
+}
+
+.ig-compact-tile {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  background: #060e1c;
+  border: 1px solid #142136;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.ig-compact-tile:hover {
+  transform: translateY(-2px);
+  border-color: rgba(225, 48, 108, 0.45);
+  box-shadow: 0 4px 12px rgba(225, 48, 108, 0.18);
+}
+
+.ig-compact-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #020617;
+}
+
+.ig-compact-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.ig-compact-tile:hover .ig-compact-img {
+  transform: scale(1.08);
+}
+
+.ig-compact-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #ffffff;
+  backdrop-filter: blur(4px);
+  z-index: 2;
+}
+
+.ig-compact-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 3;
+}
+
+.ig-compact-tile:hover .ig-compact-overlay {
+  opacity: 1;
+}
+
+.ig-compact-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.ig-compact-caption {
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ig-compact-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #f1f5f9;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ig-compact-tag {
+  font-size: 9.5px;
+  color: #00c9f2;
+  font-weight: 600;
+}
+
+/* Light mode overrides for Compact Instagram */
+html.light .ig-compact-bio-bar {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+html.light .ig-compact-bio-text {
+  color: #334155;
+}
+
+html.light .ig-compact-bio-sub {
+  color: #64748b;
+}
+
+html.light .ig-compact-gallery {
+  background: #ffffff;
+}
+
+html.light .ig-compact-tile {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+html.light .ig-compact-title {
+  color: #0f172a;
+}
+
 
 /* LinkedIn Posts Stack */
 .li-posts-stack {

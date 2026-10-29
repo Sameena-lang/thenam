@@ -29,9 +29,9 @@ export async function GET(request: Request) {
     }
 
     if (search) {
-      query += ' AND (filename LIKE ? OR original_name LIKE ? OR alt_text LIKE ? OR section_tag LIKE ?)'
+      query += ' AND (filename LIKE ? OR original_name LIKE ? OR alt_text LIKE ? OR section_tag LIKE ? OR url LIKE ?)'
       const s = `%${search}%`
-      queryParams.push(s, s, s, s)
+      queryParams.push(s, s, s, s, s)
     }
 
     query += ' ORDER BY created_at DESC'
@@ -48,15 +48,24 @@ export async function GET(request: Request) {
       }
     })
 
-    // Total stats
+    // Total stats & section counts
     const totalCount = (db.prepare('SELECT COUNT(*) as count FROM media').get() as { count: number }).count
     const totalBytes = (db.prepare('SELECT COALESCE(SUM(file_size), 0) as total FROM media').get() as { total: number }).total
+
+    const sectionCountsRows = (db.prepare('SELECT section_tag, COUNT(*) as count FROM media GROUP BY section_tag').all() as unknown) as Array<{ section_tag: string; count: number }>
+    const sectionCounts: Record<string, number> = { all: totalCount }
+    for (const r of sectionCountsRows) {
+      if (r.section_tag) {
+        sectionCounts[r.section_tag] = r.count
+      }
+    }
 
     return NextResponse.json({
       media,
       stats: {
         totalCount,
         totalBytes,
+        sectionCounts,
       },
     })
   } catch (error) {

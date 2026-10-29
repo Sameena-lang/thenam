@@ -10,6 +10,7 @@ import {
   AlertCircle,
   Loader2,
   RefreshCw,
+  Search,
 } from 'lucide-react'
 
 export interface MediaOption {
@@ -53,6 +54,8 @@ export default function AdminImagePicker({
   const [mediaList, setMediaList] = useState<MediaOption[]>([])
   const [loadingMedia, setLoadingMedia] = useState(false)
   const [libraryError, setLibraryError] = useState<string | null>(null)
+  const [pickerSearch, setPickerSearch] = useState('')
+  const [pickerSection, setPickerSection] = useState<string>('all')
 
   // Fetch available images from Media Library when drawer opens
   const fetchMediaList = async () => {
@@ -106,6 +109,16 @@ export default function AdminImagePicker({
       fileInputRef.current.value = ''
     }
   }
+
+  const displayedMedia = mediaList.filter((m) => {
+    const matchesSection = pickerSection === 'all' || m.section_tag === pickerSection
+    const matchesSearch =
+      !pickerSearch.trim() ||
+      m.original_name.toLowerCase().includes(pickerSearch.toLowerCase()) ||
+      (m.alt_text && m.alt_text.toLowerCase().includes(pickerSearch.toLowerCase())) ||
+      m.url.toLowerCase().includes(pickerSearch.toLowerCase())
+    return matchesSection && matchesSearch
+  })
 
   const handleSelectFromLibrary = (item: MediaOption) => {
     handleClearSelection()
@@ -362,7 +375,7 @@ export default function AdminImagePicker({
           borderRadius: '10px',
           padding: '12px',
           marginBottom: '12px',
-          maxHeight: '220px',
+          maxHeight: '280px',
           overflowY: 'auto',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>

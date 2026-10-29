@@ -189,7 +189,8 @@ export default function CommunityFeeds() {
         </div>
 
         {/* 3-Column Social Media Feed Cards Grid */}
-        <div className="community-cards-grid">
+        <div className={`community-cards-grid ${activeTab !== 'all' ? 'single-tab-active' : ''}`}>
+
           {/* ========================================================
               CARD 1: INSTAGRAM GALLERY
               ======================================================== */}
@@ -199,7 +200,7 @@ export default function CommunityFeeds() {
               <div className="social-card-banner ig-banner">
                 <div className="banner-left">
                   <div className="social-brand-icon">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                     </svg>
                   </div>
@@ -216,12 +217,12 @@ export default function CommunityFeeds() {
                   className="banner-action-btn"
                   aria-label="Follow Thenam Software Solutions on Instagram"
                 >
-                  <span>Follow Us</span>
-                  <ExternalLink size={13} />
+                  <span>Follow</span>
+                  <ExternalLink size={12} />
                 </a>
               </div>
 
-              {/* Profile Bar */}
+              {/* Profile Row: Real stats & Verified Handle */}
               <div className="social-profile-row">
                 <div className="profile-avatar-wrap ring-instagram">
                   <img src="/thenam-logo.png" alt="Thenam Software Solutions" className="profile-avatar-img" />
@@ -229,21 +230,32 @@ export default function CommunityFeeds() {
                 <div className="profile-info-wrap">
                   <div className="profile-name-row">
                     <span className="profile-name">Thenam Software Solutions</span>
-                    <CheckCircle2 size={14} className="verified-badge-blue" />
+                    <CheckCircle2 size={13} className="verified-badge-blue" />
+                    <span className="ig-mini-handle">@thenam_software_solutions</span>
                   </div>
-                  <p className="profile-tagline">🌐 Empowering Tech Solutions 💡 AI | Web | Cloud</p>
                   <div className="profile-stats-chips">
-                    <span><strong>3</strong> Posts</span>
+                    <span><strong>18</strong> Posts</span>
                     <span className="stat-dot">•</span>
-                    <span><strong>57+</strong> Followers</span>
+                    <span><strong>59</strong> Followers</span>
                     <span className="stat-dot">•</span>
-                    <span><strong>8</strong> Following</span>
+                    <span><strong>9</strong> Following</span>
                   </div>
                 </div>
               </div>
 
-              {/* Instagram Post Showcase Grid */}
-              <div className="ig-posts-grid">
+              {/* Exact Real Bio & Leadership */}
+              <div className="ig-compact-bio-bar">
+                <div className="ig-compact-bio-text">
+                  <span className="ig-lead-badge">Leadership</span>
+                  <span>Harishwaran. P (CEO) · Jayamurugan V (Founder)</span>
+                </div>
+                <div className="ig-compact-bio-sub">
+                  <span>🌐 AI | Web | Cloud · Porur, Chennai 600116</span>
+                </div>
+              </div>
+
+              {/* Exact 3-Column Square Image Gallery */}
+              <div className="ig-compact-gallery">
                 {instagramPosts.map((post) => {
                   const isLiked = likedPosts[post.id]
                   return (
@@ -252,41 +264,25 @@ export default function CommunityFeeds() {
                       href={post.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="ig-post-item group"
+                      className="ig-compact-tile group"
                       aria-label={post.title}
+                      title={post.title}
                     >
-                      <div className="ig-post-thumb-wrap">
-                        <img src={post.image} alt={post.title} className="ig-post-img" />
-                        <span className="ig-post-badge">{post.badge}</span>
+                      <div className="ig-compact-img-wrap">
+                        <img src={post.image} alt={post.title} className="ig-compact-img" />
+                        <span className="ig-compact-badge">{post.badge}</span>
 
                         {/* Hover Overlay */}
-                        <div className="ig-post-overlay">
-                          <div className="ig-overlay-metrics">
-                            <button
-                              type="button"
-                              className="metric-btn"
-                              onClick={(e) => toggleLike(post.id, e)}
-                              aria-label="Like post"
-                            >
-                              <Heart
-                                size={15}
-                                fill={isLiked ? '#ef4444' : 'white'}
-                                stroke={isLiked ? '#ef4444' : 'white'}
-                              />
-                              <span>{post.likes + (isLiked ? 1 : 0)}</span>
-                            </button>
-                            <span className="metric-btn">
-                              <MessageCircle size={15} />
-                              <span>{post.comments}</span>
-                            </span>
-                          </div>
-                          <span className="ig-view-label">View on Instagram</span>
+                        <div className="ig-compact-overlay">
+                          <span className="ig-compact-metric">
+                            <Heart size={11} fill="#ffffff" />
+                            {post.likes + (isLiked ? 1 : 0)}
+                          </span>
+                          <span className="ig-compact-metric">
+                            <MessageCircle size={11} fill="#ffffff" />
+                            {post.comments}
+                          </span>
                         </div>
-                      </div>
-
-                      <div className="ig-post-caption-box">
-                        <span className="ig-post-title">{post.title}</span>
-                        <span className="ig-post-subtitle">{post.subtitle}</span>
                       </div>
                     </a>
                   )
@@ -301,8 +297,8 @@ export default function CommunityFeeds() {
                   rel="noopener noreferrer"
                   className="card-footer-cta"
                 >
-                  <span>Explore @thenam_software_solutions on Instagram</span>
-                  <ArrowRight size={14} />
+                  <span>Explore @thenam_software_solutions</span>
+                  <ArrowRight size={13} />
                 </a>
               </div>
             </article>
@@ -360,7 +356,7 @@ export default function CommunityFeeds() {
 
               {/* LinkedIn Posts Feed */}
               <div className="li-posts-stack">
-                {linkedinUpdates.map((post) => {
+                {(activeTab === 'all' ? linkedinUpdates.slice(0, 1) : linkedinUpdates).map((post) => {
                   const isLiked = likedPosts[post.id]
                   return (
                     <div key={post.id} className="li-post-card">
@@ -483,7 +479,7 @@ export default function CommunityFeeds() {
 
               {/* YouTube Video List */}
               <div className="yt-videos-stack">
-                {youtubeVideos.map((video) => (
+                {(activeTab === 'all' ? youtubeVideos.slice(0, 1) : youtubeVideos).map((video) => (
                   <a
                     key={video.id}
                     href={video.url}

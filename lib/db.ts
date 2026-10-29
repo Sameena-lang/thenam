@@ -2,6 +2,7 @@ import { DatabaseSync } from 'node:sqlite'
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
+import { inspectImageBuffer } from './media-storage'
 
 // Types
 export interface AdminUser {
@@ -1169,6 +1170,9 @@ function initializeSchema(db: DatabaseSync) {
     }
   }
 
+  // Automatically synchronize all static and uploaded images in public/
+  syncAllPublicMediaWithDb(db)
+
   // Seed sample initial notifications if admin_notifications table is empty
   const checkNotifs = db.prepare('SELECT COUNT(*) as count FROM admin_notifications').get() as { count: number }
   if (checkNotifs.count === 0) {
@@ -1228,6 +1232,128 @@ function initializeSchema(db: DatabaseSync) {
       insertNotif.run(n.id, n.type, n.title, n.message, n.link, n.reference_id, n.reference_type, n.is_read, n.created_at)
     }
   }
+}
+
+function syncAllPublicMediaWithDb(targetDb: DatabaseSync): { addedCount: number; total: number } {
+  try {
+    const publicDir = path.join(process.cwd(), 'public')
+    if (!fs.existsSync(publicDir)) {
+      return { addedCount: 0, total: 0 }
+    }
+
+    const existingRows = (targetDb.prepare('SELECT url FROM media').all() as unknown) as Array<{ url: string }>
+    const existingUrls = new Set(existingRows.map((r) => r.url))
+
+    function scanDir(dir: string): string[] {
+      let list: string[] = []
+      try {
+        const items = fs.readdirSync(dir, { withFileTypes: true })
+        for (const item of items) {
+          const full = path.join(dir, item.name)
+          if (item.isDirectory()) {
+            list = list.concat(scanDir(full))
+          } else if (/\.(png|jpe?g|webp|svg)$/i.test(item.name)) {
+            list.push(full)
+          }
+        }
+      } catch (e) {
+        console.error('Error scanning dir for media:', dir, e)
+      }
+      return list
+    }
+
+    function deriveAltAndSection(url: string, filename: string): { section: string; alt: string } {
+      const norm = url.toLowerCase()
+      const base = path
+        .basename(filename, path.extname(filename))
+        .replace(/[-_]+/g, ' ')
+        .replace(/\b\w/g, (c) => c.toUpperCase())
+
+      if (norm.startsWith('/hero') || norm.includes('banner') || norm.includes('desk-bg') || norm.includes('laptop-dashboard')) {
+        return { section: 'hero', alt: `Hero: ${base}` }
+      }
+      if (norm.startsWith('/services/')) {
+        return { section: 'services', alt: `Service: ${base}` }
+      }
+      if (norm.startsWith('/projects/')) {
+        return { section: 'products', alt: `Project: ${base}` }
+      }
+      if (norm.startsWith('/about-portfolio/')) {
+        return { section: 'team', alt: `About & Portfolio: ${base}` }
+      }
+      if (norm.startsWith('/marquee-logos/')) {
+        return { section: 'branding', alt: `Client Brand: ${base}` }
+      }
+      if (norm.startsWith('/social/')) {
+        return { section: 'social', alt: `Social Media: ${base}` }
+      }
+      if (norm.includes('logo') || norm.includes('leaf') || norm.includes('icon') || norm.includes('favicon')) {
+        return { section: 'branding', alt: `THENAM Brand: ${base}` }
+      }
+      return { section: 'general', alt: base }
+    }
+
+    const allFiles = scanDir(publicDir)
+    let addedCount = 0
+    const now = new Date().toISOString()
+
+    const insertStmt = targetDb.prepare(`
+      INSERT INTO media (id, filename, original_name, url, alt_text, mime_type, file_size, width, height, section_tag, usage_ref, is_system, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
+    `)
+
+    for (const filePath of allFiles) {
+      const relUrl = '/' + path.relative(publicDir, filePath).split(path.sep).join('/')
+      if (existingUrls.has(relUrl)) {
+        continue
+      }
+
+      try {
+        const buffer = fs.readFileSync(filePath)
+        const filename = path.basename(filePath)
+        const meta = inspectImageBuffer(buffer, filename) || {
+          mimeType: 'image/png',
+          width: 0,
+          height: 0,
+          fileSize: buffer.length,
+        }
+
+        const { section, alt } = deriveAltAndSection(relUrl, filename)
+        const id = 'med_' + crypto.createHash('md5').update(relUrl).digest('hex').substring(0, 12)
+
+        insertStmt.run(
+          id,
+          filename,
+          filename,
+          relUrl,
+          alt,
+          meta.mimeType,
+          meta.fileSize,
+          meta.width,
+          meta.height,
+          section,
+          null,
+          now,
+          now
+        )
+
+        existingUrls.add(relUrl)
+        addedCount++
+      } catch (err) {
+        console.error('Error importing media file:', relUrl, err)
+      }
+    }
+
+    const total = ((targetDb.prepare('SELECT COUNT(*) as count FROM media').get() as unknown) as { count: number }).count
+    return { addedCount, total }
+  } catch (err) {
+    console.error('Error in syncAllPublicMediaWithDb:', err)
+    return { addedCount: 0, total: 0 }
+  }
+}
+
+export function syncAllPublicMedia(customDb?: DatabaseSync): { addedCount: number; total: number } {
+  return syncAllPublicMediaWithDb(customDb || db)
 }
 
 export const db = getDatabase()
