@@ -5483,6 +5483,166 @@ html.light .video-wrapper-glass {
   }
 }
 
+/* ========================================================
+   CAREERS PAGE HERO BACKGROUND IMAGE & AMBIENT VISUALS
+   ======================================================== */
+.careers-hero-with-bg {
+  position: relative;
+  overflow: hidden;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  padding: 95px 0 90px;
+  background-color: #050b14;
+}
+
+.careers-hero-bg-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.careers-hero-bg-img {
+  position: absolute;
+  inset: -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
+  background-image: url('/careers/careers-hero-bg.jpg');
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  will-change: transform;
+  transform: scale(1);
+  animation: careersHeroZoom 26s ease-in-out infinite alternate;
+  filter: brightness(0.85) contrast(1.08) saturate(1.1);
+}
+
+@keyframes careersHeroZoom {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.05) translate3d(-10px, -4px, 0);
+  }
+}
+
+.careers-hero-gradient-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(
+      90deg,
+      rgba(5, 11, 20, 0.98) 0%,
+      rgba(5, 11, 20, 0.94) 36%,
+      rgba(5, 11, 20, 0.78) 52%,
+      rgba(5, 11, 20, 0.40) 72%,
+      rgba(5, 11, 20, 0.15) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(5, 11, 20, 0.55) 0%,
+      transparent 22%,
+      transparent 78%,
+      rgba(5, 11, 20, 0.7) 100%
+    );
+  z-index: 2;
+}
+
+.careers-hero-glow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle 380px at 75% 45%, rgba(0, 201, 255, 0.10), transparent 70%),
+    radial-gradient(circle 280px at 20% 70%, rgba(158, 229, 53, 0.05), transparent 70%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.careers-hero-with-bg .inner-hero-content {
+  position: relative;
+  z-index: 4;
+  max-width: 660px;
+}
+
+.careers-hero-with-bg .inner-hero-title {
+  text-shadow: 0 2px 20px rgba(5, 11, 20, 0.7), 0 1px 6px rgba(5, 11, 20, 0.5);
+}
+
+.careers-hero-with-bg .inner-hero-desc {
+  text-shadow: 0 1px 10px rgba(5, 11, 20, 0.6);
+}
+
+@media (max-width: 1024px) {
+  .careers-hero-with-bg {
+    min-height: 480px;
+    padding: 85px 0 80px;
+  }
+
+  .careers-hero-bg-img {
+    background-position: 65% center;
+    filter: brightness(0.80) contrast(1.05);
+  }
+
+  .careers-hero-gradient-overlay {
+    background: 
+      linear-gradient(
+        90deg,
+        rgba(5, 11, 20, 0.98) 0%,
+        rgba(5, 11, 20, 0.94) 45%,
+        rgba(5, 11, 20, 0.80) 65%,
+        rgba(5, 11, 20, 0.55) 100%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(5, 11, 20, 0.6) 0%,
+        transparent 25%,
+        transparent 75%,
+        rgba(5, 11, 20, 0.7) 100%
+      );
+  }
+}
+
+@media (max-width: 768px) {
+  .careers-hero-with-bg {
+    min-height: auto;
+    padding: 75px 0 70px;
+  }
+
+  .careers-hero-bg-img {
+    background-position: 70% center;
+    filter: brightness(0.65) contrast(1.05);
+  }
+
+  .careers-hero-gradient-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(5, 11, 20, 0.94) 0%,
+      rgba(5, 11, 20, 0.88) 50%,
+      rgba(5, 11, 20, 0.92) 100%
+    );
+  }
+
+  .careers-hero-glow {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .careers-hero-bg-img {
+    animation: none;
+    transform: none;
+  }
+}
+
+
 
 
 
