@@ -18,6 +18,7 @@ import {
   Layers,
   Package,
   Image as LucideImage,
+  BarChart3,
 } from 'lucide-react'
 import NotificationBell from './NotificationBell'
 
@@ -74,6 +75,7 @@ export default function AdminShell({
 
   const navLinks = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/admin/analytics', label: 'Analytics & Reports', icon: BarChart3 },
     { href: '/admin/services', label: 'Services', icon: Layers },
     { href: '/admin/products', label: 'Products', icon: Package },
     { href: '/admin/media', label: 'Image Library', icon: LucideImage },

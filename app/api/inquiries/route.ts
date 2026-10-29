@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { db, recordNotification } from '@/lib/db'
+import { cookies } from 'next/headers'
+import { db, recordNotification, recordAnalyticsEvent } from '@/lib/db'
 import crypto from 'node:crypto'
 
 export async function POST(request: Request) {
@@ -16,11 +17,18 @@ export async function POST(request: Request) {
       timeline,
       message,
       needNda = false,
+      visitorId: bodyVisitorId,
+      sessionId: bodySessionId,
     } = body
 
     if (!fullName || !email || !message) {
       return NextResponse.json({ error: 'Name, email, and project message are required.' }, { status: 400 })
     }
+
+    const cookieStore = await cookies()
+    const cookieVid = cookieStore.get('thenam_vid')?.value
+    const visitorId = bodyVisitorId || cookieVid || null
+    const sessionId = bodySessionId || cookieStore.get('thenam_sid')?.value || 's_inq_direct'
 
     const cleanEmail = String(email).trim().toLowerCase()
     const cleanName = String(fullName).trim()
@@ -29,9 +37,9 @@ export async function POST(request: Request) {
 
     db.prepare(`
       INSERT INTO inquiries (
-        id, full_name, email, phone, company, service_id, service_name, budget_tier, timeline, message, need_nda, status, created_at
+        id, full_name, email, phone, company, service_id, service_name, budget_tier, timeline, message, need_nda, status, created_at, visitor_id
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?)
     `).run(
       id,
       cleanName,
@@ -44,8 +52,22 @@ export async function POST(request: Request) {
       timeline ? String(timeline) : null,
       String(message).trim(),
       needNda ? 1 : 0,
-      now
+      now,
+      visitorId
     )
+
+    // Record conversion analytics event with privacy safeguards (no PII)
+    if (visitorId) {
+      recordAnalyticsEvent({
+        visitorId,
+        sessionId,
+        eventName: 'enquiry_submitted',
+        eventCategory: 'conversion',
+        resourceId: String(serviceId),
+        resourceName: String(serviceName),
+        createdAt: now,
+      })
+    }
 
     // Also auto-register or associate user in users table if new
     const existingUser = db.prepare('SELECT id FROM users WHERE email = ?').get(cleanEmail)

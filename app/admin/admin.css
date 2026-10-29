@@ -1444,3 +1444,202 @@
   gap: 10px;
 }
 
+/* ========================================================
+   ANALYTICS & REPORTS DESIGN SYSTEM EXTENSIONS
+   ======================================================== */
+
+.adm-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #ffffff;
+  border: 1px solid var(--adm-border);
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.adm-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.adm-filter-btn {
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.adm-filter-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.adm-filter-btn.active {
+  background: #061426;
+  color: #ffffff;
+  border-color: #061426;
+  box-shadow: 0 2px 4px rgba(6, 20, 38, 0.15);
+}
+
+.adm-date-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.adm-date-input {
+  padding: 5px 10px;
+  font-size: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #0f172a;
+  outline: none;
+  background: #ffffff;
+}
+
+.adm-date-input:focus {
+  border-color: var(--adm-cyan);
+  box-shadow: 0 0 0 2px rgba(0, 201, 242, 0.15);
+}
+
+.adm-chart-container {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: visible;
+  user-select: none;
+}
+
+.adm-chart-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.adm-chart-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(6, 20, 38, 0.95);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 201, 242, 0.3);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  font-size: 11.5px;
+  z-index: 50;
+  transform: translate(-50%, -100%);
+  margin-top: -10px;
+  white-space: nowrap;
+}
+
+.adm-funnel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.adm-funnel-step {
+  background: #f8fafc;
+  border: 1px solid var(--adm-border);
+  border-radius: 10px;
+  padding: 16px;
+  position: relative;
+}
+
+.adm-funnel-step.highlight {
+  background: linear-gradient(135deg, rgba(0, 201, 242, 0.05) 0%, rgba(0, 223, 165, 0.08) 100%);
+  border-color: rgba(0, 201, 242, 0.35);
+}
+
+.adm-funnel-step-num {
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.adm-funnel-step-val {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.adm-funnel-step-sub {
+  font-size: 11.5px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.adm-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.adm-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #00c9f2, #00dfa5);
+}
+
+.adm-progress-fill.purple {
+  background: linear-gradient(90deg, #8b5cf6, #6366f1);
+}
+
+.adm-progress-fill.amber {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+@media print {
+  /* Hide non-printable elements during PDF print */
+  .adm-sidebar,
+  .adm-topbar,
+  .adm-filter-bar,
+  .adm-view-site-btn,
+  .adm-logout-btn,
+  .adm-no-print {
+    display: none !important;
+  }
+
+  .adm-root,
+  .adm-shell,
+  .adm-main-wrap,
+  .adm-content {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .adm-card,
+  .adm-stat-card {
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
