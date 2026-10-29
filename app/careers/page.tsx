@@ -120,9 +120,15 @@ export default function CareersPage() {
         {/* ========================================================
             CAREERS HERO SECTION
             ======================================================== */}
-        <section className="inner-page-hero" aria-label="Careers Header">
-          <div className="hero-glow-cyan" aria-hidden="true" />
-          <div className="container">
+        <section className="inner-page-hero careers-hero-with-bg" aria-label="Careers Header">
+          {/* Background image layers */}
+          <div className="careers-hero-bg-layer" aria-hidden="true">
+            <div className="careers-hero-bg-img" />
+            <div className="careers-hero-gradient-overlay" />
+            <div className="careers-hero-glow" />
+          </div>
+
+          <div className="container" style={{ position: 'relative', zIndex: 5, width: '100%' }}>
             <div className="inner-hero-content">
               <span className="inner-hero-eyebrow">
                 <Sparkles size={13} style={{ display: 'inline', marginRight: '6px' }} />

@@ -219,9 +219,15 @@ export default function ServicesPage() {
         {/* ========================================================
             SERVICES PAGE HERO
             ======================================================== */}
-        <section className="inner-page-hero" aria-label="Services Header">
-          <div className="hero-glow-cyan" aria-hidden="true" />
-          <div className="container">
+        <section className="inner-page-hero services-hero-with-bg" aria-label="Services Header">
+          {/* Background image layers */}
+          <div className="services-hero-bg-layer" aria-hidden="true">
+            <div className="services-hero-bg-img" />
+            <div className="services-hero-gradient-overlay" />
+            <div className="services-hero-glow" />
+          </div>
+
+          <div className="container" style={{ position: 'relative', zIndex: 2, width: '100%' }}>
             <div className="inner-hero-content">
               <span className="inner-hero-eyebrow">
                 <Sparkles size={13} style={{ display: 'inline', marginRight: '6px' }} />

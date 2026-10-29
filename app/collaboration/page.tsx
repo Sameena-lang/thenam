@@ -21,9 +21,15 @@ export default function CollaborationPage() {
         {/* ========================================================
             COLLABORATION HERO SECTION
             ======================================================== */}
-        <section className="inner-page-hero" aria-label="Collaboration Header">
-          <div className="hero-glow-cyan" aria-hidden="true" />
-          <div className="container">
+        <section className="inner-page-hero collaboration-hero-with-bg" aria-label="Collaboration Header">
+          {/* Background image layers */}
+          <div className="collaboration-hero-bg-layer" aria-hidden="true">
+            <div className="collaboration-hero-bg-img" />
+            <div className="collaboration-hero-gradient-overlay" />
+            <div className="collaboration-hero-glow" />
+          </div>
+
+          <div className="container" style={{ position: 'relative', zIndex: 5, width: '100%' }}>
             <div className="inner-hero-content">
               <span className="inner-hero-eyebrow">
                 <Sparkles size={13} style={{ display: 'inline', marginRight: '6px' }} />
