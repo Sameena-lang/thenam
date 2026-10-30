@@ -17,6 +17,7 @@ import {
   ShieldAlert,
   Layers,
   Package,
+  FileText,
   Image as LucideImage,
   BarChart3,
 } from 'lucide-react'
@@ -78,6 +79,7 @@ export default function AdminShell({
     { href: '/admin/analytics', label: 'Analytics & Reports', icon: BarChart3 },
     { href: '/admin/services', label: 'Services', icon: Layers },
     { href: '/admin/products', label: 'Products', icon: Package },
+    { href: '/admin/content', label: 'Content Management', icon: FileText },
     { href: '/admin/media', label: 'Image Library', icon: LucideImage },
     { href: '/admin/users', label: 'Users & Clients', icon: Users },
     { href: '/admin/inquiries', label: 'Inquiries & Quotes', icon: MessageSquareText },

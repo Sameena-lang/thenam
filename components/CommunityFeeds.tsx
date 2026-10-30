@@ -230,9 +230,9 @@ export default function CommunityFeeds() {
                 <div className="profile-info-wrap">
                   <div className="profile-name-row">
                     <span className="profile-name">Thenam Software Solutions</span>
-                    <CheckCircle2 size={13} className="verified-badge-blue" />
-                    <span className="ig-mini-handle">@thenam_software_solutions</span>
+                    <CheckCircle2 size={14} className="verified-badge-blue" />
                   </div>
+                  <p className="profile-tagline">@thenam_software_solutions · AI | Web | Cloud</p>
                   <div className="profile-stats-chips">
                     <span><strong>18</strong> Posts</span>
                     <span className="stat-dot">•</span>
@@ -297,7 +297,7 @@ export default function CommunityFeeds() {
                   rel="noopener noreferrer"
                   className="card-footer-cta"
                 >
-                  <span>Explore @thenam_software_solutions</span>
+                  <span>Explore @thenam_software_solutions on Instagram</span>
                   <ArrowRight size={13} />
                 </a>
               </div>
@@ -472,7 +472,7 @@ export default function CommunityFeeds() {
                   <div className="profile-stats-chips">
                     <span><strong>@Thenamsoftwaresolutions-v9w</strong></span>
                     <span className="stat-dot">•</span>
-                    <span>Tech Tutorials & Demos</span>
+                    <span><strong>120+</strong> Subscribers</span>
                   </div>
                 </div>
               </div>

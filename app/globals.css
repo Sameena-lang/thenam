@@ -3560,8 +3560,8 @@ button {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
-  align-items: start;
-  justify-items: center;
+  align-items: stretch;
+  justify-items: stretch;
 }
 
 .community-cards-grid.single-tab-active {
@@ -3587,25 +3587,15 @@ button {
 }
 
 
-.social-feed-card.card-instagram {
-  aspect-ratio: 1 / 1;
-  max-width: 380px;
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
+.social-feed-card.card-instagram,
 .social-feed-card.card-linkedin,
 .social-feed-card.card-youtube {
   width: 100%;
-  max-width: 380px;
-  min-height: 380px;
+  height: 100%;
+  min-height: 480px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin: 0 auto;
 }
 
 .card-instagram:hover {
@@ -3622,7 +3612,8 @@ button {
 
 /* Card Banner */
 .social-card-banner {
-  padding: 10px 14px;
+  padding: 12px 16px;
+  min-height: 56px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -3700,8 +3691,9 @@ button {
 .social-profile-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
+  gap: 12px;
+  padding: 12px 16px;
+  min-height: 72px;
   background: #0a1426;
   border-bottom: 1px solid #142136;
 }
@@ -3959,8 +3951,10 @@ button {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  padding: 10px 14px;
+  padding: 16px 14px;
   background: #081120;
+  flex: 1;
+  align-content: center;
 }
 
 .ig-compact-tile {
@@ -4322,7 +4316,8 @@ html.light .ig-compact-title {
 
 /* Card Footer */
 .social-card-footer {
-  padding: 14px 20px;
+  margin-top: auto;
+  padding: 12px 16px;
   background: #060e1c;
   border-top: 1px solid #142136;
 }

@@ -125,6 +125,24 @@ export interface MediaItem {
   updated_at: string
 }
 
+export interface ContentItem {
+  id: string
+  title: string
+  subtitle: string | null
+  short_description: string
+  full_description: string | null
+  image_url: string | null
+  image_alt: string | null
+  page: string // 'home' | 'services' | 'products' | 'projects' | 'about' | 'careers' | 'collaboration'
+  section: string
+  button_text: string | null
+  button_url: string | null
+  display_order: number
+  status: 'draft' | 'published'
+  created_at: string
+  updated_at: string
+}
+
 export interface SiteSetting {
   key: string
   value: string
@@ -440,6 +458,31 @@ function initializeSchema(db: DatabaseSync) {
 
   // Ensure visitor_id column exists on inquiries for conversion tracking
   try { db.exec('ALTER TABLE inquiries ADD COLUMN visitor_id TEXT;') } catch { /* exists */ }
+
+  // 15. Content Management Table (site_content)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS site_content (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      subtitle TEXT,
+      short_description TEXT NOT NULL,
+      full_description TEXT,
+      image_url TEXT,
+      image_alt TEXT,
+      page TEXT NOT NULL,
+      section TEXT NOT NULL,
+      button_text TEXT,
+      button_url TEXT,
+      display_order INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'draft',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_site_content_page ON site_content(page);
+    CREATE INDEX IF NOT EXISTS idx_site_content_section ON site_content(section);
+    CREATE INDEX IF NOT EXISTS idx_site_content_status ON site_content(status);
+    CREATE INDEX IF NOT EXISTS idx_site_content_order ON site_content(display_order, created_at DESC);
+  `)
 
   // Indexes for fast lookup
   db.exec(`
@@ -1388,6 +1431,18 @@ export function isMediaInUse(url: string): { inUse: boolean; locations: string[]
     locations.push(`Proprietary Product: ${p.name}`)
   }
 
+// Check site_content
+  try {
+    const contentRows = (db
+      .prepare('SELECT title, page, section FROM site_content WHERE image_url = ?')
+      .all(url) as unknown) as Array<{ title: string; page: string; section: string }>
+    for (const c of contentRows) {
+      locations.push(`Content (${c.page} - ${c.section}): ${c.title}`)
+    }
+  } catch {
+    // safe fallback
+  }
+
   // Check if it's marked as a core system asset
   const mediaRow = (db
     .prepare('SELECT is_system, usage_ref FROM media WHERE url = ?')
@@ -1889,4 +1944,153 @@ export function getEnquiryPerformanceData(startDate: string, endDate: string) {
     statusBreakdown,
     ndaRequests: ndaRow?.count || 0,
   }
+}
+
+
+/**
+ * ========================================================
+ * CONTENT MANAGEMENT CRUD HELPERS
+ * ========================================================
+ */
+
+export function getAllContent(filters?: {
+  page?: string
+  section?: string
+  status?: string
+  search?: string
+}): ContentItem[] {
+  let query = 'SELECT * FROM site_content WHERE 1=1'
+  const params: (string | number | null)[] = []
+
+  if (filters?.page && filters.page !== 'all') {
+    query += ' AND page = ?'
+    params.push(filters.page)
+  }
+
+  if (filters?.section && filters.section !== 'all') {
+    query += ' AND section = ?'
+    params.push(filters.section)
+  }
+
+  if (filters?.status && filters.status !== 'all') {
+    query += ' AND status = ?'
+    params.push(filters.status)
+  }
+
+  if (filters?.search && filters.search.trim()) {
+    const term = `%${filters.search.trim()}%`
+    query += ' AND (title LIKE ? OR subtitle LIKE ? OR short_description LIKE ? OR full_description LIKE ? OR button_text LIKE ?)'
+    params.push(term, term, term, term, term)
+  }
+
+  query += ' ORDER BY display_order ASC, created_at DESC'
+
+  const rows = (db.prepare(query).all(...params) as unknown) as ContentItem[]
+  return rows
+}
+
+export function getContentById(id: string): ContentItem | null {
+  const row = (db.prepare('SELECT * FROM site_content WHERE id = ?').get(id) as unknown) as ContentItem | undefined
+  return row || null
+}
+
+export function createContent(
+  item: Omit<ContentItem, 'id' | 'created_at' | 'updated_at'> & { id?: string }
+): ContentItem {
+  const id = item.id?.trim() || ('cnt_' + crypto.randomBytes(8).toString('hex'))
+  const now = new Date().toISOString()
+
+  db.prepare(`
+    INSERT INTO site_content (
+      id, title, subtitle, short_description, full_description,
+      image_url, image_alt, page, section, button_text, button_url,
+      display_order, status, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    id,
+    item.title.trim(),
+    item.subtitle?.trim() || null,
+    item.short_description.trim(),
+    item.full_description?.trim() || null,
+    item.image_url?.trim() || null,
+    item.image_alt?.trim() || null,
+    item.page.trim().toLowerCase(),
+    item.section.trim().toLowerCase(),
+    item.button_text?.trim() || null,
+    item.button_url?.trim() || null,
+    Number(item.display_order) || 0,
+    item.status === 'published' ? 'published' : 'draft',
+    now,
+    now
+  )
+
+  const created = getContentById(id)
+  if (!created) {
+    throw new Error('Failed to retrieve newly created content item.')
+  }
+  return created
+}
+
+export function updateContent(
+  id: string,
+  updates: Partial<Omit<ContentItem, 'id' | 'created_at'>>
+): ContentItem | null {
+  const existing = getContentById(id)
+  if (!existing) return null
+
+  const updatedFields: string[] = []
+  const params: (string | number | null)[] = []
+
+  const allowedFields: Array<keyof Omit<ContentItem, 'id' | 'created_at'>> = [
+    'title',
+    'subtitle',
+    'short_description',
+    'full_description',
+    'image_url',
+    'image_alt',
+    'page',
+    'section',
+    'button_text',
+    'button_url',
+    'display_order',
+    'status',
+  ]
+
+  for (const field of allowedFields) {
+    if (field in updates) {
+      updatedFields.push(`${field} = ?`)
+      let val = updates[field]
+      if (typeof val === 'string') val = val.trim()
+      if (field === 'display_order') val = Number(val) || 0
+      params.push(val ?? null)
+    }
+  }
+
+  const now = new Date().toISOString()
+  updatedFields.push('updated_at = ?')
+  params.push(now)
+  params.push(id)
+
+  db.prepare(`UPDATE site_content SET ${updatedFields.join(', ')} WHERE id = ?`).run(...params)
+  return getContentById(id)
+}
+
+export function deleteContent(id: string): boolean {
+  const result = db.prepare('DELETE FROM site_content WHERE id = ?').run(id)
+  return result.changes > 0
+}
+
+export function getPublicContentByPage(page: string, section?: string): ContentItem[] {
+  let query = "SELECT * FROM site_content WHERE page = ? AND status = 'published'"
+  const params: (string | number | null)[] = [page.trim().toLowerCase()]
+
+  if (section && section !== 'all') {
+    query += ' AND section = ?'
+    params.push(section.trim().toLowerCase())
+  }
+
+  query += ' ORDER BY display_order ASC, created_at DESC'
+
+  const rows = (db.prepare(query).all(...params) as unknown) as ContentItem[]
+  return rows
 }
