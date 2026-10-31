@@ -41,6 +41,43 @@ interface ProductRecord {
   updated_at: string
 }
 
+export const BADGE_COLOR_OPTIONS = [
+  { value: 'cyan', label: 'Cyan (THENAM)', bg: '#e0f2fe', text: '#0284c7', border: '#7dd3fc' },
+  { value: 'teal', label: 'Teal (THENAM)', bg: '#ccfbf1', text: '#0f766e', border: '#5eead4' },
+  { value: 'lime', label: 'Lime (THENAM)', bg: '#ecfccb', text: '#4d7c0f', border: '#bef264' },
+  { value: 'green', label: 'Green', bg: '#dcfce7', text: '#15803d', border: '#86efac' },
+  { value: 'emerald', label: 'Emerald', bg: '#d1fae5', text: '#047857', border: '#6ee7b7' },
+  { value: 'blue', label: 'Blue', bg: '#dbeafe', text: '#1d4ed8', border: '#93c5fd' },
+  { value: 'sky', label: 'Sky Blue', bg: '#e0f2fe', text: '#0369a1', border: '#bae6fd' },
+  { value: 'indigo', label: 'Indigo', bg: '#e0e7ff', text: '#4338ca', border: '#a5b4fc' },
+  { value: 'purple', label: 'Purple', bg: '#f3e8ff', text: '#7e22ce', border: '#d8b4fe' },
+  { value: 'violet', label: 'Violet', bg: '#ede9fe', text: '#6d28d9', border: '#c4b5fd' },
+  { value: 'pink', label: 'Pink', bg: '#fce7f3', text: '#be185d', border: '#f9a8d4' },
+  { value: 'rose', label: 'Rose', bg: '#ffe4e6', text: '#be123c', border: '#fecdd3' },
+  { value: 'red', label: 'Red', bg: '#fee2e2', text: '#b91c1c', border: '#fca5a5' },
+  { value: 'orange', label: 'Orange', bg: '#ffedd5', text: '#c2410c', border: '#fdba74' },
+  { value: 'yellow', label: 'Yellow / Amber', bg: '#fef3c7', text: '#b45309', border: '#fde68a' },
+  { value: 'slate', label: 'Slate / Gray', bg: '#f1f5f9', text: '#334155', border: '#cbd5e1' },
+  { value: 'navy', label: 'Dark Navy', bg: '#061426', text: '#00c9f2', border: 'rgba(0, 201, 242, 0.4)' },
+  { value: 'gradient', label: 'Cyan-Lime Gradient', bg: 'linear-gradient(135deg, rgba(0,201,242,0.18), rgba(130,230,46,0.18))', text: '#0284c7', border: '#00c9f2' },
+]
+
+export function getBadgeStyle(color?: string) {
+  const c = (color || 'cyan').toLowerCase().trim()
+  const found = BADGE_COLOR_OPTIONS.find((opt) => opt.value === c)
+  if (found) {
+    return { bg: found.bg, text: found.text, border: found.border }
+  }
+  if (c.startsWith('#')) {
+    return {
+      bg: c + '18',
+      text: c,
+      border: c + '60',
+    }
+  }
+  return { bg: '#e0f2fe', text: '#0284c7', border: '#7dd3fc' }
+}
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<ProductRecord[]>([])
   const [loading, setLoading] = useState(true)
@@ -441,17 +478,22 @@ export default function AdminProductsPage() {
                       </div>
                     </td>
                     <td>
-                      <span style={{
-                        fontSize: '11px',
-                        fontWeight: '700',
-                        padding: '3px 8px',
-                        borderRadius: '12px',
-                        background: '#e0f2fe',
-                        color: '#0284c7',
-                        border: '1px solid currentColor',
-                      }}>
-                        {p.badge}
-                      </span>
+                      {(() => {
+                        const bStyle = getBadgeStyle(p.badge_color)
+                        return (
+                          <span style={{
+                            fontSize: '11px',
+                            fontWeight: '700',
+                            padding: '3px 8px',
+                            borderRadius: '12px',
+                            background: bStyle.bg,
+                            color: bStyle.text,
+                            border: `1px solid ${bStyle.border}`,
+                          }}>
+                            {p.badge}
+                          </span>
+                        )
+                      })()}
                     </td>
                     <td>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', maxWidth: '180px' }}>
@@ -586,17 +628,69 @@ export default function AdminProductsPage() {
                   </div>
 
                   <div className="adm-form-group">
-                    <label className="adm-label">Badge Color</label>
-                    <select
-                      className="adm-input-field"
-                      value={formBadgeColor}
-                      onChange={(e) => setFormBadgeColor(e.target.value)}
-                    >
-                      <option value="lime">Lime</option>
-                      <option value="cyan">Cyan</option>
-                      <option value="yellow">Yellow</option>
-                      <option value="blue">Blue</option>
-                    </select>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <label className="adm-label" style={{ margin: 0 }}>Badge Color</label>
+                      {formBadge && (
+                        <span style={{
+                          fontSize: '10.5px',
+                          fontWeight: '800',
+                          padding: '2px 8px',
+                          borderRadius: '12px',
+                          background: getBadgeStyle(formBadgeColor).bg,
+                          color: getBadgeStyle(formBadgeColor).text,
+                          border: `1px solid ${getBadgeStyle(formBadgeColor).border}`,
+                          textTransform: 'uppercase',
+                        }}>
+                          Preview: {formBadge}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <select
+                        className="adm-input-field"
+                        value={formBadgeColor.startsWith('#') ? 'custom' : formBadgeColor}
+                        onChange={(e) => {
+                          if (e.target.value !== 'custom') {
+                            setFormBadgeColor(e.target.value)
+                          }
+                        }}
+                        style={{ flex: 1 }}
+                      >
+                        {BADGE_COLOR_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                        <option value="custom">Custom Color (#hex)...</option>
+                      </select>
+
+                      <input
+                        type="color"
+                        value={formBadgeColor.startsWith('#') ? formBadgeColor : (BADGE_COLOR_OPTIONS.find(o => o.value === formBadgeColor)?.text || '#00c9f2')}
+                        onChange={(e) => setFormBadgeColor(e.target.value)}
+                        title="Pick custom color"
+                        style={{
+                          width: '38px',
+                          height: '38px',
+                          padding: '2px',
+                          borderRadius: '8px',
+                          border: '1px solid #cbd5e1',
+                          cursor: 'pointer',
+                          background: '#ffffff',
+                          flexShrink: 0,
+                        }}
+                      />
+                    </div>
+                    {formBadgeColor.startsWith('#') && (
+                      <input
+                        type="text"
+                        className="adm-input-field"
+                        value={formBadgeColor}
+                        onChange={(e) => setFormBadgeColor(e.target.value)}
+                        placeholder="#ff007f"
+                        style={{ marginTop: '6px', fontSize: '12px', fontFamily: 'monospace' }}
+                      />
+                    )}
                   </div>
                 </div>
 

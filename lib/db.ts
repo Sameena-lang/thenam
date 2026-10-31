@@ -2364,3 +2364,61 @@ export function deleteProject(slug: string): boolean {
   const res = db.prepare('DELETE FROM projects WHERE slug = ?').run(slug)
   return res.changes > 0
 }
+
+export interface ProductDetailParsed extends ProductItem {
+  tagsList: string[]
+  metricsList: Array<{ label: string; val: string }>
+  featuresList: string[]
+}
+
+export function getProductById(id: string): ProductDetailParsed | null {
+  try {
+    const cleanId = id.trim().toLowerCase()
+    const row = (db.prepare('SELECT * FROM products WHERE id = ?').get(cleanId) as unknown) as ProductItem | undefined
+    if (!row) {
+      // Try fuzzy match or fallback for common slugs (e.g. ecommerce -> commerceflow)
+      const all = (db.prepare('SELECT * FROM products').all() as unknown) as ProductItem[]
+      const found = all.find(
+        (p) =>
+          p.id.toLowerCase() === cleanId ||
+          p.id.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanId.replace(/[^a-z0-9]/g, '') ||
+          p.name.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanId.replace(/[^a-z0-9]/g, '')
+      )
+      if (!found) return null
+      return {
+        ...found,
+        tagsList: (() => { try { return JSON.parse(found.tags) } catch { return [] } })(),
+        metricsList: (() => { try { return JSON.parse(found.metrics) } catch { return [] } })(),
+        featuresList: (() => { try { return JSON.parse(found.features) } catch { return [] } })(),
+      }
+    }
+    return {
+      ...row,
+      tagsList: (() => { try { return JSON.parse(row.tags) } catch { return [] } })(),
+      metricsList: (() => { try { return JSON.parse(row.metrics) } catch { return [] } })(),
+      featuresList: (() => { try { return JSON.parse(row.features) } catch { return [] } })(),
+    }
+  } catch (err) {
+    console.error('Failed to get product by id:', err)
+    return null
+  }
+}
+
+export function getAllProductsFromDb(activeOnly = true): ProductDetailParsed[] {
+  try {
+    const sql = activeOnly
+      ? 'SELECT * FROM products WHERE is_active = 1 ORDER BY sort_order ASC, created_at ASC'
+      : 'SELECT * FROM products ORDER BY sort_order ASC, created_at ASC'
+    const rows = (db.prepare(sql).all() as unknown) as ProductItem[]
+    return rows.map((row) => ({
+      ...row,
+      tagsList: (() => { try { return JSON.parse(row.tags) } catch { return [] } })(),
+      metricsList: (() => { try { return JSON.parse(row.metrics) } catch { return [] } })(),
+      featuresList: (() => { try { return JSON.parse(row.features) } catch { return [] } })(),
+    }))
+  } catch (err) {
+    console.error('Failed to get all products from db:', err)
+    return []
+  }
+}
+

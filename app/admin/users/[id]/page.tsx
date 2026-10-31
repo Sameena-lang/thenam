@@ -54,6 +54,8 @@ export default function UserDetailPage() {
   const [error, setError] = useState<string | null>(null)
 
   // Edit fields
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
   const [role, setRole] = useState('')
   const [status, setStatus] = useState('')
   const [phone, setPhone] = useState('')
@@ -80,6 +82,8 @@ export default function UserDetailPage() {
         setUser(data.user)
         setInquiries(data.inquiries || [])
 
+        setName(data.user.name || '')
+        setEmail(data.user.email || '')
         setRole(data.user.role)
         setStatus(data.user.status)
         setPhone(data.user.phone || '')
@@ -103,7 +107,7 @@ export default function UserDetailPage() {
       const res = await fetch(`/api/admin/users/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role, status, phone, company, notes }),
+        body: JSON.stringify({ name, email, role, status, phone, company, notes }),
       })
       if (!res.ok) throw new Error('Failed to update user profile')
       const data = await res.json()
@@ -238,16 +242,33 @@ export default function UserDetailPage() {
           </h2>
 
           <form onSubmit={handleSave}>
-            <div style={{ marginBottom: '14px' }}>
-              <label className="adm-form-label" style={{ color: '#334155', marginBottom: '4px', display: 'block' }}>
-                Primary Email (Read-Only)
-              </label>
-              <input
-                disabled
-                value={user.email}
-                className="adm-input adm-input-light"
-                style={{ background: '#f1f5f9', color: '#64748b', padding: '9px 12px' }}
-              />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+              <div>
+                <label className="adm-form-label" style={{ color: '#334155', marginBottom: '4px', display: 'block', fontSize: '12.5px', fontWeight: 600 }}>
+                  Full Name *
+                </label>
+                <input
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="adm-input adm-input-light"
+                  style={{ padding: '9px 12px' }}
+                />
+              </div>
+
+              <div>
+                <label className="adm-form-label" style={{ color: '#334155', marginBottom: '4px', display: 'block', fontSize: '12.5px', fontWeight: 600 }}>
+                  Primary Email *
+                </label>
+                <input
+                  required
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="adm-input adm-input-light"
+                  style={{ padding: '9px 12px' }}
+                />
+              </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>

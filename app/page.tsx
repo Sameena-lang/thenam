@@ -96,6 +96,66 @@ const MARQUEE_ITEMS = [
   ...CLIENT_MARQUEE_LOGOS,
   ...CLIENT_MARQUEE_LOGOS,
   ...CLIENT_MARQUEE_LOGOS,
+  ...CLIENT_MARQUEE_LOGOS,
+  ...CLIENT_MARQUEE_LOGOS,
+]
+
+interface FeaturedProduct {
+  id: string
+  name: string
+  category: string
+  tagline: string
+  tags: string[]
+  imageUrl: string
+  sortOrder: number
+}
+
+const DEFAULT_FEATURED_PRODUCTS: FeaturedProduct[] = [
+  {
+    id: 'agrismart',
+    name: 'AgriSmart',
+    category: 'AI-Powered AgriTech Platform',
+    tagline: 'Precision agricultural intelligence for farmers, cooperatives, and agribusinesses.',
+    tags: ['Web App', 'AI/ML', 'IoT'],
+    imageUrl: '/projects/featured-agrismart-hq.png',
+    sortOrder: 1,
+  },
+  {
+    id: 'paper-heros',
+    name: 'Paper Heros',
+    category: 'E-commerce – DIY Paper Crafts, Toys & Creative Products',
+    tagline: 'Cut. Fold. Create. Play. – Build Your Own Paper Heroes!',
+    tags: ['E-commerce', 'DIY Crafts', 'Paper Art'],
+    imageUrl: '/uploads/screenshot-2026-10-31-200749-1793458568283_706d1dfd.png',
+    sortOrder: 1,
+  },
+  {
+    id: 'zarabot',
+    name: 'ZaraBot',
+    category: 'Tamil-first AI Assistant',
+    tagline: 'Natural conversational customer support in Tamil and Indian English.',
+    tags: ['AI', 'Chatbot', 'Voice'],
+    imageUrl: '/projects/featured-zarabot-hq.png',
+    sortOrder: 2,
+  },
+  {
+    id: 'commerceflow',
+    name: 'E-Commerce Platform',
+    category: 'Business Website',
+    tagline: 'High-conversion headless storefront and order management platform.',
+    tags: ['Web Development', 'E-commerce'],
+    imageUrl: '/projects/featured-ecommerce-hq.png',
+    sortOrder: 3,
+  },
+  {
+    id: 'pulse-core',
+    name: 'Business Management System',
+    category: 'Custom Software',
+    tagline: 'Operations, CRM & Resource Cockpit for modern enterprises.',
+    tags: ['Web App', 'Dashboard'],
+    imageUrl: '/projects/featured-bizmgmt-hq.png',
+    sortOrder: 4,
+  },
 ]
 
 export default function HomePage() {
@@ -129,6 +189,7 @@ export default function HomePage() {
   }
 
   // Live configurable images from site settings with default fallbacks
+  const [featuredProducts, setFeaturedProducts] = useState<FeaturedProduct[]>(DEFAULT_FEATURED_PRODUCTS)
   const [siteImages, setSiteImages] = useState({
     heroBg: '/hero-bg.png',
     heroAlt: 'THENAM Software Solutions Hero Background with Laptop and Digital Interface',
@@ -165,6 +226,37 @@ export default function HomePage() {
       })
       .catch((err) => {
         console.warn('Site settings fetch error; using default images:', err)
+      })
+
+    // Fetch live products from database (includes newly added products like Paper Heros)
+    fetch('/api/products')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data && Array.isArray(data.products) && data.products.length > 0) {
+          const mapped: FeaturedProduct[] = data.products.map((p: any) => {
+            let img = p.image_url
+            if (!img) {
+              if (p.id?.includes('agri')) img = '/projects/featured-agrismart-hq.png'
+              else if (p.id?.includes('zara')) img = '/projects/featured-zarabot-hq.png'
+              else if (p.id?.includes('commerce') || p.id?.includes('paper')) img = '/projects/featured-ecommerce-hq.png'
+              else if (p.id?.includes('pulse') || p.id?.includes('business')) img = '/projects/featured-bizmgmt-hq.png'
+              else img = '/projects/featured-ecommerce-hq.png'
+            }
+            return {
+              id: p.id,
+              name: p.name,
+              category: p.category,
+              tagline: p.tagline || '',
+              tags: Array.isArray(p.tags) && p.tags.length > 0 ? p.tags : ['Web App', 'Platform'],
+              imageUrl: img,
+              sortOrder: Number(p.sort_order) || 99,
+            }
+          })
+          setFeaturedProducts(mapped)
+        }
+      })
+      .catch((err) => {
+        console.warn('Dynamic products fetch error:', err)
       })
     return () => {
       isMounted = false
@@ -261,7 +353,7 @@ export default function HomePage() {
           <div className="marquee-track">
             <div className="marquee-group">
               {MARQUEE_ITEMS.map((item, i) => (
-                <div key={`group-1-${i}`} className="trusted-logo-card">
+                <div key={`group-1-${i}`} className="trusted-logo-card" onClick={() => router.push(item.href)} role="link" tabIndex={0} style={{ cursor: "pointer" }} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(item.href); } }}>
                   <Link
                     href={item.href}
                     className="trusted-logo-link"
@@ -283,7 +375,7 @@ export default function HomePage() {
             </div>
             <div className="marquee-group" aria-hidden="true">
               {MARQUEE_ITEMS.map((item, i) => (
-                <div key={`group-2-${i}`} className="trusted-logo-card">
+                <div key={`group-2-${i}`} className="trusted-logo-card" onClick={() => router.push(item.href)} role="link" tabIndex={0} style={{ cursor: "pointer" }} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(item.href); } }}>
                   <Link
                     href={item.href}
                     className="trusted-logo-link"
@@ -613,99 +705,33 @@ export default function HomePage() {
 
             {/* Right Projects: 4 Horizontal Clean Cards (Exact match to Image 2) */}
             <div className="featured-work-cards-row">
-              {/* Project 1: AgriSmart */}
-              <Link
-                href="/products#agrismart"
-                className="featured-normal-card"
-                aria-label="AgriSmart — AI-Powered AgriTech Platform"
-              >
-                <div className="featured-card-thumb-wrap">
-                  <img
-                    src={siteImages.productAgri}
-                    alt="AgriSmart platform preview"
-                    className="featured-card-img"
-                  />
-                </div>
-                <div className="featured-card-body">
-                  <h3 className="featured-card-title">AgriSmart</h3>
-                  <p className="featured-card-subtitle">AI-Powered AgriTech Platform</p>
-                  <div className="featured-card-tags">
-                    <span className="featured-pill-tag">Web App</span>
-                    <span className="featured-pill-tag">AI/ML</span>
-                    <span className="featured-pill-tag">IoT</span>
+              {featuredProducts.map((product) => (
+                <Link
+                  key={product.id}
+                  href={`/products/${product.id}`}
+                  className="featured-normal-card"
+                  aria-label={`${product.name} — ${product.category}`}
+                >
+                  <div className="featured-card-thumb-wrap">
+                    <img
+                      src={product.imageUrl}
+                      alt={`${product.name} platform preview`}
+                      className="featured-card-img"
+                    />
                   </div>
-                </div>
-              </Link>
-
-              {/* Project 2: ZaraBot */}
-              <Link
-                href="/products#zarabot"
-                className="featured-normal-card"
-                aria-label="ZaraBot — Tamil-first AI Assistant"
-              >
-                <div className="featured-card-thumb-wrap">
-                  <img
-                    src={siteImages.productZara}
-                    alt="ZaraBot AI Voice preview"
-                    className="featured-card-img"
-                  />
-                </div>
-                <div className="featured-card-body">
-                  <h3 className="featured-card-title">ZaraBot</h3>
-                  <p className="featured-card-subtitle">Tamil-first AI Assistant</p>
-                  <div className="featured-card-tags">
-                    <span className="featured-pill-tag">AI</span>
-                    <span className="featured-pill-tag">Chatbot</span>
-                    <span className="featured-pill-tag">Voice</span>
+                  <div className="featured-card-body">
+                    <h3 className="featured-card-title">{product.name}</h3>
+                    <p className="featured-card-subtitle">{product.category}</p>
+                    <div className="featured-card-tags">
+                      {product.tags.slice(0, 3).map((tag, tIdx) => (
+                        <span key={tIdx} className="featured-pill-tag">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </Link>
-
-              {/* Project 3: E-Commerce Platform */}
-              <Link
-                href="/products#ecommerce"
-                className="featured-normal-card"
-                aria-label="E-Commerce Platform — Business Website"
-              >
-                <div className="featured-card-thumb-wrap">
-                  <img
-                    src={siteImages.productEcom}
-                    alt="E-Commerce Platform preview"
-                    className="featured-card-img"
-                  />
-                </div>
-                <div className="featured-card-body">
-                  <h3 className="featured-card-title">E-Commerce Platform</h3>
-                  <p className="featured-card-subtitle">Business Website</p>
-                  <div className="featured-card-tags">
-                    <span className="featured-pill-tag">Web Development</span>
-                    <span className="featured-pill-tag">E-commerce</span>
-                  </div>
-                </div>
-              </Link>
-
-              {/* Project 4: Business Management System */}
-              <Link
-                href="/products#business-management"
-                className="featured-normal-card"
-                aria-label="Business Management System — Custom Software"
-              >
-                <div className="featured-card-thumb-wrap">
-                  <img
-                    src={siteImages.productPulse}
-                    alt="Business Management System preview"
-                    className="featured-card-img"
-                  />
-                </div>
-                <div className="featured-card-body">
-                  <h3 className="featured-card-title">Business Management System</h3>
-                  <p className="featured-card-subtitle">Custom Software</p>
-                  <div className="featured-card-tags">
-                    <span className="featured-pill-tag">Web App</span>
-                    <span className="featured-pill-tag">Dashboard</span>
-                  </div>
-                </div>
-              </Link>
+                </Link>
+              ))}
             </div>
           </div>
         </section>

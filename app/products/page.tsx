@@ -21,6 +21,35 @@ import {
 
 const DEFAULT_PRODUCTS = [
   {
+    id: 'paper-heros',
+    name: 'Paper Heros',
+    category: 'E-commerce – DIY Paper Crafts, Toys & Creative Products',
+    badge: 'Active',
+    badgeColor: 'orange',
+    icon: ShoppingBag,
+    iconColor: '#c2410c',
+    iconBg: '#ffedd5',
+    tagline: 'Cut. Fold. Create. Play. – Build Your Own Paper Heroes!',
+    description: 'Paper Heroes is a creative e-commerce platform offering premium DIY 3D paper craft kits inspired by popular anime characters and superheroes. It transforms ordinary paper into exciting 3D character models through a fun and engaging cut, fold, and assemble experience.',
+    tags: ['E-commerce', 'DIY Crafts', 'Paper Art', '3D Papercraft'],
+    metrics: [
+      { label: 'Product Category', val: 'DIY Paper Crafts' },
+      { label: 'Craft Type', val: '3D Paper Models' },
+      { label: 'Collection', val: 'Naruto Edition' },
+      { label: 'Experience', val: 'Cut • Fold • Create' },
+    ],
+    features: [
+      'Premium DIY 3D paper craft kits',
+      'Anime-inspired character collections',
+      'Naruto Edition special collection',
+      'Beginner-friendly cutting and folding instructions',
+      'Easy-to-assemble paper models',
+      'Creative and educational crafting experience',
+    ],
+    image_url: '/uploads/screenshot-2026-10-31-200749-1793458568283_706d1dfd.png',
+    image_alt: 'Paper Heros DIY Paper Crafts storefront preview',
+  },
+  {
     id: 'agrismart',
     name: 'AgriSmart',
     category: 'AI-Powered AgriTech Platform',
@@ -150,6 +179,33 @@ interface ProductCardItem {
   image_alt?: string | null
 }
 
+function getProductBadgeStyle(color?: string) {
+  const c = (color || 'cyan').toLowerCase().trim()
+  const map: Record<string, { bg: string; text: string; border: string }> = {
+    cyan: { bg: '#e0f2fe', text: '#0284c7', border: '#7dd3fc' },
+    teal: { bg: '#ccfbf1', text: '#0f766e', border: '#5eead4' },
+    lime: { bg: '#ecfccb', text: '#4d7c0f', border: '#bef264' },
+    green: { bg: '#dcfce7', text: '#15803d', border: '#86efac' },
+    emerald: { bg: '#d1fae5', text: '#047857', border: '#6ee7b7' },
+    blue: { bg: '#dbeafe', text: '#1d4ed8', border: '#93c5fd' },
+    sky: { bg: '#e0f2fe', text: '#0369a1', border: '#bae6fd' },
+    indigo: { bg: '#e0e7ff', text: '#4338ca', border: '#a5b4fc' },
+    purple: { bg: '#f3e8ff', text: '#7e22ce', border: '#d8b4fe' },
+    violet: { bg: '#ede9fe', text: '#6d28d9', border: '#c4b5fd' },
+    pink: { bg: '#fce7f3', text: '#be185d', border: '#f9a8d4' },
+    rose: { bg: '#ffe4e6', text: '#be123c', border: '#fecdd3' },
+    red: { bg: '#fee2e2', text: '#b91c1c', border: '#fca5a5' },
+    orange: { bg: '#ffedd5', text: '#c2410c', border: '#fdba74' },
+    yellow: { bg: '#fef3c7', text: '#b45309', border: '#fde68a' },
+    slate: { bg: '#f1f5f9', text: '#334155', border: '#cbd5e1' },
+    navy: { bg: '#061426', text: '#00c9f2', border: 'rgba(0, 201, 242, 0.4)' },
+    gradient: { bg: 'linear-gradient(135deg, rgba(0,201,242,0.18), rgba(130,230,46,0.18))', text: '#0284c7', border: '#00c9f2' },
+  }
+  if (map[c]) return map[c]
+  if (c.startsWith('#')) return { bg: c + '18', text: c, border: c + '60' }
+  return { bg: '#e0f2fe', text: '#0284c7', border: '#7dd3fc' }
+}
+
 export default function ProductsPage() {
   const [products, setProducts] = useState<ProductCardItem[]>(DEFAULT_PRODUCTS)
 
@@ -211,6 +267,37 @@ export default function ProductsPage() {
     }
   }, [])
 
+  // Auto-scroll to hash anchor when arriving with #paper-heros, etc.
+  useEffect(() => {
+    const handleHashScroll = () => {
+      if (typeof window === 'undefined') return
+      const rawHash = window.location.hash ? window.location.hash.replace('#', '') : null
+      if (!rawHash) return
+
+      const attemptScroll = (retries = 8) => {
+        const el = document.getElementById(rawHash)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          el.style.outline = '3px solid #00c9f2'
+          el.style.boxShadow = '0 0 35px rgba(0, 201, 242, 0.45)'
+          el.style.transition = 'outline 0.3s ease, box-shadow 0.3s ease'
+          setTimeout(() => {
+            el.style.outline = 'none'
+            el.style.boxShadow = '0 8px 30px rgba(15, 23, 42, 0.05)'
+          }, 3000)
+        } else if (retries > 0) {
+          setTimeout(() => attemptScroll(retries - 1), 100)
+        }
+      }
+
+      setTimeout(() => attemptScroll(), 80)
+    }
+
+    handleHashScroll()
+    window.addEventListener('hashchange', handleHashScroll)
+    return () => window.removeEventListener('hashchange', handleHashScroll)
+  }, [products])
+
   return (
     <>
       <Header />
@@ -271,6 +358,7 @@ export default function ProductsPage() {
                       gridTemplateColumns: isEven ? '1.15fr 0.85fr' : '0.85fr 1.15fr',
                       gap: '40px',
                       alignItems: 'center',
+                      scrollMarginTop: '110px',
                     }}
                   >
                     {/* Visual Mock Column */}
@@ -346,17 +434,23 @@ export default function ProductsPage() {
                     {/* Copy Column */}
                     <div style={{ order: isEven ? 1 : 2 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                        <span style={{
-                          fontSize: '11px',
-                          fontWeight: '800',
-                          textTransform: 'uppercase',
-                          color: '#0284c7',
-                          background: '#e0f2fe',
-                          padding: '4px 10px',
-                          borderRadius: '20px',
-                        }}>
-                          {product.badge}
-                        </span>
+                        {(() => {
+                          const bStyle = getProductBadgeStyle(product.badgeColor)
+                          return (
+                            <span style={{
+                              fontSize: '11px',
+                              fontWeight: '800',
+                              textTransform: 'uppercase',
+                              color: bStyle.text,
+                              background: bStyle.bg,
+                              border: `1px solid ${bStyle.border}`,
+                              padding: '4px 10px',
+                              borderRadius: '20px',
+                            }}>
+                              {product.badge}
+                            </span>
+                          )
+                        })()}
                         <div style={{ display: 'flex', gap: '6px' }}>
                           {product.tags.map((t, idx) => (
                             <span key={idx} className="tag-pill">{t}</span>
@@ -383,13 +477,13 @@ export default function ProductsPage() {
                         ))}
                       </div>
 
-                      <div style={{ display: 'flex', gap: '12px' }}>
-                        <Link href="/contact" className="quote-btn">
-                          <span>Request Live Demo</span>
+                      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                        <Link href={`/products/${product.id}`} className="quote-btn" style={{ background: '#0284c7' }}>
+                          <span>View Product Page</span>
                           <ArrowRight size={14} />
                         </Link>
                         <Link href="/contact" className="explore-btn" style={{ background: '#0f172a' }}>
-                          <span>Deploy for Your Team</span>
+                          <span>Request Live Demo</span>
                           <ExternalLink size={14} />
                         </Link>
                       </div>

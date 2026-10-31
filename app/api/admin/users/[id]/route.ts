@@ -43,13 +43,15 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await request.json()
-    const { status, role, phone, company, notes } = body
+    const { name, email, status, role, phone, company, notes } = body
 
     const user = (db.prepare('SELECT * FROM users WHERE id = ?').get(id) as unknown) as WebsiteUser | undefined
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
+    const updatedName = name !== undefined && name.trim() ? name.trim() : user.name
+    const updatedEmail = email !== undefined && email.trim() ? email.trim().toLowerCase() : user.email
     const updatedStatus = status || user.status
     const updatedRole = role || user.role
     const updatedPhone = phone !== undefined ? phone : user.phone
@@ -58,9 +60,9 @@ export async function PATCH(
 
     db.prepare(`
       UPDATE users 
-      SET status = ?, role = ?, phone = ?, company = ?, notes = ?
+      SET name = ?, email = ?, status = ?, role = ?, phone = ?, company = ?, notes = ?
       WHERE id = ?
-    `).run(updatedStatus, updatedRole, updatedPhone, updatedCompany, updatedNotes, id)
+    `).run(updatedName, updatedEmail, updatedStatus, updatedRole, updatedPhone, updatedCompany, updatedNotes, id)
 
     recordAuditLog(
       'UPDATE_USER',

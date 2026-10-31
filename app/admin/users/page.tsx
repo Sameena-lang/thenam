@@ -18,6 +18,8 @@ import {
   AlertCircle,
   X,
   Loader2,
+  Edit2,
+  CheckCircle2,
 } from 'lucide-react'
 
 interface WebsiteUser {
@@ -63,6 +65,19 @@ export default function AdminUsersPage() {
   // Delete confirmation
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null)
   const [deleteLoading, setDeleteLoading] = useState(false)
+
+  // Edit User Modal State
+  const [editingUser, setEditingUser] = useState<WebsiteUser | null>(null)
+  const [editName, setEditName] = useState('')
+  const [editEmail, setEditEmail] = useState('')
+  const [editPhone, setEditPhone] = useState('')
+  const [editCompany, setEditCompany] = useState('')
+  const [editRole, setEditRole] = useState<'client' | 'partner' | 'student' | 'founder'>('client')
+  const [editStatus, setEditStatus] = useState<'active' | 'pending' | 'deactivated'>('active')
+  const [editNotes, setEditNotes] = useState('')
+  const [editLoading, setEditLoading] = useState(false)
+  const [editError, setEditError] = useState<string | null>(null)
+  const [actionSuccess, setActionSuccess] = useState<string | null>(null)
 
   const fetchUsers = useCallback(async (pageToLoad = 1) => {
     setLoading(true)
@@ -125,6 +140,55 @@ export default function AdminUsersPage() {
       alert('Could not delete user account.')
     } finally {
       setDeleteLoading(false)
+    }
+  }
+
+  const handleOpenEditModal = (u: WebsiteUser) => {
+    setEditingUser(u)
+    setEditName(u.name)
+    setEditEmail(u.email)
+    setEditPhone(u.phone || '')
+    setEditCompany(u.company || '')
+    setEditRole(u.role)
+    setEditStatus(u.status)
+    setEditNotes(u.notes || '')
+    setEditError(null)
+  }
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingUser) return
+    setEditLoading(true)
+    setEditError(null)
+    try {
+      const res = await fetch(`/api/admin/users/${editingUser.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: editName,
+          email: editEmail,
+          phone: editPhone,
+          company: editCompany,
+          role: editRole,
+          status: editStatus,
+          notes: editNotes,
+        }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Failed to update user record')
+      }
+
+      setEditingUser(null)
+      setActionSuccess(`User "${editName}" updated successfully!`)
+      setTimeout(() => setActionSuccess(null), 3500)
+      fetchUsers(pagination.page)
+    } catch (err: unknown) {
+      console.error(err)
+      setEditError(err instanceof Error ? err.message : 'Error updating user')
+    } finally {
+      setEditLoading(false)
     }
   }
 
@@ -211,6 +275,13 @@ export default function AdminUsersPage() {
         <div className="adm-alert-error" role="alert">
           <AlertCircle size={16} />
           <span>{error}</span>
+        </div>
+      )}
+
+      {actionSuccess && (
+        <div className="adm-alert-success" role="status" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '8px', color: '#065f46', marginBottom: '20px', fontSize: '13.5px' }}>
+          <CheckCircle2 size={16} style={{ color: '#10b981', flexShrink: 0 }} />
+          <span>{actionSuccess}</span>
         </div>
       )}
 
@@ -339,6 +410,17 @@ export default function AdminUsersPage() {
                     <td style={{ fontSize: '12.5px', color: '#64748b' }}>{formatDate(u.created_at)}</td>
                     <td style={{ textAlign: 'right' }}>
                       <div style={{ display: 'inline-flex', gap: '8px', alignItems: 'center' }}>
+                        <button
+                          onClick={() => handleOpenEditModal(u)}
+                          className="adm-btn adm-btn-outline adm-btn-sm"
+                          style={{ color: '#0284c7', borderColor: '#bae6fd' }}
+                          title="Edit user details"
+                          type="button"
+                        >
+                          <Edit2 size={13} />
+                          <span>Edit</span>
+                        </button>
+
                         <Link
                           href={`/admin/users/${u.id}`}
                           className="adm-btn adm-btn-outline adm-btn-sm"
@@ -621,6 +703,177 @@ export default function AdminUsersPage() {
                   ) : (
                     <span>Register User</span>
                   )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Modal */}
+      {editingUser && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(6, 20, 38, 0.7)',
+            backdropFilter: 'blur(4px)',
+            display: 'grid',
+            placeItems: 'center',
+            zIndex: 100,
+            padding: '20px',
+            overflowY: 'auto',
+          }}
+        >
+          <div className="adm-card" style={{ maxWidth: '520px', width: '100%', padding: '28px', margin: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <div>
+                <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', margin: 0 }}>
+                  Edit Client / User Details
+                </h3>
+                <span style={{ fontSize: '12px', color: '#64748b' }}>Update verified record for {editingUser.name}</span>
+              </div>
+              <button
+                onClick={() => setEditingUser(null)}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b' }}
+                type="button"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {editError && (
+              <div className="adm-alert-error" role="alert" style={{ marginBottom: '14px' }}>
+                <AlertCircle size={15} />
+                <span>{editError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSaveEdit}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+                <div>
+                  <label className="adm-form-label" style={{ color: '#334155', marginBottom: '4px', display: 'block', fontSize: '12.5px', fontWeight: 600 }}>
+                    Full Name *
+                  </label>
+                  <input
+                    required
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    placeholder="Full Name"
+                    className="adm-input adm-input-light"
+                    style={{ padding: '9px 12px' }}
+                  />
+                </div>
+
+                <div>
+                  <label className="adm-form-label" style={{ color: '#334155', marginBottom: '4px', display: 'block', fontSize: '12.5px', fontWeight: 600 }}>
+                    Email Address *
+                  </label>
+                  <input
+                    required
+                    type="email"
+                    value={editEmail}
+                    onChange={(e) => setEditEmail(e.target.value)}
+                    placeholder="email@company.com"
+                    className="adm-input adm-input-light"
+                    style={{ padding: '9px 12px' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+                <div>
+                  <label className="adm-form-label" style={{ color: '#334155', marginBottom: '4px', display: 'block', fontSize: '12.5px', fontWeight: 600 }}>
+                    Phone Number
+                  </label>
+                  <input
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    placeholder="+91 98400 12345"
+                    className="adm-input adm-input-light"
+                    style={{ padding: '9px 12px' }}
+                  />
+                </div>
+
+                <div>
+                  <label className="adm-form-label" style={{ color: '#334155', marginBottom: '4px', display: 'block', fontSize: '12.5px', fontWeight: 600 }}>
+                    Company / Organization
+                  </label>
+                  <input
+                    value={editCompany}
+                    onChange={(e) => setEditCompany(e.target.value)}
+                    placeholder="Company Name"
+                    className="adm-input adm-input-light"
+                    style={{ padding: '9px 12px' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+                <div>
+                  <label className="adm-form-label" style={{ color: '#334155', marginBottom: '4px', display: 'block', fontSize: '12.5px', fontWeight: 600 }}>
+                    Account Role
+                  </label>
+                  <select
+                    value={editRole}
+                    onChange={(e) => setEditRole(e.target.value as any)}
+                    className="adm-input adm-input-light"
+                    style={{ padding: '9px 12px', height: '42px' }}
+                  >
+                    <option value="client">Client</option>
+                    <option value="partner">Partner</option>
+                    <option value="founder">Founder</option>
+                    <option value="student">Student</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="adm-form-label" style={{ color: '#334155', marginBottom: '4px', display: 'block', fontSize: '12.5px', fontWeight: 600 }}>
+                    Account Status
+                  </label>
+                  <select
+                    value={editStatus}
+                    onChange={(e) => setEditStatus(e.target.value as any)}
+                    className="adm-input adm-input-light"
+                    style={{ padding: '9px 12px', height: '42px' }}
+                  >
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="deactivated">Deactivated</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '22px' }}>
+                <label className="adm-form-label" style={{ color: '#334155', marginBottom: '4px', display: 'block', fontSize: '12.5px', fontWeight: 600 }}>
+                  Internal Notes &amp; Project Context
+                </label>
+                <textarea
+                  value={editNotes}
+                  onChange={(e) => setEditNotes(e.target.value)}
+                  placeholder="Client notes, project preferences, or billing agreements..."
+                  rows={3}
+                  className="adm-input adm-input-light"
+                  style={{ padding: '9px 12px', resize: 'vertical' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => setEditingUser(null)}
+                  disabled={editLoading}
+                  className="adm-btn adm-btn-outline"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={editLoading}
+                  className="adm-btn adm-btn-primary"
+                  style={{ width: 'auto', padding: '10px 20px' }}
+                >
+                  {editLoading ? 'Saving Changes...' : 'Save Changes'}
                 </button>
               </div>
             </form>
