@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { PROJECTS, ALL_PROJECTS } from '@/lib/projects-data'
+import { getProjectBySlug, getAllProjects } from '@/lib/db'
 import './project-detail.css'
 import {
   ArrowLeft,
@@ -15,26 +16,31 @@ import {
   Compass,
 } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface PageProps {
   params: Promise<{ slug: string }>
 }
 
 export function generateStaticParams() {
-  return ALL_PROJECTS.map((p) => ({
+  const all = getAllProjects(true)
+  return all.map((p) => ({
     slug: p.slug,
   }))
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params
-  const project = PROJECTS[slug]
+  const project = getProjectBySlug(slug) || PROJECTS[slug]
 
   if (!project) {
     notFound()
   }
 
-  // Get other projects for "More Projects Like This"
-  const relatedProjects = ALL_PROJECTS.filter((p) => p.slug !== slug).slice(0, 4)
+  // Get other active projects for "More Projects Like This"
+  const allProjects = getAllProjects(false)
+  const relatedProjects = allProjects.filter((p) => p.slug !== slug).slice(0, 4)
 
   return (
     <>
@@ -55,7 +61,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#38bdf8', fontSize: '13.5px', fontWeight: 600, textDecoration: 'none' }}
             >
               <ArrowLeft size={15} />
-              <span>Back to Projects</span>
+              <span>Back to Home</span>
             </Link>
           </div>
 
@@ -251,11 +257,11 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   overflow: 'hidden',
                 }}
               >
-                {/* For swekas-luxe, render the authentic full browser screenshot with traffic lights */}
-                {project.slug === 'swekas-luxe' ? (
+                {/* For swekas-luxe or mockups with authentic full browser frame */}
+                {project.mockupImage?.includes('browser-exact') || (project.slug === 'swekas-luxe' && (!project.mockupImage || project.mockupImage === '/projects/swekas-browser-exact.png')) ? (
                   <img
-                    src="/projects/swekas-browser-exact.png"
-                    alt="Swekas Luxe live website preview at https://swekasluxe.com"
+                    src={project.mockupImage || '/projects/swekas-browser-exact.png'}
+                    alt={`${project.titleFirst} ${project.titleSecond} live website preview at ${project.domain || project.visitUrl}`}
                     style={{ width: '100%', height: 'auto', display: 'block' }}
                   />
                 ) : (
@@ -295,7 +301,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                       >
                         <span style={{ color: '#38bdf8' }}>🔒</span>
                         <span className="p-url-text" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {project.domain}
+                          {project.domain || project.visitUrl}
                         </span>
                       </div>
                     </div>

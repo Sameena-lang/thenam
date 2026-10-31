@@ -1,3 +1,4 @@
+import { PROJECTS, ProjectDetail } from './projects-data'
 import { DatabaseSync } from 'node:sqlite'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -139,6 +140,29 @@ export interface ContentItem {
   button_url: string | null
   display_order: number
   status: 'draft' | 'published'
+  created_at: string
+  updated_at: string
+}
+
+export interface ProjectItem {
+  slug: string
+  title_first: string
+  title_second: string
+  subtitle: string
+  category_eyebrow: string
+  domain: string
+  visit_url: string
+  category: string
+  year: string
+  practice: string
+  phase: string
+  mockup_image: string
+  short_desc: string
+  tag: string
+  tag_type: string
+  thumbnail: string
+  sort_order: number
+  is_active: number
   created_at: string
   updated_at: string
 }
@@ -509,6 +533,58 @@ function initializeSchema(db: DatabaseSync) {
     CREATE INDEX IF NOT EXISTS idx_analytics_ev_name_date ON analytics_events(event_name, date);
     CREATE INDEX IF NOT EXISTS idx_analytics_ev_visitor ON analytics_events(visitor_id);
   `)
+
+// 16. Projects Table (Client Case Studies, Portfolio & Live Visit Links)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS projects (
+      slug TEXT PRIMARY KEY,
+      title_first TEXT NOT NULL,
+      title_second TEXT NOT NULL,
+      subtitle TEXT NOT NULL,
+      category_eyebrow TEXT NOT NULL,
+      domain TEXT NOT NULL,
+      visit_url TEXT NOT NULL,
+      category TEXT NOT NULL,
+      year TEXT NOT NULL,
+      practice TEXT NOT NULL,
+      phase TEXT NOT NULL,
+      mockup_image TEXT NOT NULL,
+      short_desc TEXT NOT NULL,
+      tag TEXT NOT NULL,
+      tag_type TEXT NOT NULL,
+      thumbnail TEXT NOT NULL,
+      sort_order INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_projects_sort ON projects(sort_order ASC, created_at ASC);
+    CREATE INDEX IF NOT EXISTS idx_projects_active ON projects(is_active);
+  `)
+
+  // Seed Initial Projects from projects-data.ts if table is empty
+  const checkProjects = db.prepare('SELECT COUNT(*) as count FROM projects').get() as { count: number }
+  if (checkProjects.count === 0) {
+    const now = new Date().toISOString()
+    const stmt = db.prepare(`
+      INSERT INTO projects (
+        slug, title_first, title_second, subtitle, category_eyebrow,
+        domain, visit_url, category, year, practice, phase,
+        mockup_image, short_desc, tag, tag_type, thumbnail,
+        sort_order, is_active, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
+    `)
+
+    let sort = 1
+    for (const p of Object.values(PROJECTS)) {
+      stmt.run(
+        p.slug, p.titleFirst, p.titleSecond, p.subtitle, p.categoryEyebrow,
+        p.domain, p.visitUrl, p.category, p.year, p.practice, p.phase,
+        p.mockupImage, p.shortDesc, p.tag, p.tagType, p.thumbnail,
+        sort++, now, now
+      )
+    }
+  }
 
   // Seed Initial Admin User if none exists
   const checkAdmin = db.prepare('SELECT COUNT(*) as count FROM admin_users').get() as { count: number }
@@ -1443,6 +1519,18 @@ export function isMediaInUse(url: string): { inUse: boolean; locations: string[]
     // safe fallback
   }
 
+// Check projects
+  try {
+    const projectRows = (db
+      .prepare('SELECT title_first, title_second FROM projects WHERE mockup_image = ? OR thumbnail = ?')
+      .all(url, url) as unknown) as Array<{ title_first: string; title_second: string }>
+    for (const p of projectRows) {
+      locations.push(`Project Case Study: ${p.title_first} ${p.title_second}`)
+    }
+  } catch {
+    // safe fallback
+  }
+
   // Check if it's marked as a core system asset
   const mediaRow = (db
     .prepare('SELECT is_system, usage_ref FROM media WHERE url = ?')
@@ -2093,4 +2181,186 @@ export function getPublicContentByPage(page: string, section?: string): ContentI
 
   const rows = (db.prepare(query).all(...params) as unknown) as ContentItem[]
   return rows
+}
+
+
+/**
+ * ========================================================
+ * PROJECTS & PORTFOLIO CRUD HELPERS
+ * ========================================================
+ */
+
+function mapProjectItemToDetail(item: ProjectItem): ProjectDetail & { sortOrder: number; isActive: boolean; createdAt: string; updatedAt: string } {
+  return {
+    slug: item.slug,
+    titleFirst: item.title_first,
+    titleSecond: item.title_second,
+    subtitle: item.subtitle,
+    categoryEyebrow: item.category_eyebrow,
+    domain: item.domain,
+    visitUrl: item.visit_url,
+    category: item.category,
+    year: item.year,
+    practice: item.practice,
+    phase: item.phase,
+    mockupImage: item.mockup_image,
+    shortDesc: item.short_desc,
+    tag: item.tag,
+    tagType: item.tag_type,
+    thumbnail: item.thumbnail,
+    sortOrder: item.sort_order,
+    isActive: item.is_active === 1,
+    createdAt: item.created_at,
+    updatedAt: item.updated_at,
+  }
+}
+
+export function getAllProjects(includeInactive = false): (ProjectDetail & { sortOrder: number; isActive: boolean; createdAt: string; updatedAt: string })[] {
+  try {
+    const query = includeInactive
+      ? 'SELECT * FROM projects ORDER BY sort_order ASC, created_at ASC'
+      : 'SELECT * FROM projects WHERE is_active = 1 ORDER BY sort_order ASC, created_at ASC'
+    const rows = (db.prepare(query).all() as unknown) as ProjectItem[]
+    if (rows && rows.length > 0) {
+      return rows.map(mapProjectItemToDetail)
+    }
+  } catch (err) {
+    console.error('Failed to query projects from database, using fallback:', err)
+  }
+
+  // Fallback to in-memory default projects
+  return Object.values(PROJECTS).map((p, idx) => ({
+    ...p,
+    sortOrder: idx + 1,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }))
+}
+
+export function getProjectBySlug(slug: string): (ProjectDetail & { sortOrder: number; isActive: boolean; createdAt: string; updatedAt: string }) | null {
+  try {
+    const row = (db.prepare('SELECT * FROM projects WHERE slug = ?').get(slug) as unknown) as ProjectItem | undefined
+    if (row) {
+      return mapProjectItemToDetail(row)
+    }
+  } catch (err) {
+    console.error('Failed to query project by slug from database:', err)
+  }
+
+  const fallback = PROJECTS[slug]
+  if (fallback) {
+    return {
+      ...fallback,
+      sortOrder: 1,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+  }
+
+  return null
+}
+
+export function updateProject(
+  slug: string,
+  updates: Partial<{
+    titleFirst: string
+    titleSecond: string
+    subtitle: string
+    categoryEyebrow: string
+    domain: string
+    visitUrl: string
+    category: string
+    year: string
+    practice: string
+    phase: string
+    mockupImage: string
+    shortDesc: string
+    tag: string
+    tagType: string
+    thumbnail: string
+    sortOrder: number
+    isActive: boolean | number
+  }>
+): (ProjectDetail & { sortOrder: number; isActive: boolean; createdAt: string; updatedAt: string }) | null {
+  const existing = getProjectBySlug(slug)
+  if (!existing) return null
+
+  const fields: string[] = []
+  const params: (string | number | null)[] = []
+
+  if (updates.titleFirst !== undefined) { fields.push('title_first = ?'); params.push(updates.titleFirst.trim()) }
+  if (updates.titleSecond !== undefined) { fields.push('title_second = ?'); params.push(updates.titleSecond.trim()) }
+  if (updates.subtitle !== undefined) { fields.push('subtitle = ?'); params.push(updates.subtitle.trim()) }
+  if (updates.categoryEyebrow !== undefined) { fields.push('category_eyebrow = ?'); params.push(updates.categoryEyebrow.trim()) }
+  if (updates.domain !== undefined) { fields.push('domain = ?'); params.push(updates.domain.trim()) }
+  if (updates.visitUrl !== undefined) { fields.push('visit_url = ?'); params.push(updates.visitUrl.trim()) }
+  if (updates.category !== undefined) { fields.push('category = ?'); params.push(updates.category.trim()) }
+  if (updates.year !== undefined) { fields.push('year = ?'); params.push(updates.year.trim()) }
+  if (updates.practice !== undefined) { fields.push('practice = ?'); params.push(updates.practice.trim()) }
+  if (updates.phase !== undefined) { fields.push('phase = ?'); params.push(updates.phase.trim()) }
+  if (updates.mockupImage !== undefined) { fields.push('mockup_image = ?'); params.push(updates.mockupImage.trim()) }
+  if (updates.shortDesc !== undefined) { fields.push('short_desc = ?'); params.push(updates.shortDesc.trim()) }
+  if (updates.tag !== undefined) { fields.push('tag = ?'); params.push(updates.tag.trim()) }
+  if (updates.tagType !== undefined) { fields.push('tag_type = ?'); params.push(updates.tagType.trim()) }
+  if (updates.thumbnail !== undefined) { fields.push('thumbnail = ?'); params.push(updates.thumbnail.trim()) }
+  if (updates.sortOrder !== undefined) { fields.push('sort_order = ?'); params.push(Number(updates.sortOrder) || 0) }
+  if (updates.isActive !== undefined) { fields.push('is_active = ?'); params.push(updates.isActive ? 1 : 0) }
+
+  const now = new Date().toISOString()
+  fields.push('updated_at = ?')
+  params.push(now)
+  params.push(slug)
+
+  db.prepare(`UPDATE projects SET ${fields.join(', ')} WHERE slug = ?`).run(...params)
+  return getProjectBySlug(slug)
+}
+
+export function createProject(
+  project: ProjectDetail & { sortOrder?: number; isActive?: boolean }
+): ProjectDetail & { sortOrder: number; isActive: boolean; createdAt: string; updatedAt: string } {
+  const now = new Date().toISOString()
+  const slug = project.slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')
+
+  db.prepare(`
+    INSERT INTO projects (
+      slug, title_first, title_second, subtitle, category_eyebrow,
+      domain, visit_url, category, year, practice, phase,
+      mockup_image, short_desc, tag, tag_type, thumbnail,
+      sort_order, is_active, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    slug,
+    project.titleFirst.trim(),
+    project.titleSecond.trim(),
+    project.subtitle.trim(),
+    project.categoryEyebrow.trim(),
+    project.domain.trim(),
+    project.visitUrl.trim(),
+    project.category.trim(),
+    project.year.trim(),
+    project.practice.trim(),
+    project.phase.trim(),
+    project.mockupImage.trim(),
+    project.shortDesc.trim(),
+    project.tag.trim(),
+    project.tagType.trim(),
+    project.thumbnail.trim(),
+    Number(project.sortOrder) || 99,
+    project.isActive !== false ? 1 : 0,
+    now,
+    now
+  )
+
+  const created = getProjectBySlug(slug)
+  if (!created) {
+    throw new Error(`Failed to retrieve newly created project "${slug}".`)
+  }
+  return created
+}
+
+export function deleteProject(slug: string): boolean {
+  const res = db.prepare('DELETE FROM projects WHERE slug = ?').run(slug)
+  return res.changes > 0
 }
