@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: thenam
+    runtime: node
+    plan: free
+    region: singapore
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_INITIAL_EMAIL
+        value: admin@thenamsoft.com
+      - key: ADMIN_INITIAL_NAME
+        value: Thenam Administrator
+      - key: ADMIN_INITIAL_PASSWORD
+        value: ThenamAdmin#2026
+      - key: ADMIN_SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_PATH
+        value: ./data/thenam.db
+
