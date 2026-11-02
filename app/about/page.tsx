@@ -70,8 +70,15 @@ export default function AboutPage() {
         <section
           className="inner-page-hero about-hero-with-bg"
           aria-label="About Us Header"
-          style={{ position: 'relative', overflow: 'hidden', minHeight: '490px', display: 'flex', alignItems: 'center' }}
+          style={{ position: 'relative', overflow: 'hidden', minHeight: '520px', display: 'flex', alignItems: 'center' }}
         >
+          {/* Background Image Layer */}
+          <div className="about-hero-bg-layer" aria-hidden="true">
+            <div className="about-hero-bg-img" />
+            <div className="about-hero-gradient-overlay" />
+            <div className="about-hero-glow" />
+          </div>
+
           <div className="hero-glow-cyan" aria-hidden="true" />
           
           {/* Moving 3D coverflow carousel in the background */}
