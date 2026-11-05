@@ -88,6 +88,15 @@ const CLIENT_MARQUEE_LOGOS: MarqueeLogo[] = [
     className: 'marquee-logo-chennai',
     href: '/projects/chennai-tales',
   },
+  {
+    id: 'paper-heros',
+    name: 'Paper Heros',
+    src: '/marquee-logos/paper-heros.png',
+    width: 48,
+    height: 34,
+    className: 'marquee-logo-paperheros',
+    href: '/products/paper-heros',
+  },
 ]
 
 // Repeat 4x per track group to create a seamless continuous scrolling ribbon
@@ -274,8 +283,186 @@ export default function HomePage() {
         <section
           className="hero-section"
           aria-label="Hero Introduction"
-          style={{ backgroundImage: `url('${siteImages.heroBg}')` }}
+          style={{ backgroundImage: `url('${siteImages.heroBg || '/hero-bg.png'}')` }}
         >
+          <style dangerouslySetInnerHTML={{ __html: `
+            /* Desktop BR is visible on desktop, hidden on mobile */
+            .hero-desktop-br {
+              display: inline;
+            }
+            .hero-mobile-br {
+              display: none;
+            }
+
+            @media (max-width: 980px) {
+              .hero-desktop-br {
+                display: none !important;
+              }
+              .hero-mobile-br {
+                display: inline !important;
+              }
+              .hero-section {
+                background-color: #031525 !important;
+                background-image: 
+                  linear-gradient(
+                    180deg,
+                    rgba(3, 21, 37, 0.96) 0%,
+                    rgba(3, 21, 37, 0.88) 36%,
+                    rgba(3, 21, 37, 0.45) 65%,
+                    rgba(3, 21, 37, 0.85) 100%
+                  ),
+                  url('${siteImages.heroBg || '/hero-bg.png'}') !important;
+                background-position: center top, 75% bottom !important;
+                background-size: 100% 100%, cover !important;
+                background-repeat: no-repeat, no-repeat !important;
+                padding: 38px 0 34px !important;
+                min-height: auto !important;
+                height: auto !important;
+                width: 100% !important;
+                max-width: 100vw !important;
+                overflow: hidden !important;
+                margin-bottom: 0 !important;
+              }
+              .hero-visual-spacer {
+                display: none !important;
+                min-height: 0 !important;
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+              }
+              .hero-glow-cyan, .hero-glow-lime,
+              .hero-plant-left, .hero-plant-right {
+                display: none !important;
+              }
+              .hero-grid {
+                grid-template-columns: 1fr !important;
+                gap: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+              }
+              .hero-copy-col {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+                overflow-wrap: break-word !important;
+                word-break: normal !important;
+              }
+              .hero-eyebrow {
+                font-size: 11px !important;
+                margin-bottom: 14px !important;
+                letter-spacing: 0.14em !important;
+                flex-wrap: wrap !important;
+                gap: 6px !important;
+                line-height: 1.4 !important;
+                white-space: normal !important;
+              }
+              .hero-title {
+                font-size: clamp(28px, 7.5vw, 32px) !important;
+                line-height: 1.15 !important;
+                margin: 0 0 16px !important;
+                letter-spacing: normal !important;
+                word-spacing: normal !important;
+                font-weight: 800 !important;
+                color: #ffffff !important;
+                overflow-wrap: break-word !important;
+                word-break: normal !important;
+              }
+              .hero-desc {
+                font-size: 15px !important;
+                line-height: 1.58 !important;
+                letter-spacing: normal !important;
+                word-spacing: normal !important;
+                color: var(--text-slate, #94a3b8) !important;
+                margin: 0 0 24px !important;
+                max-width: 100% !important;
+                overflow-wrap: break-word !important;
+                word-break: normal !important;
+                box-sizing: border-box !important;
+              }
+              .hero-btn-row {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+                margin-bottom: 22px !important;
+                width: 100% !important;
+                max-width: 440px !important;
+              }
+              .hero-btn-row .explore-btn,
+              .hero-btn-row .quote-btn {
+                width: 100% !important;
+                max-width: 100% !important;
+                display: inline-flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+                padding: 13px 20px !important;
+                font-size: 14px !important;
+                font-weight: 700 !important;
+                box-sizing: border-box !important;
+                text-align: center !important;
+                border-radius: 9px !important;
+                gap: 8px !important;
+              }
+              .price-callout {
+                margin-bottom: 22px !important;
+                font-size: 13px !important;
+                justify-content: flex-start !important;
+                flex-wrap: wrap !important;
+                gap: 6px !important;
+              }
+              .hero-badges-row {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 10px 14px !important;
+                padding-top: 18px !important;
+                border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin-bottom: 0 !important;
+              }
+              .badge-item {
+                font-size: 11px !important;
+                white-space: normal !important;
+                line-height: 1.3 !important;
+                gap: 6px !important;
+              }
+              .badge-item svg {
+                flex-shrink: 0 !important;
+                width: 14px !important;
+                height: 14px !important;
+              }
+              .trusted-showcase-section {
+                padding: 22px 0 18px 0 !important;
+                margin-top: 0 !important;
+              }
+            }
+            @media (max-width: 480px) {
+              .hero-section {
+                padding: 32px 0 28px !important;
+              }
+              .hero-title {
+                font-size: 28px !important;
+                line-height: 1.15 !important;
+                letter-spacing: normal !important;
+              }
+              .hero-desc {
+                font-size: 14.5px !important;
+                line-height: 1.55 !important;
+                margin: 0 0 22px !important;
+              }
+              .hero-badges-row {
+                gap: 8px 10px !important;
+              }
+              .badge-item {
+                font-size: 10.5px !important;
+              }
+            }
+            @media (max-width: 340px) {
+              .hero-badges-row {
+                grid-template-columns: 1fr !important;
+              }
+            }
+          ` }} />
           <div className="hero-glow-cyan" aria-hidden="true" />
           <div className="hero-glow-lime" aria-hidden="true" />
           <div className="hero-plant-left" aria-hidden="true" />
@@ -290,8 +477,10 @@ export default function HomePage() {
               </span>
 
               <h1 className="hero-title">
-                Technology that moves<br />
+                Technology that <br className="hero-mobile-br" />
+                moves <br className="hero-desktop-br" />
                 your <span className="accent-cyan">business</span>{' '}
+                <br className="hero-mobile-br" />
                 <span className="accent-lime">forward.</span>
               </h1>
 
@@ -347,7 +536,7 @@ export default function HomePage() {
         <section className="trusted-showcase-section" aria-label="Trusted by institutions and partners">
           <div className="trusted-showcase-header">
             <h2 className="trusted-showcase-title">
-              Trusted by <span className="trusted-showcase-highlight">colleges</span> across India
+              Trusted by <span className="trusted-showcase-highlight">Clients</span> across India
             </h2>
           </div>
           <div className="marquee-track">

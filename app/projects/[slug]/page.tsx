@@ -72,7 +72,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             className="p-hero-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
               gap: '48px',
               alignItems: 'center',
               marginBottom: '70px',

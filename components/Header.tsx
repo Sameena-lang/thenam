@@ -61,15 +61,70 @@ export default function Header() {
     <>
       {/* Main Navbar */}
       <header className="main-header">
+        <style dangerouslySetInnerHTML={{ __html: `
+          @media (max-width: 980px) {
+            .header-quote-btn {
+              display: none !important;
+            }
+            .desktop-nav {
+              display: none !important;
+            }
+            .mobile-toggle {
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              width: 38px !important;
+              height: 38px !important;
+              border-radius: 8px !important;
+              background: rgba(255, 255, 255, 0.06) !important;
+              border: 1px solid rgba(255, 255, 255, 0.14) !important;
+              color: #ffffff !important;
+              cursor: pointer !important;
+              flex-shrink: 0 !important;
+            }
+            .brand-logo {
+              min-width: 0 !important;
+              flex-shrink: 0 !important;
+              gap: 9px !important;
+            }
+            .brand-name {
+              font-size: 16.5px !important;
+              white-space: nowrap !important;
+            }
+            .brand-tagline {
+              font-size: 7px !important;
+              letter-spacing: 0.13em !important;
+              white-space: nowrap !important;
+            }
+            .logo-leaf {
+              width: 34px !important;
+              height: 34px !important;
+              flex-shrink: 0 !important;
+            }
+          }
+          @media (max-width: 360px) {
+            .brand-name {
+              font-size: 15px !important;
+            }
+            .brand-tagline {
+              font-size: 6.5px !important;
+              letter-spacing: 0.1em !important;
+            }
+            .logo-leaf {
+              width: 30px !important;
+              height: 30px !important;
+            }
+          }
+        ` }} />
         <div className="container header-inner">
           {/* Logo */}
           <Link href="/" className="brand-logo" aria-label="Thenam Software Solutions home">
             <img src="/thenam-leaf-clean.png" alt="Thenam Logo" className="logo-leaf header-logo-leaf" width="38" height="38" />
-            <div className="brand-text">
-              <span className="brand-name">
+            <div className="brand-text" style={{ flexShrink: 0, minWidth: 0 }}>
+              <span className="brand-name" style={{ whiteSpace: 'nowrap' }}>
                 THEN<span className="brand-name-accent">AM</span>
               </span>
-              <span className="brand-tagline">SOFTWARE SOLUTIONS</span>
+              <span className="brand-tagline" style={{ whiteSpace: 'nowrap' }}>SOFTWARE SOLUTIONS</span>
             </div>
           </Link>
 

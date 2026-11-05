@@ -348,23 +348,15 @@ export default function ProductsPage() {
                   <article
                     key={product.id}
                     id={product.id}
+                    className={`product-showcase-card ${isEven ? 'is-even' : ''}`}
                     style={{
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '18px',
-                      padding: '36px',
-                      background: '#ffffff',
-                      boxShadow: '0 8px 30px rgba(15, 23, 42, 0.05)',
-                      display: 'grid',
-                      gridTemplateColumns: isEven ? '1.15fr 0.85fr' : '0.85fr 1.15fr',
-                      gap: '40px',
-                      alignItems: 'center',
                       scrollMarginTop: '110px',
                     }}
                   >
                     {/* Visual Mock Column */}
                     <div
+                      className="product-card-visual-col"
                       style={{
-                        order: isEven ? 2 : 1,
                         background: '#070f1e',
                         borderRadius: '14px',
                         padding: '24px',
@@ -432,7 +424,7 @@ export default function ProductsPage() {
                     </div>
 
                     {/* Copy Column */}
-                    <div style={{ order: isEven ? 1 : 2 }}>
+                    <div className="product-card-copy-col">
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                         {(() => {
                           const bStyle = getProductBadgeStyle(product.badgeColor)

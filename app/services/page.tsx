@@ -15,10 +15,6 @@ import {
   CheckCircle2,
   ArrowRight,
   Sparkles,
-  ShieldCheck,
-  Zap,
-  Clock,
-  Coins,
 } from 'lucide-react'
 
 const DEFAULT_SERVICE_CATEGORIES = [
@@ -272,7 +268,7 @@ export default function ServicesPage() {
               </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '28px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 350px), 1fr))', gap: '28px' }}>
               {serviceCategories.map((service) => {
                 const Icon = service.icon
                 return (
@@ -469,47 +465,6 @@ export default function ServicesPage() {
                   <span>Request Custom Proposal</span>
                   <ArrowRight size={14} />
                 </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ========================================================
-            WHY CHOOSE THENAM (TRUST PILLARS)
-            ======================================================== */}
-        <section className="inner-white-section">
-          <div className="container">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
-              <div style={{ padding: '24px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                <Clock size={24} style={{ color: '#0284c7', marginBottom: '14px' }} />
-                <h4 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 8px' }}>Rapid Execution</h4>
-                <p style={{ fontSize: '13px', color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-                  We work in disciplined, fast sprints so you see real working software every week.
-                </p>
-              </div>
-
-              <div style={{ padding: '24px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                <Coins size={24} style={{ color: '#65a30d', marginBottom: '14px' }} />
-                <h4 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 8px' }}>Predictable Pricing</h4>
-                <p style={{ fontSize: '13px', color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-                  Clear scopes, milestones, and no surprise invoices. Websites start at just &#8377;1,999*.
-                </p>
-              </div>
-
-              <div style={{ padding: '24px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                <ShieldCheck size={24} style={{ color: '#0284c7', marginBottom: '14px' }} />
-                <h4 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 8px' }}>Code Ownership</h4>
-                <p style={{ fontSize: '13px', color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-                  You own 100% of your source code, design files, and deployment accounts. No vendor lock-in.
-                </p>
-              </div>
-
-              <div style={{ padding: '24px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                <Zap size={24} style={{ color: '#65a30d', marginBottom: '14px' }} />
-                <h4 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 8px' }}>Ongoing Support</h4>
-                <p style={{ fontSize: '13px', color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-                  We stand by what we build with continuous monitoring, warranty, and feature enhancements.
-                </p>
               </div>
             </div>
           </div>
