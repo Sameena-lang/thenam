@@ -36,18 +36,71 @@
   z-index: 1;
 }
 
-/* Right tropical leaf foliage decoration */
-.p-leaf-bg-right {
+/* Left leaf artwork decorative background element - Hero scoped */
+.p-leaf-bg-left {
   position: absolute;
-  top: 90px;
-  right: 0;
-  width: 220px;
-  height: 520px;
-  background: url('/projects/project-bg-leaf-right.png') no-repeat right top;
-  background-size: contain;
-  opacity: 0.85;
+  top: 0;
+  left: 0;
+  width: min(680px, 48vw);
+  height: 540px;
+  max-height: 560px;
   pointer-events: none;
   z-index: 1;
+  overflow: hidden;
+}
+
+.p-leaf-artwork-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/projects/project-leaf-artwork.jpg');
+  background-size: cover;
+  background-position: top left;
+  background-repeat: no-repeat;
+  opacity: 0.15; /* 15% opacity: subtle, non-overpowering decorative background (12–18% range) */
+  filter: brightness(0.90) contrast(1.1);
+  transform: scale(1.02);
+  -webkit-mask-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 25%, rgba(0, 0, 0, 0.3) 55%, transparent 85%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 45%, rgba(0, 0, 0, 0.2) 75%, transparent 95%);
+  -webkit-mask-composite: destination-in;
+  mask-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 25%, rgba(0, 0, 0, 0.3) 55%, transparent 85%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 45%, rgba(0, 0, 0, 0.2) 75%, transparent 95%);
+  mask-composite: intersect;
+  transition: opacity 0.3s ease;
+}
+
+.p-leaf-gradient-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to right,
+      rgba(3, 20, 34, 0.45) 0%,
+      rgba(3, 20, 34, 0.65) 30%,
+      rgba(3, 20, 34, 0.90) 60%,
+      #031422 82%,
+      #031422 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(3, 20, 34, 0.2) 0%,
+      transparent 30%,
+      rgba(3, 20, 34, 0.75) 65%,
+      #031422 90%,
+      #031422 100%
+    );
+  pointer-events: none;
+}
+
+.p-leaf-ambient-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle 320px at 22% 30%, rgba(0, 201, 242, 0.08) 0%, transparent 65%);
+  pointer-events: none;
 }
 
 .p-content-container {
@@ -55,7 +108,7 @@
   margin: 0 auto;
   padding: 0 24px 80px;
   position: relative;
-  z-index: 2;
+  z-index: 10;
 }
 
 /* Back navigation */
@@ -91,6 +144,8 @@
 .p-hero-copy {
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 10;
 }
 
 .p-eyebrow {
@@ -109,6 +164,7 @@
   letter-spacing: -0.035em;
   color: #ffffff;
   margin: 0 0 14px;
+  text-shadow: 0 2px 24px rgba(3, 20, 34, 0.85), 0 1px 6px rgba(3, 20, 34, 0.6);
 }
 
 .p-title-gradient {
@@ -124,6 +180,7 @@
   color: #94a3b8;
   margin: 0 0 28px;
   max-width: 480px;
+  text-shadow: 0 1px 12px rgba(3, 20, 34, 0.7);
 }
 
 /* Specs Row: 4 items side-by-side */
@@ -211,6 +268,7 @@
 /* Glowing browser window frame */
 .p-browser-col {
   position: relative;
+  z-index: 10;
 }
 
 .p-browser-window {
@@ -304,6 +362,8 @@
 
 /* Related Projects Section */
 .p-related-section {
+  position: relative;
+  z-index: 10;
   padding-top: 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -456,8 +516,17 @@
   .p-related-cards-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .p-leaf-bg-right {
-    display: none;
+  .p-leaf-bg-left {
+    display: block;
+    width: 100%;
+    max-width: 580px;
+    height: 440px;
+    left: 0;
+    top: 0;
+  }
+  .p-leaf-artwork-img {
+    opacity: 0.14;
+    background-position: top left;
   }
 }
 
@@ -467,5 +536,33 @@
   }
   .p-related-cards-grid {
     grid-template-columns: 1fr;
+  }
+  .p-leaf-bg-left {
+    display: block;
+    width: 100%;
+    height: 320px;
+    left: 0;
+    top: 0;
+  }
+  .p-leaf-artwork-img {
+    opacity: 0.12;
+    background-position: top left;
+  }
+  .p-leaf-gradient-overlay {
+    background:
+      linear-gradient(
+        to right,
+        rgba(3, 20, 34, 0.5) 0%,
+        rgba(3, 20, 34, 0.75) 40%,
+        rgba(3, 20, 34, 0.95) 75%,
+        #031422 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(3, 20, 34, 0.2) 0%,
+        rgba(3, 20, 34, 0.8) 65%,
+        #031422 90%,
+        #031422 100%
+      );
   }
 }

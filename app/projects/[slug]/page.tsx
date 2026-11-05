@@ -50,9 +50,15 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         {/* Ambient Glows */}
         <div className="p-ambient-cyan" aria-hidden="true" />
         <div className="p-ambient-lime" aria-hidden="true" />
-        <div className="p-leaf-bg-right" aria-hidden="true" />
 
-        <div className="p-content-container" style={{ maxWidth: '1220px', margin: '0 auto', padding: '0 24px 80px', position: 'relative', zIndex: 2 }}>
+        {/* Background Leaf Artwork prominently on LEFT side */}
+        <div className="p-leaf-bg-left" aria-hidden="true">
+          <div className="p-leaf-artwork-img" />
+          <div className="p-leaf-gradient-overlay" />
+          <div className="p-leaf-ambient-glow" />
+        </div>
+
+        <div className="p-content-container" style={{ maxWidth: '1220px', margin: '0 auto', padding: '0 24px 80px', position: 'relative', zIndex: 10 }}>
           {/* Back Navigation Link */}
           <div className="p-back-bar" style={{ padding: '30px 0 24px' }}>
             <Link
