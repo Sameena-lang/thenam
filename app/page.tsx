@@ -403,13 +403,6 @@ export default function HomePage() {
                 border-radius: 9px !important;
                 gap: 8px !important;
               }
-              .price-callout {
-                margin-bottom: 22px !important;
-                font-size: 13px !important;
-                justify-content: flex-start !important;
-                flex-wrap: wrap !important;
-                gap: 6px !important;
-              }
               .hero-badges-row {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
@@ -498,11 +491,6 @@ export default function HomePage() {
                   <span>Get a Free Quote</span>
                   <ArrowRight size={15} />
                 </Link>
-              </div>
-
-              <div className="price-callout">
-                <span>Websites starting from</span>
-                <span className="price-highlight">₹1,999*</span>
               </div>
 
               <div className="hero-badges-row">
