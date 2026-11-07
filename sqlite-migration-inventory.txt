@@ -1,0 +1,2464 @@
+THENAM SQLITE MIGRATION INVENTORY
+Database: C:\Users\samee\thenam\thenam\data\thenam.db
+
+========================================
+TABLE: admin_notifications
+ROW COUNT: 5
+CREATE SQL:
+CREATE TABLE admin_notifications (
+      id TEXT PRIMARY KEY,
+      type TEXT NOT NULL,
+      title TEXT NOT NULL,
+      message TEXT NOT NULL,
+      link TEXT NOT NULL,
+      reference_id TEXT,
+      reference_type TEXT,
+      is_read INTEGER DEFAULT 0,
+      created_at TEXT NOT NULL
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "type",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "title",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "message",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "link",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "reference_id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "reference_type",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "is_read",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "0",
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_notifications_read",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "idx_notifications_created",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 2,
+    "name": "sqlite_autoindex_admin_notifications_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: admin_sessions
+ROW COUNT: 26
+CREATE SQL:
+CREATE TABLE admin_sessions (
+      id TEXT PRIMARY KEY,
+      admin_id TEXT NOT NULL,
+      token_hash TEXT UNIQUE NOT NULL,
+      expires_at TEXT NOT NULL,
+      ip_address TEXT,
+      user_agent TEXT,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (admin_id) REFERENCES admin_users(id) ON DELETE CASCADE
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "admin_id",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "token_hash",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "expires_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "ip_address",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "user_agent",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[
+  {
+    "id": 0,
+    "seq": 0,
+    "table": "admin_users",
+    "from": "admin_id",
+    "to": "id",
+    "on_update": "NO ACTION",
+    "on_delete": "CASCADE",
+    "match": "NONE"
+  }
+]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_sessions_token_hash",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "sqlite_autoindex_admin_sessions_2",
+    "unique": 1,
+    "origin": "u",
+    "partial": 0
+  },
+  {
+    "seq": 2,
+    "name": "sqlite_autoindex_admin_sessions_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: admin_users
+ROW COUNT: 1
+CREATE SQL:
+CREATE TABLE admin_users (
+      id TEXT PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL COLLATE NOCASE,
+      name TEXT NOT NULL,
+      password_hash TEXT NOT NULL,
+      salt TEXT NOT NULL,
+      role TEXT DEFAULT 'super_admin',
+      status TEXT DEFAULT 'active',
+      created_at TEXT NOT NULL,
+      last_login TEXT
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "email",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "name",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "password_hash",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "salt",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "role",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": "'super_admin'",
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "status",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": "'active'",
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "last_login",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "sqlite_autoindex_admin_users_2",
+    "unique": 1,
+    "origin": "u",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "sqlite_autoindex_admin_users_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: analytics_events
+ROW COUNT: 0
+CREATE SQL:
+CREATE TABLE analytics_events (
+      id TEXT PRIMARY KEY,
+      visitor_id TEXT NOT NULL,
+      session_id TEXT NOT NULL,
+      event_name TEXT NOT NULL,
+      event_category TEXT DEFAULT 'conversion',
+      resource_id TEXT,
+      resource_name TEXT,
+      created_at TEXT NOT NULL,
+      date TEXT NOT NULL
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "visitor_id",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "session_id",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "event_name",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "event_category",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": "'conversion'",
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "resource_id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "resource_name",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "date",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_analytics_ev_visitor",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "idx_analytics_ev_name_date",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 2,
+    "name": "sqlite_autoindex_analytics_events_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: analytics_pageviews
+ROW COUNT: 257
+CREATE SQL:
+CREATE TABLE analytics_pageviews (
+      id TEXT PRIMARY KEY,
+      visitor_id TEXT NOT NULL,
+      session_id TEXT NOT NULL,
+      path TEXT NOT NULL,
+      title TEXT,
+      referrer TEXT,
+      service_id TEXT,
+      product_id TEXT,
+      device_type TEXT DEFAULT 'desktop',
+      browser TEXT,
+      os TEXT,
+      created_at TEXT NOT NULL,
+      date TEXT NOT NULL
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "visitor_id",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "session_id",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "path",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "title",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "referrer",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "service_id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "product_id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "device_type",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": "'desktop'",
+    "pk": 0
+  },
+  {
+    "cid": 9,
+    "name": "browser",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 10,
+    "name": "os",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 11,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 12,
+    "name": "date",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_analytics_pv_created",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "idx_analytics_pv_path",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 2,
+    "name": "idx_analytics_pv_visitor",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 3,
+    "name": "idx_analytics_pv_date",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 4,
+    "name": "sqlite_autoindex_analytics_pageviews_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: applications
+ROW COUNT: 1
+CREATE SQL:
+CREATE TABLE applications (
+      id TEXT PRIMARY KEY,
+      full_name TEXT NOT NULL,
+      email TEXT NOT NULL COLLATE NOCASE,
+      phone TEXT NOT NULL,
+      role TEXT NOT NULL,
+      portfolio_link TEXT,
+      experience_level TEXT,
+      message TEXT,
+      status TEXT DEFAULT 'submitted',
+      created_at TEXT NOT NULL
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "full_name",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "email",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "phone",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "role",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "portfolio_link",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "experience_level",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "message",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "status",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": "'submitted'",
+    "pk": 0
+  },
+  {
+    "cid": 9,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "sqlite_autoindex_applications_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: audit_logs
+ROW COUNT: 103
+CREATE SQL:
+CREATE TABLE audit_logs (
+      id TEXT PRIMARY KEY,
+      admin_id TEXT,
+      admin_email TEXT,
+      action TEXT NOT NULL,
+      target_type TEXT,
+      target_id TEXT,
+      details TEXT,
+      created_at TEXT NOT NULL
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "admin_id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "admin_email",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "action",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "target_type",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "target_id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "details",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_audit_logs_created",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "sqlite_autoindex_audit_logs_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: inquiries
+ROW COUNT: 3
+CREATE SQL:
+CREATE TABLE inquiries (
+      id TEXT PRIMARY KEY,
+      full_name TEXT NOT NULL,
+      email TEXT NOT NULL COLLATE NOCASE,
+      phone TEXT,
+      company TEXT,
+      service_id TEXT NOT NULL,
+      service_name TEXT NOT NULL,
+      budget_tier TEXT,
+      timeline TEXT,
+      message TEXT NOT NULL,
+      need_nda INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'new',
+      created_at TEXT NOT NULL
+    , visitor_id TEXT)
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "full_name",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "email",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "phone",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "company",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "service_id",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "service_name",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "budget_tier",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "timeline",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 9,
+    "name": "message",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 10,
+    "name": "need_nda",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "0",
+    "pk": 0
+  },
+  {
+    "cid": 11,
+    "name": "status",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": "'new'",
+    "pk": 0
+  },
+  {
+    "cid": 12,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 13,
+    "name": "visitor_id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_inquiries_visitor",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "idx_inquiries_status",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 2,
+    "name": "idx_inquiries_created_at",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 3,
+    "name": "sqlite_autoindex_inquiries_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: login_attempts
+ROW COUNT: 1
+CREATE SQL:
+CREATE TABLE login_attempts (
+      id TEXT PRIMARY KEY,
+      ip_address TEXT NOT NULL,
+      email TEXT NOT NULL COLLATE NOCASE,
+      attempted_at TEXT NOT NULL,
+      success INTEGER DEFAULT 0
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "ip_address",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "email",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "attempted_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "success",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "0",
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_login_attempts",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "sqlite_autoindex_login_attempts_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: media
+ROW COUNT: 120
+CREATE SQL:
+CREATE TABLE media (
+      id TEXT PRIMARY KEY,
+      filename TEXT NOT NULL,
+      original_name TEXT NOT NULL,
+      url TEXT UNIQUE NOT NULL,
+      alt_text TEXT NOT NULL DEFAULT '',
+      mime_type TEXT NOT NULL,
+      file_size INTEGER NOT NULL,
+      width INTEGER DEFAULT 0,
+      height INTEGER DEFAULT 0,
+      section_tag TEXT DEFAULT 'general',
+      usage_ref TEXT,
+      is_system INTEGER DEFAULT 0,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "filename",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "original_name",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "url",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "alt_text",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": "''",
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "mime_type",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "file_size",
+    "type": "INTEGER",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "width",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "0",
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "height",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "0",
+    "pk": 0
+  },
+  {
+    "cid": 9,
+    "name": "section_tag",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": "'general'",
+    "pk": 0
+  },
+  {
+    "cid": 10,
+    "name": "usage_ref",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 11,
+    "name": "is_system",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "0",
+    "pk": 0
+  },
+  {
+    "cid": 12,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 13,
+    "name": "updated_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_media_url",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "idx_media_section",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 2,
+    "name": "idx_media_created",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 3,
+    "name": "sqlite_autoindex_media_2",
+    "unique": 1,
+    "origin": "u",
+    "partial": 0
+  },
+  {
+    "seq": 4,
+    "name": "sqlite_autoindex_media_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: products
+ROW COUNT: 5
+CREATE SQL:
+CREATE TABLE products (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      category TEXT NOT NULL,
+      badge TEXT NOT NULL,
+      badge_color TEXT NOT NULL,
+      icon_name TEXT NOT NULL,
+      icon_color TEXT NOT NULL,
+      icon_bg TEXT NOT NULL,
+      tagline TEXT NOT NULL,
+      description TEXT NOT NULL,
+      tags TEXT NOT NULL,
+      metrics TEXT NOT NULL,
+      features TEXT NOT NULL,
+      sort_order INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    , image_url TEXT, image_alt TEXT)
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "name",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "category",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "badge",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "badge_color",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "icon_name",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "icon_color",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "icon_bg",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "tagline",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 9,
+    "name": "description",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 10,
+    "name": "tags",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 11,
+    "name": "metrics",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 12,
+    "name": "features",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 13,
+    "name": "sort_order",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "0",
+    "pk": 0
+  },
+  {
+    "cid": 14,
+    "name": "is_active",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "1",
+    "pk": 0
+  },
+  {
+    "cid": 15,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 16,
+    "name": "updated_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 17,
+    "name": "image_url",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 18,
+    "name": "image_alt",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_products_active_sort",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "sqlite_autoindex_products_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: projects
+ROW COUNT: 5
+CREATE SQL:
+CREATE TABLE projects (
+      slug TEXT PRIMARY KEY,
+      title_first TEXT NOT NULL,
+      title_second TEXT NOT NULL,
+      subtitle TEXT NOT NULL,
+      category_eyebrow TEXT NOT NULL,
+      domain TEXT NOT NULL,
+      visit_url TEXT NOT NULL,
+      category TEXT NOT NULL,
+      year TEXT NOT NULL,
+      practice TEXT NOT NULL,
+      phase TEXT NOT NULL,
+      mockup_image TEXT NOT NULL,
+      short_desc TEXT NOT NULL,
+      tag TEXT NOT NULL,
+      tag_type TEXT NOT NULL,
+      thumbnail TEXT NOT NULL,
+      sort_order INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "slug",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "title_first",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "title_second",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "subtitle",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "category_eyebrow",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "domain",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "visit_url",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "category",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "year",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 9,
+    "name": "practice",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 10,
+    "name": "phase",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 11,
+    "name": "mockup_image",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 12,
+    "name": "short_desc",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 13,
+    "name": "tag",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 14,
+    "name": "tag_type",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 15,
+    "name": "thumbnail",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 16,
+    "name": "sort_order",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "0",
+    "pk": 0
+  },
+  {
+    "cid": 17,
+    "name": "is_active",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "1",
+    "pk": 0
+  },
+  {
+    "cid": 18,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 19,
+    "name": "updated_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_projects_active",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "idx_projects_sort",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 2,
+    "name": "sqlite_autoindex_projects_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: services
+ROW COUNT: 6
+CREATE SQL:
+CREATE TABLE services (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      subtitle TEXT NOT NULL,
+      badge TEXT NOT NULL,
+      description TEXT NOT NULL,
+      color_class TEXT NOT NULL,
+      icon_name TEXT NOT NULL,
+      features TEXT NOT NULL,
+      sort_order INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    , image_url TEXT, image_alt TEXT)
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "title",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "subtitle",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "badge",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "description",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "color_class",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "icon_name",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "features",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "sort_order",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "0",
+    "pk": 0
+  },
+  {
+    "cid": 9,
+    "name": "is_active",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "1",
+    "pk": 0
+  },
+  {
+    "cid": 10,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 11,
+    "name": "updated_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 12,
+    "name": "image_url",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 13,
+    "name": "image_alt",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_services_active_sort",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "sqlite_autoindex_services_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: site_content
+ROW COUNT: 0
+CREATE SQL:
+CREATE TABLE site_content (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      subtitle TEXT,
+      short_description TEXT NOT NULL,
+      full_description TEXT,
+      image_url TEXT,
+      image_alt TEXT,
+      page TEXT NOT NULL,
+      section TEXT NOT NULL,
+      button_text TEXT,
+      button_url TEXT,
+      display_order INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'draft',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "title",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "subtitle",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "short_description",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "full_description",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "image_url",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "image_alt",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "page",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "section",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 9,
+    "name": "button_text",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 10,
+    "name": "button_url",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 11,
+    "name": "display_order",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": "0",
+    "pk": 0
+  },
+  {
+    "cid": 12,
+    "name": "status",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": "'draft'",
+    "pk": 0
+  },
+  {
+    "cid": 13,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 14,
+    "name": "updated_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_site_content_order",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "idx_site_content_status",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 2,
+    "name": "idx_site_content_section",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 3,
+    "name": "idx_site_content_page",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 4,
+    "name": "sqlite_autoindex_site_content_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: site_settings
+ROW COUNT: 13
+CREATE SQL:
+CREATE TABLE site_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      description TEXT,
+      updated_at TEXT NOT NULL
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "key",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "value",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "description",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "updated_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "sqlite_autoindex_site_settings_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+========================================
+TABLE: users
+ROW COUNT: 6
+CREATE SQL:
+CREATE TABLE users (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL COLLATE NOCASE,
+      phone TEXT,
+      company TEXT,
+      role TEXT DEFAULT 'client',
+      status TEXT DEFAULT 'active',
+      created_at TEXT NOT NULL,
+      notes TEXT
+    )
+COLUMNS:
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "name",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "email",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "phone",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "company",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "role",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": "'client'",
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "status",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": "'active'",
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "notes",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+FOREIGN KEYS:
+[]
+INDEXES:
+[
+  {
+    "seq": 0,
+    "name": "idx_users_created_at",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 1,
+    "name": "idx_users_status",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 2,
+    "name": "idx_users_email",
+    "unique": 0,
+    "origin": "c",
+    "partial": 0
+  },
+  {
+    "seq": 3,
+    "name": "sqlite_autoindex_users_2",
+    "unique": 1,
+    "origin": "u",
+    "partial": 0
+  },
+  {
+    "seq": 4,
+    "name": "sqlite_autoindex_users_1",
+    "unique": 1,
+    "origin": "pk",
+    "partial": 0
+  }
+]
+
+ALL DATABASE OBJECTS:
+[
+  {
+    "type": "index",
+    "name": "idx_analytics_ev_name_date",
+    "tbl_name": "analytics_events",
+    "sql": "CREATE INDEX idx_analytics_ev_name_date ON analytics_events(event_name, date)"
+  },
+  {
+    "type": "index",
+    "name": "idx_analytics_ev_visitor",
+    "tbl_name": "analytics_events",
+    "sql": "CREATE INDEX idx_analytics_ev_visitor ON analytics_events(visitor_id)"
+  },
+  {
+    "type": "index",
+    "name": "idx_analytics_pv_created",
+    "tbl_name": "analytics_pageviews",
+    "sql": "CREATE INDEX idx_analytics_pv_created ON analytics_pageviews(created_at)"
+  },
+  {
+    "type": "index",
+    "name": "idx_analytics_pv_date",
+    "tbl_name": "analytics_pageviews",
+    "sql": "CREATE INDEX idx_analytics_pv_date ON analytics_pageviews(date)"
+  },
+  {
+    "type": "index",
+    "name": "idx_analytics_pv_path",
+    "tbl_name": "analytics_pageviews",
+    "sql": "CREATE INDEX idx_analytics_pv_path ON analytics_pageviews(path)"
+  },
+  {
+    "type": "index",
+    "name": "idx_analytics_pv_visitor",
+    "tbl_name": "analytics_pageviews",
+    "sql": "CREATE INDEX idx_analytics_pv_visitor ON analytics_pageviews(visitor_id)"
+  },
+  {
+    "type": "index",
+    "name": "idx_audit_logs_created",
+    "tbl_name": "audit_logs",
+    "sql": "CREATE INDEX idx_audit_logs_created ON audit_logs(created_at)"
+  },
+  {
+    "type": "index",
+    "name": "idx_inquiries_created_at",
+    "tbl_name": "inquiries",
+    "sql": "CREATE INDEX idx_inquiries_created_at ON inquiries(created_at)"
+  },
+  {
+    "type": "index",
+    "name": "idx_inquiries_status",
+    "tbl_name": "inquiries",
+    "sql": "CREATE INDEX idx_inquiries_status ON inquiries(status)"
+  },
+  {
+    "type": "index",
+    "name": "idx_inquiries_visitor",
+    "tbl_name": "inquiries",
+    "sql": "CREATE INDEX idx_inquiries_visitor ON inquiries(visitor_id)"
+  },
+  {
+    "type": "index",
+    "name": "idx_login_attempts",
+    "tbl_name": "login_attempts",
+    "sql": "CREATE INDEX idx_login_attempts ON login_attempts(ip_address, attempted_at)"
+  },
+  {
+    "type": "index",
+    "name": "idx_media_created",
+    "tbl_name": "media",
+    "sql": "CREATE INDEX idx_media_created ON media(created_at DESC)"
+  },
+  {
+    "type": "index",
+    "name": "idx_media_section",
+    "tbl_name": "media",
+    "sql": "CREATE INDEX idx_media_section ON media(section_tag)"
+  },
+  {
+    "type": "index",
+    "name": "idx_media_url",
+    "tbl_name": "media",
+    "sql": "CREATE INDEX idx_media_url ON media(url)"
+  },
+  {
+    "type": "index",
+    "name": "idx_notifications_created",
+    "tbl_name": "admin_notifications",
+    "sql": "CREATE INDEX idx_notifications_created ON admin_notifications(created_at)"
+  },
+  {
+    "type": "index",
+    "name": "idx_notifications_read",
+    "tbl_name": "admin_notifications",
+    "sql": "CREATE INDEX idx_notifications_read ON admin_notifications(is_read)"
+  },
+  {
+    "type": "index",
+    "name": "idx_products_active_sort",
+    "tbl_name": "products",
+    "sql": "CREATE INDEX idx_products_active_sort ON products(is_active, sort_order)"
+  },
+  {
+    "type": "index",
+    "name": "idx_projects_active",
+    "tbl_name": "projects",
+    "sql": "CREATE INDEX idx_projects_active ON projects(is_active)"
+  },
+  {
+    "type": "index",
+    "name": "idx_projects_sort",
+    "tbl_name": "projects",
+    "sql": "CREATE INDEX idx_projects_sort ON projects(sort_order ASC, created_at ASC)"
+  },
+  {
+    "type": "index",
+    "name": "idx_services_active_sort",
+    "tbl_name": "services",
+    "sql": "CREATE INDEX idx_services_active_sort ON services(is_active, sort_order)"
+  },
+  {
+    "type": "index",
+    "name": "idx_sessions_token_hash",
+    "tbl_name": "admin_sessions",
+    "sql": "CREATE INDEX idx_sessions_token_hash ON admin_sessions(token_hash)"
+  },
+  {
+    "type": "index",
+    "name": "idx_site_content_order",
+    "tbl_name": "site_content",
+    "sql": "CREATE INDEX idx_site_content_order ON site_content(display_order, created_at DESC)"
+  },
+  {
+    "type": "index",
+    "name": "idx_site_content_page",
+    "tbl_name": "site_content",
+    "sql": "CREATE INDEX idx_site_content_page ON site_content(page)"
+  },
+  {
+    "type": "index",
+    "name": "idx_site_content_section",
+    "tbl_name": "site_content",
+    "sql": "CREATE INDEX idx_site_content_section ON site_content(section)"
+  },
+  {
+    "type": "index",
+    "name": "idx_site_content_status",
+    "tbl_name": "site_content",
+    "sql": "CREATE INDEX idx_site_content_status ON site_content(status)"
+  },
+  {
+    "type": "index",
+    "name": "idx_users_created_at",
+    "tbl_name": "users",
+    "sql": "CREATE INDEX idx_users_created_at ON users(created_at)"
+  },
+  {
+    "type": "index",
+    "name": "idx_users_email",
+    "tbl_name": "users",
+    "sql": "CREATE INDEX idx_users_email ON users(email)"
+  },
+  {
+    "type": "index",
+    "name": "idx_users_status",
+    "tbl_name": "users",
+    "sql": "CREATE INDEX idx_users_status ON users(status)"
+  },
+  {
+    "type": "table",
+    "name": "admin_notifications",
+    "tbl_name": "admin_notifications",
+    "sql": "CREATE TABLE admin_notifications (\n      id TEXT PRIMARY KEY,\n      type TEXT NOT NULL,\n      title TEXT NOT NULL,\n      message TEXT NOT NULL,\n      link TEXT NOT NULL,\n      reference_id TEXT,\n      reference_type TEXT,\n      is_read INTEGER DEFAULT 0,\n      created_at TEXT NOT NULL\n    )"
+  },
+  {
+    "type": "table",
+    "name": "admin_sessions",
+    "tbl_name": "admin_sessions",
+    "sql": "CREATE TABLE admin_sessions (\n      id TEXT PRIMARY KEY,\n      admin_id TEXT NOT NULL,\n      token_hash TEXT UNIQUE NOT NULL,\n      expires_at TEXT NOT NULL,\n      ip_address TEXT,\n      user_agent TEXT,\n      created_at TEXT NOT NULL,\n      FOREIGN KEY (admin_id) REFERENCES admin_users(id) ON DELETE CASCADE\n    )"
+  },
+  {
+    "type": "table",
+    "name": "admin_users",
+    "tbl_name": "admin_users",
+    "sql": "CREATE TABLE admin_users (\n      id TEXT PRIMARY KEY,\n      email TEXT UNIQUE NOT NULL COLLATE NOCASE,\n      name TEXT NOT NULL,\n      password_hash TEXT NOT NULL,\n      salt TEXT NOT NULL,\n      role TEXT DEFAULT 'super_admin',\n      status TEXT DEFAULT 'active',\n      created_at TEXT NOT NULL,\n      last_login TEXT\n    )"
+  },
+  {
+    "type": "table",
+    "name": "analytics_events",
+    "tbl_name": "analytics_events",
+    "sql": "CREATE TABLE analytics_events (\n      id TEXT PRIMARY KEY,\n      visitor_id TEXT NOT NULL,\n      session_id TEXT NOT NULL,\n      event_name TEXT NOT NULL,\n      event_category TEXT DEFAULT 'conversion',\n      resource_id TEXT,\n      resource_name TEXT,\n      created_at TEXT NOT NULL,\n      date TEXT NOT NULL\n    )"
+  },
+  {
+    "type": "table",
+    "name": "analytics_pageviews",
+    "tbl_name": "analytics_pageviews",
+    "sql": "CREATE TABLE analytics_pageviews (\n      id TEXT PRIMARY KEY,\n      visitor_id TEXT NOT NULL,\n      session_id TEXT NOT NULL,\n      path TEXT NOT NULL,\n      title TEXT,\n      referrer TEXT,\n      service_id TEXT,\n      product_id TEXT,\n      device_type TEXT DEFAULT 'desktop',\n      browser TEXT,\n      os TEXT,\n      created_at TEXT NOT NULL,\n      date TEXT NOT NULL\n    )"
+  },
+  {
+    "type": "table",
+    "name": "applications",
+    "tbl_name": "applications",
+    "sql": "CREATE TABLE applications (\n      id TEXT PRIMARY KEY,\n      full_name TEXT NOT NULL,\n      email TEXT NOT NULL COLLATE NOCASE,\n      phone TEXT NOT NULL,\n      role TEXT NOT NULL,\n      portfolio_link TEXT,\n      experience_level TEXT,\n      message TEXT,\n      status TEXT DEFAULT 'submitted',\n      created_at TEXT NOT NULL\n    )"
+  },
+  {
+    "type": "table",
+    "name": "audit_logs",
+    "tbl_name": "audit_logs",
+    "sql": "CREATE TABLE audit_logs (\n      id TEXT PRIMARY KEY,\n      admin_id TEXT,\n      admin_email TEXT,\n      action TEXT NOT NULL,\n      target_type TEXT,\n      target_id TEXT,\n      details TEXT,\n      created_at TEXT NOT NULL\n    )"
+  },
+  {
+    "type": "table",
+    "name": "inquiries",
+    "tbl_name": "inquiries",
+    "sql": "CREATE TABLE inquiries (\n      id TEXT PRIMARY KEY,\n      full_name TEXT NOT NULL,\n      email TEXT NOT NULL COLLATE NOCASE,\n      phone TEXT,\n      company TEXT,\n      service_id TEXT NOT NULL,\n      service_name TEXT NOT NULL,\n      budget_tier TEXT,\n      timeline TEXT,\n      message TEXT NOT NULL,\n      need_nda INTEGER DEFAULT 0,\n      status TEXT DEFAULT 'new',\n      created_at TEXT NOT NULL\n    , visitor_id TEXT)"
+  },
+  {
+    "type": "table",
+    "name": "login_attempts",
+    "tbl_name": "login_attempts",
+    "sql": "CREATE TABLE login_attempts (\n      id TEXT PRIMARY KEY,\n      ip_address TEXT NOT NULL,\n      email TEXT NOT NULL COLLATE NOCASE,\n      attempted_at TEXT NOT NULL,\n      success INTEGER DEFAULT 0\n    )"
+  },
+  {
+    "type": "table",
+    "name": "media",
+    "tbl_name": "media",
+    "sql": "CREATE TABLE media (\n      id TEXT PRIMARY KEY,\n      filename TEXT NOT NULL,\n      original_name TEXT NOT NULL,\n      url TEXT UNIQUE NOT NULL,\n      alt_text TEXT NOT NULL DEFAULT '',\n      mime_type TEXT NOT NULL,\n      file_size INTEGER NOT NULL,\n      width INTEGER DEFAULT 0,\n      height INTEGER DEFAULT 0,\n      section_tag TEXT DEFAULT 'general',\n      usage_ref TEXT,\n      is_system INTEGER DEFAULT 0,\n      created_at TEXT NOT NULL,\n      updated_at TEXT NOT NULL\n    )"
+  },
+  {
+    "type": "table",
+    "name": "products",
+    "tbl_name": "products",
+    "sql": "CREATE TABLE products (\n      id TEXT PRIMARY KEY,\n      name TEXT NOT NULL,\n      category TEXT NOT NULL,\n      badge TEXT NOT NULL,\n      badge_color TEXT NOT NULL,\n      icon_name TEXT NOT NULL,\n      icon_color TEXT NOT NULL,\n      icon_bg TEXT NOT NULL,\n      tagline TEXT NOT NULL,\n      description TEXT NOT NULL,\n      tags TEXT NOT NULL,\n      metrics TEXT NOT NULL,\n      features TEXT NOT NULL,\n      sort_order INTEGER DEFAULT 0,\n      is_active INTEGER DEFAULT 1,\n      created_at TEXT NOT NULL,\n      updated_at TEXT NOT NULL\n    , image_url TEXT, image_alt TEXT)"
+  },
+  {
+    "type": "table",
+    "name": "projects",
+    "tbl_name": "projects",
+    "sql": "CREATE TABLE projects (\n      slug TEXT PRIMARY KEY,\n      title_first TEXT NOT NULL,\n      title_second TEXT NOT NULL,\n      subtitle TEXT NOT NULL,\n      category_eyebrow TEXT NOT NULL,\n      domain TEXT NOT NULL,\n      visit_url TEXT NOT NULL,\n      category TEXT NOT NULL,\n      year TEXT NOT NULL,\n      practice TEXT NOT NULL,\n      phase TEXT NOT NULL,\n      mockup_image TEXT NOT NULL,\n      short_desc TEXT NOT NULL,\n      tag TEXT NOT NULL,\n      tag_type TEXT NOT NULL,\n      thumbnail TEXT NOT NULL,\n      sort_order INTEGER DEFAULT 0,\n      is_active INTEGER DEFAULT 1,\n      created_at TEXT NOT NULL,\n      updated_at TEXT NOT NULL\n    )"
+  },
+  {
+    "type": "table",
+    "name": "services",
+    "tbl_name": "services",
+    "sql": "CREATE TABLE services (\n      id TEXT PRIMARY KEY,\n      title TEXT NOT NULL,\n      subtitle TEXT NOT NULL,\n      badge TEXT NOT NULL,\n      description TEXT NOT NULL,\n      color_class TEXT NOT NULL,\n      icon_name TEXT NOT NULL,\n      features TEXT NOT NULL,\n      sort_order INTEGER DEFAULT 0,\n      is_active INTEGER DEFAULT 1,\n      created_at TEXT NOT NULL,\n      updated_at TEXT NOT NULL\n    , image_url TEXT, image_alt TEXT)"
+  },
+  {
+    "type": "table",
+    "name": "site_content",
+    "tbl_name": "site_content",
+    "sql": "CREATE TABLE site_content (\n      id TEXT PRIMARY KEY,\n      title TEXT NOT NULL,\n      subtitle TEXT,\n      short_description TEXT NOT NULL,\n      full_description TEXT,\n      image_url TEXT,\n      image_alt TEXT,\n      page TEXT NOT NULL,\n      section TEXT NOT NULL,\n      button_text TEXT,\n      button_url TEXT,\n      display_order INTEGER DEFAULT 0,\n      status TEXT DEFAULT 'draft',\n      created_at TEXT NOT NULL,\n      updated_at TEXT NOT NULL\n    )"
+  },
+  {
+    "type": "table",
+    "name": "site_settings",
+    "tbl_name": "site_settings",
+    "sql": "CREATE TABLE site_settings (\n      key TEXT PRIMARY KEY,\n      value TEXT NOT NULL,\n      description TEXT,\n      updated_at TEXT NOT NULL\n    )"
+  },
+  {
+    "type": "table",
+    "name": "users",
+    "tbl_name": "users",
+    "sql": "CREATE TABLE users (\n      id TEXT PRIMARY KEY,\n      name TEXT NOT NULL,\n      email TEXT UNIQUE NOT NULL COLLATE NOCASE,\n      phone TEXT,\n      company TEXT,\n      role TEXT DEFAULT 'client',\n      status TEXT DEFAULT 'active',\n      created_at TEXT NOT NULL,\n      notes TEXT\n    )"
+  }
+]
