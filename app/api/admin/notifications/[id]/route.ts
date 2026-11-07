@@ -16,7 +16,7 @@ export async function PATCH(
     const body = await request.json().catch(() => ({}))
     const isRead = body.is_read !== undefined ? (body.is_read ? 1 : 0) : 1
 
-    db.prepare('UPDATE admin_notifications SET is_read = ? WHERE id = ?').run(isRead, id)
+    await db.prepare('UPDATE admin_notifications SET is_read = ? WHERE id = ?').run(isRead, id)
     return NextResponse.json({ success: true, id, is_read: isRead })
   } catch (error) {
     console.error('Error updating notification read status:', error)
@@ -35,7 +35,7 @@ export async function DELETE(
 
   try {
     const { id } = await params
-    db.prepare('DELETE FROM admin_notifications WHERE id = ?').run(id)
+    await db.prepare('DELETE FROM admin_notifications WHERE id = ?').run(id)
     return NextResponse.json({ success: true, message: 'Notification deleted' })
   } catch (error) {
     console.error('Error deleting notification:', error)
