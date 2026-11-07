@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     // Verify current password
     const isCurrentValid = verifyPassword(currentPassword, admin.password_hash, admin.salt)
     if (!isCurrentValid) {
-      recordAuditLog('FAILED_PASSWORD_CHANGE', 'admin_users', admin.id, 'Incorrect current password provided', admin.id, admin.email)
+      await recordAuditLog('FAILED_PASSWORD_CHANGE', 'admin_users', admin.id, 'Incorrect current password provided', admin.id, admin.email)
       return NextResponse.json({ error: 'Incorrect current password' }, { status: 400 })
     }
 
@@ -32,9 +32,9 @@ export async function POST(request: Request) {
     const newSalt = crypto.randomBytes(16).toString('hex')
     const newHash = hashPassword(newPassword, newSalt)
 
-    db.prepare('UPDATE admin_users SET password_hash = ?, salt = ? WHERE id = ?').run(newHash, newSalt, admin.id)
+    await db.prepare('UPDATE admin_users SET password_hash = ?, salt = ? WHERE id = ?').run(newHash, newSalt, admin.id)
 
-    recordAuditLog('CHANGE_PASSWORD', 'admin_users', admin.id, 'Administrator successfully changed their password', admin.id, admin.email)
+    await recordAuditLog('CHANGE_PASSWORD', 'admin_users', admin.id, 'Administrator successfully changed their password', admin.id, admin.email)
 
     return NextResponse.json({ success: true, message: 'Password updated successfully' })
   } catch (error) {
