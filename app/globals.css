@@ -5682,12 +5682,12 @@ html.light .video-wrapper-glass {
   height: calc(100% + 40px);
   background-image: url('/services/services-hero-bg.jpg');
   background-size: cover;
-  background-position: center right;
+  background-position: 82% center;
   background-repeat: no-repeat;
   will-change: transform;
   transform: scale(1);
   animation: servicesHeroZoom 24s ease-in-out infinite alternate;
-  filter: brightness(0.92) contrast(1.05);
+  filter: brightness(1) contrast(1.02);
 }
 
 @keyframes servicesHeroZoom {
@@ -5695,7 +5695,7 @@ html.light .video-wrapper-glass {
     transform: scale(1) translate3d(0, 0, 0);
   }
   100% {
-    transform: scale(1.05) translate3d(-10px, -5px, 0);
+    transform: scale(1.04) translate3d(-8px, -4px, 0);
   }
 }
 
@@ -5707,18 +5707,19 @@ html.light .video-wrapper-glass {
   background: 
     linear-gradient(
       90deg,
-      rgba(5, 11, 20, 0.98) 0%,
-      rgba(5, 11, 20, 0.94) 34%,
-      rgba(5, 11, 20, 0.78) 50%,
-      rgba(5, 11, 20, 0.42) 72%,
-      rgba(5, 11, 20, 0.18) 100%
+      rgba(5, 11, 20, 0.94) 0%,
+      rgba(5, 11, 20, 0.88) 32%,
+      rgba(5, 11, 20, 0.58) 48%,
+      rgba(5, 11, 20, 0.16) 66%,
+      transparent 80%,
+      transparent 100%
     ),
     linear-gradient(
       180deg,
-      rgba(5, 11, 20, 0.75) 0%,
-      transparent 22%,
-      transparent 78%,
-      rgba(5, 11, 20, 0.95) 100%
+      rgba(5, 11, 20, 0.40) 0%,
+      transparent 18%,
+      transparent 82%,
+      rgba(5, 11, 20, 0.55) 100%
     );
 }
 
@@ -5728,7 +5729,7 @@ html.light .video-wrapper-glass {
   top: 25%;
   width: 480px;
   height: 480px;
-  background: radial-gradient(circle, rgba(0, 201, 255, 0.12) 0%, rgba(132, 204, 22, 0.05) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 201, 255, 0.08) 0%, rgba(132, 204, 22, 0.03) 45%, transparent 70%);
   filter: blur(50px);
   pointer-events: none;
 }
@@ -5740,12 +5741,12 @@ html.light .video-wrapper-glass {
 }
 
 .services-hero-with-bg .inner-hero-title {
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8), 0 0 30px rgba(5, 11, 20, 0.9);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85), 0 0 30px rgba(5, 11, 20, 0.95);
 }
 
 .services-hero-with-bg .inner-hero-desc {
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
-  color: #cbd5e1;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
+  color: #e2e8f0;
 }
 
 @media (max-width: 1024px) {
@@ -5755,24 +5756,26 @@ html.light .video-wrapper-glass {
   }
   
   .services-hero-bg-img {
-    background-position: 70% center;
+    background-position: 78% center;
+    filter: brightness(0.98);
   }
 
   .services-hero-gradient-overlay {
     background: 
       linear-gradient(
         90deg,
-        rgba(5, 11, 20, 0.98) 0%,
-        rgba(5, 11, 20, 0.92) 50%,
-        rgba(5, 11, 20, 0.65) 75%,
-        rgba(5, 11, 20, 0.35) 100%
+        rgba(5, 11, 20, 0.95) 0%,
+        rgba(5, 11, 20, 0.88) 40%,
+        rgba(5, 11, 20, 0.48) 65%,
+        rgba(5, 11, 20, 0.12) 85%,
+        transparent 100%
       ),
       linear-gradient(
         180deg,
-        rgba(5, 11, 20, 0.8) 0%,
-        transparent 30%,
-        transparent 70%,
-        rgba(5, 11, 20, 0.98) 100%
+        rgba(5, 11, 20, 0.5) 0%,
+        transparent 22%,
+        transparent 78%,
+        rgba(5, 11, 20, 0.65) 100%
       );
   }
 }
@@ -5784,16 +5787,17 @@ html.light .video-wrapper-glass {
   }
 
   .services-hero-bg-img {
-    background-position: 65% center;
-    filter: brightness(0.75) contrast(1.05);
+    background-position: 72% center;
+    filter: brightness(0.92);
   }
 
   .services-hero-gradient-overlay {
     background: linear-gradient(
       180deg,
       rgba(5, 11, 20, 0.92) 0%,
-      rgba(5, 11, 20, 0.88) 40%,
-      rgba(5, 11, 20, 0.85) 100%
+      rgba(5, 11, 20, 0.80) 42%,
+      rgba(5, 11, 20, 0.58) 72%,
+      rgba(5, 11, 20, 0.72) 100%
     );
   }
 
