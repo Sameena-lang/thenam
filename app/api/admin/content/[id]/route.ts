@@ -20,7 +20,7 @@ export async function GET(request: Request, context: RouteContext) {
   }
 
   const { id } = await context.params
-  const item = getContentById(id)
+  const item = await getContentById(id)
 
   if (!item) {
     return NextResponse.json({ error: 'Content item not found.' }, { status: 404 })
@@ -36,7 +36,7 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 
   const { id } = await context.params
-  const existing = getContentById(id)
+  const existing = await getContentById(id)
 
   if (!existing) {
     return NextResponse.json({ error: 'Content item not found.' }, { status: 404 })
@@ -44,7 +44,7 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   try {
     const body = await request.json()
-    const updated = updateContent(id, body)
+    const updated = await updateContent(id, body)
 
     if (!updated) {
       return NextResponse.json({ error: 'Failed to update content item.' }, { status: 500 })
@@ -69,7 +69,7 @@ export async function PATCH(request: Request, context: RouteContext) {
           : 'UNPUBLISH_CONTENT'
         : 'UPDATE_CONTENT'
 
-    recordAuditLog(
+    await recordAuditLog(
       action,
       'site_content',
       id,
@@ -92,14 +92,14 @@ export async function DELETE(request: Request, context: RouteContext) {
   }
 
   const { id } = await context.params
-  const existing = getContentById(id)
+  const existing = await getContentById(id)
 
   if (!existing) {
     return NextResponse.json({ error: 'Content item not found.' }, { status: 404 })
   }
 
   try {
-    const success = deleteContent(id)
+    const success = await deleteContent(id)
     if (!success) {
       return NextResponse.json({ error: 'Failed to delete content item.' }, { status: 500 })
     }
@@ -112,7 +112,7 @@ export async function DELETE(request: Request, context: RouteContext) {
       // safe fallback
     }
 
-    recordAuditLog(
+    await recordAuditLog(
       'DELETE_CONTENT',
       'site_content',
       id,
