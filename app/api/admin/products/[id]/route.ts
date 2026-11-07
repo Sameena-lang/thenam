@@ -13,7 +13,7 @@ export async function GET(
 
   try {
     const { id } = await params
-    const product = (db.prepare('SELECT * FROM products WHERE id = ?').get(id) as unknown) as ProductItem | undefined
+    const product = (await db.prepare('SELECT * FROM products WHERE id = ?').get(id) as unknown) as ProductItem | undefined
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 })
     }
@@ -64,7 +64,7 @@ export async function PATCH(
 
   try {
     const { id } = await params
-    const product = (db.prepare('SELECT * FROM products WHERE id = ?').get(id) as unknown) as ProductItem | undefined
+    const product = (await db.prepare('SELECT * FROM products WHERE id = ?').get(id) as unknown) as ProductItem | undefined
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 })
     }
@@ -123,7 +123,7 @@ export async function PATCH(
 
     const now = new Date().toISOString()
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE products
       SET name = ?, category = ?, badge = ?, badge_color = ?, icon_name = ?, icon_color = ?, icon_bg = ?, tagline = ?, description = ?, tags = ?, metrics = ?, features = ?, sort_order = ?, is_active = ?, image_url = ?, image_alt = ?, updated_at = ?
       WHERE id = ?
@@ -148,7 +148,7 @@ export async function PATCH(
       id
     )
 
-    recordAuditLog(
+    await recordAuditLog(
       'UPDATE_PRODUCT',
       'products',
       id,
@@ -157,7 +157,7 @@ export async function PATCH(
       admin.email
     )
 
-    const updated = (db.prepare('SELECT * FROM products WHERE id = ?').get(id) as unknown) as ProductItem
+    const updated = (await db.prepare('SELECT * FROM products WHERE id = ?').get(id) as unknown) as ProductItem
 
     return NextResponse.json({
       success: true,
@@ -206,14 +206,14 @@ export async function DELETE(
 
   try {
     const { id } = await params
-    const product = (db.prepare('SELECT * FROM products WHERE id = ?').get(id) as unknown) as ProductItem | undefined
+    const product = (await db.prepare('SELECT * FROM products WHERE id = ?').get(id) as unknown) as ProductItem | undefined
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 })
     }
 
-    db.prepare('DELETE FROM products WHERE id = ?').run(id)
+    await db.prepare('DELETE FROM products WHERE id = ?').run(id)
 
-    recordAuditLog(
+    await recordAuditLog(
       'DELETE_PRODUCT',
       'products',
       id,
