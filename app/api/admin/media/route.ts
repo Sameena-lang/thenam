@@ -36,11 +36,11 @@ export async function GET(request: Request) {
 
     query += ' ORDER BY created_at DESC'
 
-    const rawMedia = (db.prepare(query).all(...queryParams) as unknown) as MediaItem[]
+    const rawMedia = (await db.prepare(query).all(...queryParams) as unknown) as MediaItem[]
 
     // Enrich each item with real-time dependency status
     const media = rawMedia.map((m) => {
-      const usage = isMediaInUse(m.url)
+      const usage = await isMediaInUse(m.url)
       return {
         ...m,
         is_in_use: usage.inUse,
@@ -49,10 +49,10 @@ export async function GET(request: Request) {
     })
 
     // Total stats & section counts
-    const totalCount = (db.prepare('SELECT COUNT(*) as count FROM media').get() as { count: number }).count
-    const totalBytes = (db.prepare('SELECT COALESCE(SUM(file_size), 0) as total FROM media').get() as { total: number }).total
+    const totalCount = (await db.prepare('SELECT COUNT(*) as count FROM media').get() as { count: number }).count
+    const totalBytes = (await db.prepare('SELECT COALESCE(SUM(file_size), 0) as total FROM media').get() as { total: number }).total
 
-    const sectionCountsRows = (db.prepare('SELECT section_tag, COUNT(*) as count FROM media GROUP BY section_tag').all() as unknown) as Array<{ section_tag: string; count: number }>
+    const sectionCountsRows = (await db.prepare('SELECT section_tag, COUNT(*) as count FROM media GROUP BY section_tag').all() as unknown) as Array<{ section_tag: string; count: number }>
     const sectionCounts: Record<string, number> = { all: totalCount }
     for (const r of sectionCountsRows) {
       if (r.section_tag) {
@@ -119,7 +119,7 @@ export async function POST(request: Request) {
     const mediaId = 'med_' + crypto.randomBytes(8).toString('hex')
     const now = new Date().toISOString()
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO media (id, filename, original_name, url, alt_text, mime_type, file_size, width, height, section_tag, usage_ref, is_system, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
     `).run(
@@ -140,13 +140,13 @@ export async function POST(request: Request) {
 
     // If an assignment key was specified (e.g. homepage_hero_bg), update site_settings immediately
     if (assignToKey) {
-      updateSiteSetting(assignToKey, url)
+      await updateSiteSetting(assignToKey, url)
       if (altText) {
-        updateSiteSetting(`${assignToKey}_alt`, altText.trim())
+        await updateSiteSetting(`${assignToKey}_alt`, altText.trim())
       }
     }
 
-    recordAuditLog(
+    await recordAuditLog(
       'UPLOAD_MEDIA',
       'media',
       mediaId,
@@ -155,7 +155,7 @@ export async function POST(request: Request) {
       admin.email
     )
 
-    const created = (db.prepare('SELECT * FROM media WHERE id = ?').get(mediaId) as unknown) as MediaItem
+    const created = (await db.prepare('SELECT * FROM media WHERE id = ?').get(mediaId) as unknown) as MediaItem
 
     return NextResponse.json({
       success: true,
