@@ -29,7 +29,7 @@ export async function GET(request: Request) {
     }
 
     if (search) {
-      query += ' AND (filename LIKE ? OR original_name LIKE ? OR alt_text LIKE ? OR section_tag LIKE ? OR url LIKE ?)'
+      query += ' AND (filename ILIKE ? OR original_name ILIKE ? OR alt_text ILIKE ? OR section_tag ILIKE ? OR url ILIKE ?)'
       const s = `%${search}%`
       queryParams.push(s, s, s, s, s)
     }
