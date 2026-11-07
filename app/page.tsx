@@ -971,7 +971,7 @@ export default function HomePage() {
                     onPlay={() => setIsPlaying(true)}
                     onPause={() => setIsPlaying(false)}
                   >
-                    <source src="/hero-background.mp4" type="video/mp4" />
+                    <source src="/thenam-platform-overview.mp4" type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
 
