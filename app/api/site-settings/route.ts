@@ -3,7 +3,7 @@ import { getAllSiteSettings } from '@/lib/db'
 
 export async function GET() {
   try {
-    const settings = getAllSiteSettings()
+    const settings = await getAllSiteSettings()
     return NextResponse.json({ settings })
   } catch (error) {
     console.error('Error fetching site settings:', error)
