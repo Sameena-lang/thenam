@@ -9,9 +9,9 @@ export async function POST() {
   }
 
   try {
-    const result = syncAllPublicMedia()
+    const result = await syncAllPublicMedia()
 
-    recordAuditLog(
+    await recordAuditLog(
       'SYNC_MEDIA',
       'media',
       null,
