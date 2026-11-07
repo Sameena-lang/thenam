@@ -9,8 +9,7 @@ export async function GET() {
   }
 
   try {
-    const rawProducts = (db
-      .prepare('SELECT * FROM products ORDER BY sort_order ASC, created_at ASC')
+    const rawProducts = (await db.prepare('SELECT * FROM products ORDER BY sort_order ASC, created_at ASC')
       .all() as unknown) as ProductItem[]
 
     const products = rawProducts.map((p) => ({
@@ -84,7 +83,7 @@ export async function POST(request: Request) {
       id?.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') ||
       name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
-    const existing = db.prepare('SELECT id FROM products WHERE id = ?').get(productId)
+    const existing = await db.prepare('SELECT id FROM products WHERE id = ?').get(productId)
     if (existing) {
       return NextResponse.json({ error: `Product with id "${productId}" already exists.` }, { status: 409 })
     }
@@ -94,7 +93,7 @@ export async function POST(request: Request) {
     const metricsJson = Array.isArray(metrics) ? JSON.stringify(metrics) : JSON.stringify([])
     const featuresJson = Array.isArray(features) ? JSON.stringify(features) : JSON.stringify([])
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO products (
         id, name, category, badge, badge_color, icon_name, icon_color, icon_bg, tagline, description, tags, metrics, features, sort_order, is_active, image_url, image_alt, created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -120,7 +119,7 @@ export async function POST(request: Request) {
       now
     )
 
-    recordAuditLog(
+    await recordAuditLog(
       'CREATE_PRODUCT',
       'products',
       productId,
