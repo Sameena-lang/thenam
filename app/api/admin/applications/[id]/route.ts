@@ -20,14 +20,14 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid application status' }, { status: 400 })
     }
 
-    const app = db.prepare('SELECT * FROM applications WHERE id = ?').get(id) as CareerApplication | undefined
+    const app = await db.prepare('SELECT * FROM applications WHERE id = ?').get(id) as CareerApplication | undefined
     if (!app) {
       return NextResponse.json({ error: 'Application not found' }, { status: 404 })
     }
 
-    db.prepare('UPDATE applications SET status = ? WHERE id = ?').run(status, id)
+    await db.prepare('UPDATE applications SET status = ? WHERE id = ?').run(status, id)
 
-    recordAuditLog(
+    await recordAuditLog(
       'UPDATE_APPLICATION_STATUS',
       'applications',
       id,
@@ -36,7 +36,7 @@ export async function PATCH(
       admin.email
     )
 
-    recordNotification({
+    await recordNotification({
       type: 'application',
       title: `Application Status: ${app.full_name}`,
       message: `Career candidate ${app.full_name} (${app.role}) moved to "${status}".`,
@@ -64,7 +64,7 @@ export async function DELETE(
 
   try {
     const { id } = await params
-    db.prepare('DELETE FROM applications WHERE id = ?').run(id)
+    await db.prepare('DELETE FROM applications WHERE id = ?').run(id)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error deleting application:', error)
