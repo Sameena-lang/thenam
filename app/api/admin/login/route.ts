@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const userAgent = request.headers.get('user-agent') || 'Unknown'
 
     // Rate limiting check
-    const rateLimit = checkRateLimit(ip, cleanEmail)
+    const rateLimit = await checkRateLimit(ip, cleanEmail)
     if (!rateLimit.allowed) {
       return NextResponse.json(
         { error: 'Too many failed login attempts. Please try again in 15 minutes.' },
@@ -26,28 +26,27 @@ export async function POST(request: Request) {
     }
 
     // Lookup admin
-    const admin = db
-      .prepare('SELECT * FROM admin_users WHERE email = ?')
+    const admin = await db.prepare('SELECT * FROM admin_users WHERE email = ?')
       .get(cleanEmail) as AdminUser | undefined
 
     if (!admin || admin.status !== 'active') {
-      recordLoginAttempt(ip, cleanEmail, false)
-      recordAuditLog('FAILED_LOGIN_ATTEMPT', 'admin_users', cleanEmail, `Failed login attempt from IP ${ip}`)
+      await recordLoginAttempt(ip, cleanEmail, false)
+      await recordAuditLog('FAILED_LOGIN_ATTEMPT', 'admin_users', cleanEmail, `Failed login attempt from IP ${ip}`)
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
     // Verify password securely
     const isValid = verifyPassword(password, admin.password_hash, admin.salt)
     if (!isValid) {
-      recordLoginAttempt(ip, cleanEmail, false)
-      recordAuditLog('FAILED_LOGIN_ATTEMPT', 'admin_users', admin.id, `Password mismatch from IP ${ip}`)
+      await recordLoginAttempt(ip, cleanEmail, false)
+      await recordAuditLog('FAILED_LOGIN_ATTEMPT', 'admin_users', admin.id, `Password mismatch from IP ${ip}`)
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
     // Successful login
-    recordLoginAttempt(ip, cleanEmail, true)
+    await recordLoginAttempt(ip, cleanEmail, true)
     await createAdminSession(admin.id, ip, userAgent)
-    recordAuditLog('ADMIN_LOGIN', 'admin_users', admin.id, `Successful login from IP ${ip}`, admin.id, admin.email)
+    await recordAuditLog('ADMIN_LOGIN', 'admin_users', admin.id, `Successful login from IP ${ip}`, admin.id, admin.email)
 
     return NextResponse.json({
       success: true,
