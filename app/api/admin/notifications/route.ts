@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     }
 
     if (search) {
-      whereClause += ' AND (title LIKE ? OR message LIKE ?)'
+      whereClause += ' AND (title ILIKE ? OR message ILIKE ?)'
       const pattern = `%${search}%`
       params.push(pattern, pattern)
     }
