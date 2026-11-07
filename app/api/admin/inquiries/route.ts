@@ -37,7 +37,7 @@ export async function GET(request: Request) {
     }
 
     const countQuery = `SELECT COUNT(*) as total FROM inquiries ${whereClause}`
-    const totalCount = (db.prepare(countQuery).get(...params) as { total: number }).total
+    const totalCount = (await db.prepare(countQuery).get(...params) as { total: number }).total
 
     const query = `
       SELECT * FROM inquiries 
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
       ORDER BY created_at DESC 
       LIMIT ? OFFSET ?
     `
-    const inquiries = (db.prepare(query).all(...params, limit, offset) as unknown) as Inquiry[]
+    const inquiries = (await db.prepare(query).all(...params, limit, offset) as unknown) as Inquiry[]
 
     return NextResponse.json({
       inquiries,
