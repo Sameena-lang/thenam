@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     const params: (string | number)[] = []
 
     if (search) {
-      whereClause += ' AND (name LIKE ? OR email LIKE ? OR company LIKE ? OR phone LIKE ?)'
+      whereClause += ' AND (name ILIKE ? OR email ILIKE ? OR company ILIKE ? OR phone ILIKE ?)'
       const pattern = `%${search}%`
       params.push(pattern, pattern, pattern, pattern)
     }
