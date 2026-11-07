@@ -109,7 +109,7 @@ export async function getAuthenticatedAdmin(): Promise<AdminUser | null> {
     const now = new Date().toISOString()
 
     // Find valid session
-    const session = db
+    const session = await db
       .prepare(
         `SELECT admin_id FROM admin_sessions 
          WHERE token_hash = ? AND expires_at > ?`
@@ -121,7 +121,7 @@ export async function getAuthenticatedAdmin(): Promise<AdminUser | null> {
     }
 
     // Find active admin user
-    const admin = db
+    const admin = await db
       .prepare(
         `SELECT id, email, name, password_hash, salt, role, status, created_at, last_login 
          FROM admin_users 
