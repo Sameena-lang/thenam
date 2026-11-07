@@ -43,7 +43,7 @@ const DEFAULT_SERVICE_CATEGORIES = [
     title: 'AI & Machine Learning',
     badge: 'High Impact',
     subtitle: 'Practical AI tools that automate work and deliver smart decisions.',
-    imageUrl: '/services/media_1793177581773_ebe5ac2e.jpg',
+    imageUrl: '/services/ai-machine-learning.jpg',
     imageAlt: 'AI & Machine Learning - Thenam Software Solutions',
     description:
       'Turn state-of-the-art language models and computer vision into business productivity. We build conversational agents, predictive tools, and intelligent data pipelines.',
@@ -62,7 +62,7 @@ const DEFAULT_SERVICE_CATEGORIES = [
     title: 'Custom Software Development',
     badge: 'Enterprise Grade',
     subtitle: 'Tailored software crafted around your specific operational workflows.',
-    imageUrl: '/services/media_1793177606591_2777dffe.jpg',
+    imageUrl: '/services/custom-software.jpg',
     imageAlt: 'Custom Software Development - Thenam Software Solutions',
     description:
       'Eliminate repetitive spreadsheet chaos with secure, scalable custom software. We build internal business tools, client portals, and cloud-native SaaS systems.',
