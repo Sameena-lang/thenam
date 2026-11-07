@@ -12,8 +12,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '30', 10)))
 
-    const logs = (db
-      .prepare('SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT ?')
+    const logs = (await db.prepare('SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT ?')
       .all(limit) as unknown) as AuditLog[]
 
     return NextResponse.json({ logs })
