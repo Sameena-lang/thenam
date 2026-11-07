@@ -24,8 +24,8 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
-export function generateStaticParams() {
-  const all = getAllProjects(true)
+export async function generateStaticParams() {
+  const all = await getAllProjects(true)
   return all.map((p) => ({
     slug: p.slug,
   }))
@@ -33,14 +33,14 @@ export function generateStaticParams() {
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params
-  const project = getProjectBySlug(slug) || PROJECTS[slug]
+  const project = await getProjectBySlug(slug) || PROJECTS[slug]
 
   if (!project) {
     notFound()
   }
 
   // Get other active projects for "More Projects Like This"
-  const allProjects = getAllProjects(false)
+  const allProjects = await getAllProjects(false)
   const relatedProjects = allProjects.filter((p) => p.slug !== slug).slice(0, 4)
 
   return (
