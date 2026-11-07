@@ -442,24 +442,21 @@ export async function isMediaInUse(url: string): Promise<{ inUse: boolean; locat
   const locations: string[] = []
 
   // Check site_settings
-  const settingRows = (db
-    .prepare('SELECT key, description FROM site_settings WHERE value = ?')
+  const settingRows = (await db.prepare('SELECT key, description FROM site_settings WHERE value = ?')
     .all(url) as unknown) as Array<{ key: string; description: string | null }>
   for (const s of settingRows) {
     locations.push(`Site Setting: ${s.description || s.key}`)
   }
 
   // Check services
-  const serviceRows = (db
-    .prepare('SELECT title FROM services WHERE image_url = ?')
+  const serviceRows = (await db.prepare('SELECT title FROM services WHERE image_url = ?')
     .all(url) as unknown) as Array<{ title: string }>
   for (const s of serviceRows) {
     locations.push(`Service Offering: ${s.title}`)
   }
 
   // Check products
-  const productRows = (db
-    .prepare('SELECT name FROM products WHERE image_url = ?')
+  const productRows = (await db.prepare('SELECT name FROM products WHERE image_url = ?')
     .all(url) as unknown) as Array<{ name: string }>
   for (const p of productRows) {
     locations.push(`Proprietary Product: ${p.name}`)
@@ -467,8 +464,7 @@ export async function isMediaInUse(url: string): Promise<{ inUse: boolean; locat
 
 // Check site_content
   try {
-    const contentRows = (db
-      .prepare('SELECT title, page, section FROM site_content WHERE image_url = ?')
+    const contentRows = (await db.prepare('SELECT title, page, section FROM site_content WHERE image_url = ?')
       .all(url) as unknown) as Array<{ title: string; page: string; section: string }>
     for (const c of contentRows) {
       locations.push(`Content (${c.page} - ${c.section}): ${c.title}`)
@@ -479,8 +475,7 @@ export async function isMediaInUse(url: string): Promise<{ inUse: boolean; locat
 
 // Check projects
   try {
-    const projectRows = (db
-      .prepare('SELECT title_first, title_second FROM projects WHERE mockup_image = ? OR thumbnail = ?')
+    const projectRows = (await db.prepare('SELECT title_first, title_second FROM projects WHERE mockup_image = ? OR thumbnail = ?')
       .all(url, url) as unknown) as Array<{ title_first: string; title_second: string }>
     for (const p of projectRows) {
       locations.push(`Project Case Study: ${p.title_first} ${p.title_second}`)
@@ -490,8 +485,7 @@ export async function isMediaInUse(url: string): Promise<{ inUse: boolean; locat
   }
 
   // Check if it's marked as a core system asset
-  const mediaRow = (db
-    .prepare('SELECT is_system, usage_ref FROM media WHERE url = ?')
+  const mediaRow = (await db.prepare('SELECT is_system, usage_ref FROM media WHERE url = ?')
     .get(url) as unknown) as { is_system: number; usage_ref: string | null } | undefined
   if (mediaRow && mediaRow.is_system === 1) {
     locations.push('Core System Asset')
@@ -1148,7 +1142,7 @@ export async function getPublicContentByPage(page: string, section?: string): Pr
  * ========================================================
  */
 
-function mapProjectItemToDetail(item: ProjectItem): Promise<ProjectDetail & { sortOrder: number; isActive: boolean; createdAt: string; updatedAt: string }> {
+function mapProjectItemToDetail(item: ProjectItem): ProjectDetail & { sortOrder: number; isActive: boolean; createdAt: string; updatedAt: string } {
   return {
     slug: item.slug,
     titleFirst: item.title_first,
