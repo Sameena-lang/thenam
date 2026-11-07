@@ -32,7 +32,7 @@ export async function GET(request: Request) {
       ${whereClause} 
       ORDER BY created_at DESC
     `
-    const applications = (db.prepare(query).all(...params) as unknown) as CareerApplication[]
+    const applications = (await db.prepare(query).all(...params) as unknown) as CareerApplication[]
 
     return NextResponse.json({ applications })
   } catch (error) {
