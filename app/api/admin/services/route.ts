@@ -9,8 +9,7 @@ export async function GET() {
   }
 
   try {
-    const rawServices = (db
-      .prepare('SELECT * FROM services ORDER BY sort_order ASC, created_at ASC')
+    const rawServices = (await db.prepare('SELECT * FROM services ORDER BY sort_order ASC, created_at ASC')
       .all() as unknown) as ServiceItem[]
 
     const services = rawServices.map((s) => ({
@@ -64,7 +63,7 @@ export async function POST(request: Request) {
       title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
     // Check if ID exists
-    const existing = db.prepare('SELECT id FROM services WHERE id = ?').get(serviceId)
+    const existing = await db.prepare('SELECT id FROM services WHERE id = ?').get(serviceId)
     if (existing) {
       return NextResponse.json({ error: `Service with id "${serviceId}" already exists.` }, { status: 409 })
     }
@@ -72,7 +71,7 @@ export async function POST(request: Request) {
     const now = new Date().toISOString()
     const featuresJson = Array.isArray(features) ? JSON.stringify(features) : JSON.stringify([])
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO services (id, title, subtitle, badge, description, color_class, icon_name, features, sort_order, is_active, image_url, image_alt, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
@@ -92,7 +91,7 @@ export async function POST(request: Request) {
       now
     )
 
-    recordAuditLog(
+    await recordAuditLog(
       'CREATE_SERVICE',
       'services',
       serviceId,
