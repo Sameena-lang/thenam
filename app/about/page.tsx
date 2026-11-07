@@ -226,7 +226,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '36px', maxWidth: '960px', margin: '0 auto' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '36px', maxWidth: '960px', margin: '0 auto' }}>
               {/* Leader 1: Tharun Varshan U */}
               <div
                 style={{

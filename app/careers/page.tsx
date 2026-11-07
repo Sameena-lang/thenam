@@ -13,10 +13,6 @@ import {
   Clock,
   CheckCircle2,
   Send,
-  Zap,
-  Laptop,
-  GraduationCap,
-  Heart,
 } from 'lucide-react'
 
 export default function CareersPage() {
@@ -63,29 +59,6 @@ export default function CareersPage() {
       experience: 'Fresher / College Students',
       desc: 'Get hands-on mentorship building modern web portals starting with our ₹1,999* web services and advancing to complex client dashboards.',
       skills: ['HTML5/CSS3', 'JavaScript/TypeScript', 'React Basics', 'Git / GitHub', 'Curiosity to learn'],
-    },
-  ]
-
-  const perks = [
-    {
-      icon: Laptop,
-      title: 'Remote-First Flexibility',
-      desc: 'Work from our Chennai office or anywhere in India. We value output and deep work over seat time.',
-    },
-    {
-      icon: Zap,
-      title: 'Cutting-Edge Tooling',
-      desc: 'Develop on modern tech stacks: Next.js 16, React 19, Turbopack, AI tooling, and high-spec hardware.',
-    },
-    {
-      icon: GraduationCap,
-      title: 'Continuous Learning Budget',
-      desc: 'Annual allowances for tech courses, certifications, conferences, and reference materials.',
-    },
-    {
-      icon: Heart,
-      title: 'Health & Wellness',
-      desc: 'Comprehensive health coverage, mental wellness days, and balanced sprint cadences.',
     },
   ]
 
@@ -146,41 +119,11 @@ export default function CareersPage() {
                   <span>View Open Positions</span>
                   <ArrowRight size={15} />
                 </a>
-                <a href="#perks" className="explore-btn">
+                <Link href="/about" className="explore-btn">
                   <span>Why Work at Thenam</span>
                   <ArrowRight size={15} />
-                </a>
+                </Link>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ========================================================
-            PERKS & CULTURE
-            ======================================================== */}
-        <section className="inner-white-section" id="perks">
-          <div className="container">
-            <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 50px' }}>
-              <span className="section-eyebrow">LIFE AT THENAM</span>
-              <h2 className="section-title-large">
-                A culture built for <span className="accent-cyan-dark">growth</span> and{' '}
-                <span className="accent-lime-dark">excellence.</span>
-              </h2>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
-              {perks.map((p, i) => {
-                const Icon = p.icon
-                return (
-                  <div key={i} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '26px' }}>
-                    <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#e0f2fe', color: '#0284c7', display: 'grid', placeItems: 'center', marginBottom: '16px' }}>
-                      <Icon size={20} />
-                    </div>
-                    <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a', margin: '0 0 8px' }}>{p.title}</h3>
-                    <p style={{ fontSize: '13px', lineHeight: '1.6', color: '#64748b', margin: 0 }}>{p.desc}</p>
-                  </div>
-                )
-              })}
             </div>
           </div>
         </section>
@@ -296,7 +239,7 @@ export default function CareersPage() {
                   gap: '18px',
                 }}
               >
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '16px' }}>
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#334155' }}>
                     Full Name *
                     <input name="fullName" required placeholder="Your full name" style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }} />
@@ -308,7 +251,7 @@ export default function CareersPage() {
                   </label>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '16px' }}>
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#334155' }}>
                     Phone / WhatsApp *
                     <input name="phone" required placeholder="+91 98765 43210" style={{ padding: '11px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }} />

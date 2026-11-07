@@ -197,7 +197,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <section
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
               gap: '48px',
               alignItems: 'center',
               padding: '20px 0 60px',
@@ -482,7 +482,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
                 gap: '40px',
               }}
             >
@@ -600,7 +600,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))',
                   gap: '18px',
                 }}
               >

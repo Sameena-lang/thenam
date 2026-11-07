@@ -15,10 +15,6 @@ import {
   CheckCircle2,
   ArrowRight,
   Sparkles,
-  ShieldCheck,
-  Zap,
-  Clock,
-  Coins,
 } from 'lucide-react'
 
 const DEFAULT_SERVICE_CATEGORIES = [
@@ -272,7 +268,7 @@ export default function ServicesPage() {
               </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '28px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 350px), 1fr))', gap: '28px' }}>
               {serviceCategories.map((service) => {
                 const Icon = service.icon
                 return (
@@ -334,183 +330,6 @@ export default function ServicesPage() {
                   </article>
                 )
               })}
-            </div>
-          </div>
-        </section>
-
-        {/* ========================================================
-            TRANSPARENT PRICING TIERS
-            ======================================================== */}
-        <section className="inner-pale-section">
-          <div className="container">
-            <div style={{ textAlign: 'center', maxWidth: '650px', margin: '0 auto 50px' }}>
-              <span className="section-eyebrow">CLEAR &amp; ACCESSIBLE PRICING</span>
-              <h2 className="section-title-large">
-                Invest with <span className="accent-cyan-dark">complete</span>{' '}
-                <span className="accent-lime-dark">clarity.</span>
-              </h2>
-              <p className="section-desc-light" style={{ margin: '14px auto 0' }}>
-                No hidden charges. Clear deliverables, agile milestones, and 30-day post-launch support included.
-              </p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: '24px' }}>
-              {/* Tier 1: Starter */}
-              <div style={{
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: '16px',
-                padding: '34px 28px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.04)'
-              }}>
-                <div>
-                  <span style={{ fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', color: '#64748b' }}>Starter Website</span>
-                  <div style={{ margin: '14px 0 8px', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-                    <strong style={{ fontSize: '34px', color: '#0f172a', fontWeight: '800' }}>&#8377;1,999</strong>
-                    <span style={{ fontSize: '12px', color: '#64748b' }}>/ one-time*</span>
-                  </div>
-                  <p style={{ fontSize: '12.5px', color: '#64748b', marginBottom: '22px' }}>
-                    Perfect for small businesses, retail shops, and individuals launching their first online presence.
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', borderTop: '1px solid #f1f5f9', paddingTop: '18px' }}>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#334155' }}><CheckCircle2 size={14} style={{ color: '#10b981' }} /> Up to 3 Responsive Pages</div>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#334155' }}><CheckCircle2 size={14} style={{ color: '#10b981' }} /> WhatsApp &amp; Call Click to Contact</div>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#334155' }}><CheckCircle2 size={14} style={{ color: '#10b981' }} /> Mobile &amp; Desktop Optimized</div>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#334155' }}><CheckCircle2 size={14} style={{ color: '#10b981' }} /> Fast 48-Hour Delivery</div>
-                  </div>
-                </div>
-                <Link href="/contact" className="explore-btn" style={{ justifyContent: 'center', marginTop: '30px', background: '#0f172a' }}>
-                  <span>Get Started for &#8377;1,999*</span>
-                  <ArrowRight size={14} />
-                </Link>
-              </div>
-
-              {/* Tier 2: Business Growth */}
-              <div style={{
-                background: '#070f1e',
-                color: '#ffffff',
-                border: '2px solid #00c9ff',
-                borderRadius: '16px',
-                padding: '34px 28px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                boxShadow: '0 18px 40px rgba(0, 201, 255, 0.16)',
-                position: 'relative'
-              }}>
-                <span style={{
-                  position: 'absolute',
-                  top: '-12px',
-                  right: '24px',
-                  background: 'linear-gradient(90deg, #00c9ff, #9ee535)',
-                  color: '#050b14',
-                  fontSize: '10px',
-                  fontWeight: '800',
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  textTransform: 'uppercase'
-                }}>
-                  Most Popular
-                </span>
-                <div>
-                  <span style={{ fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', color: '#38bdf8' }}>Business Growth</span>
-                  <div style={{ margin: '14px 0 8px', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-                    <strong style={{ fontSize: '34px', color: '#ffffff', fontWeight: '800' }}>&#8377;9,999</strong>
-                    <span style={{ fontSize: '12px', color: '#94a3b8' }}>/ project</span>
-                  </div>
-                  <p style={{ fontSize: '12.5px', color: '#94a3b8', marginBottom: '22px' }}>
-                    Complete digital presence for growing companies, startups, and service providers.
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', borderTop: '1px solid #1a2a47', paddingTop: '18px' }}>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#e2e8f0' }}><CheckCircle2 size={14} style={{ color: '#00c9ff' }} /> Up to 8 Custom Designed Pages</div>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#e2e8f0' }}><CheckCircle2 size={14} style={{ color: '#00c9ff' }} /> CMS for Blog &amp; Portfolio Updates</div>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#e2e8f0' }}><CheckCircle2 size={14} style={{ color: '#00c9ff' }} /> Lead Generation &amp; Contact Form</div>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#e2e8f0' }}><CheckCircle2 size={14} style={{ color: '#00c9ff' }} /> Google SEO Setup &amp; Analytics</div>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#e2e8f0' }}><CheckCircle2 size={14} style={{ color: '#00c9ff' }} /> 60-Day Free Technical Support</div>
-                  </div>
-                </div>
-                <Link href="/contact" className="quote-btn" style={{ justifyContent: 'center', marginTop: '30px' }}>
-                  <span>Choose Business Growth</span>
-                  <ArrowRight size={14} />
-                </Link>
-              </div>
-
-              {/* Tier 3: Custom / Enterprise */}
-              <div style={{
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: '16px',
-                padding: '34px 28px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.04)'
-              }}>
-                <div>
-                  <span style={{ fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', color: '#64748b' }}>Custom &amp; AI Solutions</span>
-                  <div style={{ margin: '14px 0 8px', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-                    <strong style={{ fontSize: '34px', color: '#0f172a', fontWeight: '800' }}>Custom</strong>
-                    <span style={{ fontSize: '12px', color: '#64748b' }}>quote</span>
-                  </div>
-                  <p style={{ fontSize: '12.5px', color: '#64748b', marginBottom: '22px' }}>
-                    Tailored AI chatbots, fullstack SaaS applications, internal portals, and workflow automations.
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', borderTop: '1px solid #f1f5f9', paddingTop: '18px' }}>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#334155' }}><CheckCircle2 size={14} style={{ color: '#10b981' }} /> Custom Architecture &amp; Tech Stack</div>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#334155' }}><CheckCircle2 size={14} style={{ color: '#10b981' }} /> AI / LLM Agents &amp; Automation</div>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#334155' }}><CheckCircle2 size={14} style={{ color: '#10b981' }} /> Database, API &amp; Third-Party Sync</div>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#334155' }}><CheckCircle2 size={14} style={{ color: '#10b981' }} /> Dedicated Project Manager &amp; SLA</div>
-                  </div>
-                </div>
-                <Link href="/contact" className="explore-btn" style={{ justifyContent: 'center', marginTop: '30px', background: '#0f172a' }}>
-                  <span>Request Custom Proposal</span>
-                  <ArrowRight size={14} />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ========================================================
-            WHY CHOOSE THENAM (TRUST PILLARS)
-            ======================================================== */}
-        <section className="inner-white-section">
-          <div className="container">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
-              <div style={{ padding: '24px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                <Clock size={24} style={{ color: '#0284c7', marginBottom: '14px' }} />
-                <h4 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 8px' }}>Rapid Execution</h4>
-                <p style={{ fontSize: '13px', color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-                  We work in disciplined, fast sprints so you see real working software every week.
-                </p>
-              </div>
-
-              <div style={{ padding: '24px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                <Coins size={24} style={{ color: '#65a30d', marginBottom: '14px' }} />
-                <h4 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 8px' }}>Predictable Pricing</h4>
-                <p style={{ fontSize: '13px', color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-                  Clear scopes, milestones, and no surprise invoices. Websites start at just &#8377;1,999*.
-                </p>
-              </div>
-
-              <div style={{ padding: '24px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                <ShieldCheck size={24} style={{ color: '#0284c7', marginBottom: '14px' }} />
-                <h4 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 8px' }}>Code Ownership</h4>
-                <p style={{ fontSize: '13px', color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-                  You own 100% of your source code, design files, and deployment accounts. No vendor lock-in.
-                </p>
-              </div>
-
-              <div style={{ padding: '24px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                <Zap size={24} style={{ color: '#65a30d', marginBottom: '14px' }} />
-                <h4 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 8px' }}>Ongoing Support</h4>
-                <p style={{ fontSize: '13px', color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-                  We stand by what we build with continuous monitoring, warranty, and feature enhancements.
-                </p>
-              </div>
             </div>
           </div>
         </section>
