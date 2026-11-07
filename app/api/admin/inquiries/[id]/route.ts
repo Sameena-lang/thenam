@@ -20,14 +20,14 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid status value' }, { status: 400 })
     }
 
-    const inquiry = db.prepare('SELECT * FROM inquiries WHERE id = ?').get(id) as Inquiry | undefined
+    const inquiry = await db.prepare('SELECT * FROM inquiries WHERE id = ?').get(id) as Inquiry | undefined
     if (!inquiry) {
       return NextResponse.json({ error: 'Inquiry not found' }, { status: 404 })
     }
 
-    db.prepare('UPDATE inquiries SET status = ? WHERE id = ?').run(status, id)
+    await db.prepare('UPDATE inquiries SET status = ? WHERE id = ?').run(status, id)
 
-    recordAuditLog(
+    await recordAuditLog(
       'UPDATE_INQUIRY_STATUS',
       'inquiries',
       id,
@@ -36,7 +36,7 @@ export async function PATCH(
       admin.email
     )
 
-    recordNotification({
+    await recordNotification({
       type: 'quote',
       title: `Quote / Inquiry Updated: ${inquiry.full_name}`,
       message: `Status for ${inquiry.service_name} proposal requested by ${inquiry.full_name} changed to "${status}".`,
@@ -46,7 +46,7 @@ export async function PATCH(
       isRead: 1,
     })
 
-    const updated = db.prepare('SELECT * FROM inquiries WHERE id = ?').get(id)
+    const updated = await db.prepare('SELECT * FROM inquiries WHERE id = ?').get(id)
     return NextResponse.json({ success: true, inquiry: updated })
   } catch (error) {
     console.error('Error updating inquiry:', error)
@@ -65,14 +65,14 @@ export async function DELETE(
 
   try {
     const { id } = await params
-    const inquiry = db.prepare('SELECT * FROM inquiries WHERE id = ?').get(id) as Inquiry | undefined
+    const inquiry = await db.prepare('SELECT * FROM inquiries WHERE id = ?').get(id) as Inquiry | undefined
     if (!inquiry) {
       return NextResponse.json({ error: 'Inquiry not found' }, { status: 404 })
     }
 
-    db.prepare('DELETE FROM inquiries WHERE id = ?').run(id)
+    await db.prepare('DELETE FROM inquiries WHERE id = ?').run(id)
 
-    recordAuditLog(
+    await recordAuditLog(
       'DELETE_INQUIRY',
       'inquiries',
       id,
