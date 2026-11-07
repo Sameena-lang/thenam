@@ -283,7 +283,12 @@ export default function HomePage() {
         <section
           className="hero-section"
           aria-label="Hero Introduction"
-          style={{ backgroundImage: `url('${siteImages.heroBg || '/hero-bg.png'}')` }}
+          style={{
+            backgroundImage: `linear-gradient(90deg, rgba(3, 21, 37, 0.72) 0%, rgba(3, 21, 37, 0.28) 38%, transparent 54%), url('${siteImages.heroBg || '/hero-bg.png'}')`,
+            backgroundPosition: 'left center, right center',
+            backgroundSize: '100% 100%, cover',
+            backgroundRepeat: 'no-repeat, no-repeat',
+          }}
         >
           <style dangerouslySetInnerHTML={{ __html: `
             /* Desktop BR is visible on desktop, hidden on mobile */
@@ -306,10 +311,10 @@ export default function HomePage() {
                 background-image: 
                   linear-gradient(
                     180deg,
-                    rgba(3, 21, 37, 0.96) 0%,
-                    rgba(3, 21, 37, 0.88) 36%,
-                    rgba(3, 21, 37, 0.45) 65%,
-                    rgba(3, 21, 37, 0.85) 100%
+                    rgba(3, 21, 37, 0.88) 0%,
+                    rgba(3, 21, 37, 0.72) 36%,
+                    rgba(3, 21, 37, 0.30) 65%,
+                    rgba(3, 21, 37, 0.68) 100%
                   ),
                   url('${siteImages.heroBg || '/hero-bg.png'}') !important;
                 background-position: center top, 75% bottom !important;
