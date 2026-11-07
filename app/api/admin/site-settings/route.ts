@@ -9,8 +9,7 @@ export async function GET() {
   }
 
   try {
-    const settings = (db
-      .prepare('SELECT key, value, description, updated_at FROM site_settings ORDER BY key ASC')
+    const settings = (await db.prepare('SELECT key, value, description, updated_at FROM site_settings ORDER BY key ASC')
       .all() as unknown) as SiteSetting[]
 
     return NextResponse.json({ settings })
@@ -33,8 +32,8 @@ export async function PATCH(request: Request) {
     if (Array.isArray(settings)) {
       for (const item of settings) {
         if (item.key && item.value !== undefined) {
-          updateSiteSetting(item.key, String(item.value).trim())
-          recordAuditLog(
+          await updateSiteSetting(item.key, String(item.value).trim())
+          await recordAuditLog(
             'UPDATE_SITE_SETTING',
             'site_settings',
             item.key,
@@ -51,9 +50,9 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Key and value are required' }, { status: 400 })
     }
 
-    updateSiteSetting(key, String(value).trim())
+    await updateSiteSetting(key, String(value).trim())
 
-    recordAuditLog(
+    await recordAuditLog(
       'UPDATE_SITE_SETTING',
       'site_settings',
       key,
