@@ -39,14 +39,14 @@ export async function GET(request: Request) {
     const rawMedia = (await db.prepare(query).all(...queryParams) as unknown) as MediaItem[]
 
     // Enrich each item with real-time dependency status
-    const media = rawMedia.map((m) => {
+    const media = await Promise.all(rawMedia.map(async (m) => {
       const usage = await isMediaInUse(m.url)
       return {
         ...m,
         is_in_use: usage.inUse,
         used_in: usage.locations,
       }
-    })
+    }))
 
     // Total stats & section counts
     const totalCount = (await db.prepare('SELECT COUNT(*) as count FROM media').get() as { count: number }).count
