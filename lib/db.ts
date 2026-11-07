@@ -843,11 +843,11 @@ export async function getPopularServicesAndProducts(startDate: string, endDate: 
 
   // Enquiries per service
   const serviceInqRows = await db.prepare(`
-    SELECT service_id, service_name, COUNT(*) as inq_count
+    SELECT service_id, COUNT(*) as inq_count
     FROM inquiries
     WHERE substr(created_at, 1, 10) >= ? AND substr(created_at, 1, 10) <= ?
     GROUP BY service_id
-  `).all(startDate, endDate) as Array<{ service_id: string; service_name: string; inq_count: number }>
+  `).all(startDate, endDate) as Array<{ service_id: string; inq_count: number }>
 
   const inqCountByService = new Map<string, number>()
   for (const row of serviceInqRows) {
