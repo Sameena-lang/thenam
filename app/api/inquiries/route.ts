@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     const id = 'inq_' + crypto.randomBytes(8).toString('hex')
     const now = new Date().toISOString()
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO inquiries (
         id, full_name, email, phone, company, service_id, service_name, budget_tier, timeline, message, need_nda, status, created_at, visitor_id
       )
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
     // Record conversion analytics event with privacy safeguards (no PII)
     if (visitorId) {
-      recordAnalyticsEvent({
+      await recordAnalyticsEvent({
         visitorId,
         sessionId,
         eventName: 'enquiry_submitted',
@@ -70,10 +70,10 @@ export async function POST(request: Request) {
     }
 
     // Also auto-register or associate user in users table if new
-    const existingUser = db.prepare('SELECT id FROM users WHERE email = ?').get(cleanEmail)
+    const existingUser = await db.prepare('SELECT id FROM users WHERE email = ?').get(cleanEmail)
     if (!existingUser) {
       const userId = 'usr_' + crypto.randomBytes(8).toString('hex')
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO users (id, name, email, phone, company, role, status, created_at, notes)
         VALUES (?, ?, ?, ?, ?, 'client', 'active', ?, ?)
       `).run(
@@ -88,7 +88,7 @@ export async function POST(request: Request) {
     }
 
     // Trigger Admin Notification for the incoming inquiry/quote request
-    recordNotification({
+    await recordNotification({
       type: 'inquiry',
       title: `New Proposal Request: ${cleanName}`,
       message: `${cleanName} requested a quote for ${serviceName}${budgetTier ? ` (${budgetTier})` : ''}. Follow-up required.`,
