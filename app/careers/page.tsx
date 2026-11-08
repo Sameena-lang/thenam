@@ -179,17 +179,13 @@ export default function CareersPage() {
                       </div>
                     </div>
 
-                    <button
-                      type="button"
+                    <a
+                      href="https://campus.thenamsoftwaresolutions.com"
                       className="quote-btn"
-                      onClick={() => {
-                        setSelectedRole(job.title)
-                        document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth' })
-                      }}
                     >
                       <span>Apply Now</span>
                       <ArrowRight size={14} />
-                    </button>
+                    </a>
                   </div>
 
                   <p style={{ fontSize: '13.5px', color: '#475569', margin: 0, lineHeight: '1.65' }}>{job.desc}</p>

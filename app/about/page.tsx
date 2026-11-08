@@ -6,6 +6,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
 import CreativePortfolioCarousel from '@/components/CreativePortfolioCarousel'
+import ThenamGallerySection from '@/components/ThenamGallerySection'
 import {
   Sparkles,
   ArrowRight,
@@ -96,11 +97,11 @@ export default function AboutPage() {
         <CreativePortfolioCarousel variant="section" autoPlay={true} />
 
         {/* ========================================================
-            OUR STORY & MISSION
+            OUR ORIGIN & PURPOSE (CLEAN 2-COLUMN WITH VISION CARD)
             ======================================================== */}
-        <section className="inner-white-section">
+        <section className="inner-white-section" aria-label="Our Origin & Purpose" style={{ borderTop: '1px solid #e2e8f0', padding: '80px 0' }}>
           <div className="container">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 460px), 1fr))', gap: '50px', alignItems: 'center' }}>
               <div>
                 <span className="section-eyebrow">OUR ORIGIN &amp; PURPOSE</span>
                 <h2 className="section-title-large" style={{ marginBottom: '22px' }}>
@@ -144,7 +145,7 @@ export default function AboutPage() {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-                  <img src="/thenam-logo.png" alt="Thenam leaf logo" width="36" height="36" />
+                  <Image src="/thenam-logo.png" alt="Thenam leaf logo" width={36} height={36} style={{ objectFit: 'contain' }} />
                   <div>
                     <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '800' }}>THENAM SOFTWARE</h3>
                     <small style={{ color: '#00c9ff', fontSize: '10px', letterSpacing: '0.1em' }}>ENGINEERING EXCELLENCE</small>
@@ -170,6 +171,11 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
+
+        {/* ========================================================
+            MOMENTS THAT DEFINE OUR JOURNEY (AUTHENTIC GALLERY SECTION)
+            ======================================================== */}
+        <ThenamGallerySection />
 
         {/* ========================================================
             LEADERSHIP & CREATIVE ARCHITECTS (FOUNDING MINDS)
@@ -352,6 +358,7 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
+
         <CtaBanner />
       </main>
 
