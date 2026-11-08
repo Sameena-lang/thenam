@@ -9,49 +9,10 @@ import CreativePortfolioCarousel from '@/components/CreativePortfolioCarousel'
 import {
   Sparkles,
   ArrowRight,
-  ShieldCheck,
-  Compass,
-  HeartHandshake,
-  Lightbulb,
   CheckCircle2,
-  MapPin,
-  Award,
-  Users2,
-  Code2,
 } from 'lucide-react'
 
 export default function AboutPage() {
-  const values = [
-    {
-      icon: ShieldCheck,
-      color: '#0284c7',
-      bg: '#e0f2fe',
-      title: 'Discipline in Engineering',
-      desc: 'We don’t cut corners. From type-safe code to automated testing and clean architectures, we build software designed to stand the test of scale.',
-    },
-    {
-      icon: Compass,
-      color: '#059669',
-      bg: '#ecfdf5',
-      title: 'Radical Transparency',
-      desc: 'No jargon, no hidden fees, no opaque black boxes. You get complete visibility into the progress, codebase, and deployment environments every step.',
-    },
-    {
-      icon: Lightbulb,
-      color: '#65a30d',
-      bg: '#f7fee7',
-      title: 'Practical Intelligence',
-      desc: 'We don’t chase tech hypes for the sake of it. We implement AI, automation, and modern web frameworks strictly where they produce real economic return.',
-    },
-    {
-      icon: HeartHandshake,
-      color: '#2563eb',
-      bg: '#eff6ff',
-      title: 'Enduring Partnership',
-      desc: 'We consider our work done only when your business succeeds. We back our deliverables with responsive post-launch support and continuous advisory.',
-    },
-  ]
-
   const stats = [
     { number: '50+', label: 'Delivered Projects' },
     { number: '98%', label: 'Client Satisfaction' },
@@ -391,46 +352,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-        <section className="inner-pale-section">
-          <div className="container">
-            <div style={{ textAlign: 'center', maxWidth: '620px', margin: '0 auto 50px' }}>
-              <span className="section-eyebrow">WHAT WE STAND FOR</span>
-              <h2 className="section-title-large">
-                Principles that <span className="accent-cyan-dark">shape</span> every{' '}
-                <span className="accent-lime-dark">commit.</span>
-              </h2>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
-              {values.map((v, i) => {
-                const Icon = v.icon
-                return (
-                  <div
-                    key={i}
-                    style={{
-                      background: '#ffffff',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '14px',
-                      padding: '28px',
-                      boxShadow: '0 4px 18px rgba(15, 23, 42, 0.04)',
-                    }}
-                  >
-                    <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: v.bg, color: v.color, display: 'grid', placeItems: 'center', marginBottom: '18px' }}>
-                      <Icon size={22} />
-                    </div>
-                    <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#0f172a', margin: '0 0 10px' }}>
-                      {v.title}
-                    </h3>
-                    <p style={{ fontSize: '13px', lineHeight: '1.65', color: '#64748b', margin: 0 }}>
-                      {v.desc}
-                    </p>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </section>
-
         <CtaBanner />
       </main>
 
