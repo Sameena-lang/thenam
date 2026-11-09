@@ -10,7 +10,6 @@ import ThenamGallerySection from '@/components/ThenamGallerySection'
 import {
   Sparkles,
   ArrowRight,
-  CheckCircle2,
 } from 'lucide-react'
 
 export default function AboutPage() {
@@ -95,82 +94,6 @@ export default function AboutPage() {
             OUR CREATIVE PORTFOLIO (MOVING SPOTLIGHT CAROUSEL)
             ======================================================== */}
         <CreativePortfolioCarousel variant="section" autoPlay={true} />
-
-        {/* ========================================================
-            OUR ORIGIN & PURPOSE (CLEAN 2-COLUMN WITH VISION CARD)
-            ======================================================== */}
-        <section className="inner-white-section" aria-label="Our Origin & Purpose" style={{ borderTop: '1px solid #e2e8f0', padding: '80px 0' }}>
-          <div className="container">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 460px), 1fr))', gap: '50px', alignItems: 'center' }}>
-              <div>
-                <span className="section-eyebrow">OUR ORIGIN &amp; PURPOSE</span>
-                <h2 className="section-title-large" style={{ marginBottom: '22px' }}>
-                  Building thoughtful technology for <span className="accent-cyan-dark">teams</span> that{' '}
-                  <span className="accent-lime-dark">matter.</span>
-                </h2>
-                <p style={{ fontSize: '14.5px', lineHeight: '1.75', color: '#475569', marginBottom: '16px' }}>
-                  Thenam Software Solutions was founded with a straightforward belief: world-class software engineering should be accessible, transparent, and grounded in real-world results.
-                </p>
-                <p style={{ fontSize: '14.5px', lineHeight: '1.75', color: '#475569', marginBottom: '24px' }}>
-                  Whether creating modern web storefronts starting at <strong>₹1,999*</strong> for growing merchants or deploying intelligent Tamil AI assistants and AgriTech IoT telemetry, our team treats every codebase with craftsmanship and rigorous discipline.
-                </p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#1e293b' }}>
-                    <CheckCircle2 size={16} style={{ color: '#10b981' }} />
-                    <strong>Rooted in Chennai, India — delivering globally across 15+ countries</strong>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#1e293b' }}>
-                    <CheckCircle2 size={16} style={{ color: '#10b981' }} />
-                    <strong>Full lifecycle accountability: UX Strategy, Architecture, QA &amp; DevSecOps</strong>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#10b981' }}>
-                    <CheckCircle2 size={16} style={{ color: '#10b981' }} />
-                    <strong>100% intellectual property ownership transferred to client</strong>
-                  </div>
-                </div>
-              </div>
-
-              {/* Graphic Card */}
-              <div
-                style={{
-                  background: '#070f1e',
-                  border: '1px solid #162642',
-                  borderRadius: '18px',
-                  padding: '36px',
-                  color: '#ffffff',
-                  boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
-                  position: 'relative',
-                  overflow: 'hidden',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-                  <Image src="/thenam-logo.png" alt="Thenam leaf logo" width={36} height={36} style={{ objectFit: 'contain' }} />
-                  <div>
-                    <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '800' }}>THENAM SOFTWARE</h3>
-                    <small style={{ color: '#00c9ff', fontSize: '10px', letterSpacing: '0.1em' }}>ENGINEERING EXCELLENCE</small>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '13px', color: '#cbd5e1' }}>
-                  <div style={{ background: '#0b162b', padding: '14px 16px', borderRadius: '10px', border: '1px solid #1c2e4d' }}>
-                    <strong style={{ color: '#9ee535', display: 'block', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px' }}>
-                      Our Vision
-                    </strong>
-                    To be the most trusted technology engineering partner for organizations that value longevity, speed, and real economic value.
-                  </div>
-
-                  <div style={{ background: '#0b162b', padding: '14px 16px', borderRadius: '10px', border: '1px solid #1c2e4d' }}>
-                    <strong style={{ color: '#00c9ff', display: 'block', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px' }}>
-                      Location &amp; Delivery
-                    </strong>
-                    Based in Chennai, Tamil Nadu, operating a high-efficiency remote-first engineering model across APAC, EMEA, and North America.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* ========================================================
             MOMENTS THAT DEFINE OUR JOURNEY (AUTHENTIC GALLERY SECTION)
