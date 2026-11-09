@@ -23,14 +23,14 @@ const DEFAULT_SERVICE_CATEGORIES = [
     icon: Monitor,
     colorClass: 'cyan',
     title: 'Web Development',
-    subtitle: 'Modern, SEO-friendly websites and web applications built for business growth.',
+    subtitle: '',
     imageUrl: '/services/media_1793177571454_be4ff352.jpg',
     imageAlt: 'Web Development - Thenam Software Solutions',
     description:
-      'We build fast, responsive websites using Next.js, React and modern web technologies.',
+      'Build fast, responsive and SEO-friendly websites using Next.js, React and modern web technologies.',
     features: [
       'Business & Corporate Websites',
-      'Landing Pages & Web Applications',
+      'Landing Pages & Web Apps',
       'E-Commerce Development',
       'SEO & Performance Optimization',
     ],
@@ -41,16 +41,16 @@ const DEFAULT_SERVICE_CATEGORIES = [
     colorClass: 'green',
     title: 'AI & Machine Learning',
     badge: 'High Impact',
-    subtitle: 'Smart AI and machine learning solutions for business automation.',
+    subtitle: '',
     imageUrl: '/services/ai-machine-learning.jpg',
     imageAlt: 'AI & Machine Learning - Thenam Software Solutions',
     description:
-      'We develop AI-powered applications, intelligent chatbots and predictive machine learning models.',
+      'Develop intelligent AI solutions, machine learning models and chatbots to automate business operations.',
     features: [
       'AI Chatbots & Virtual Assistants',
-      'Machine Learning Model Development',
+      'Machine Learning Solutions',
       'Document Processing & OCR',
-      'Predictive Analytics & Data Modeling',
+      'Predictive Analytics',
     ],
   },
   {
@@ -59,16 +59,16 @@ const DEFAULT_SERVICE_CATEGORIES = [
     colorClass: 'blue',
     title: 'Custom Software Development',
     badge: 'Enterprise Grade',
-    subtitle: 'Custom software solutions designed around your business needs.',
+    subtitle: '',
     imageUrl: '/services/custom-software.jpg',
     imageAlt: 'Custom Software Development - Thenam Software Solutions',
     description:
-      'We build secure enterprise applications, CRM systems and scalable business software.',
+      'Build secure, scalable custom software tailored to your business requirements.',
     features: [
-      'Custom Business Management Software',
+      'Custom Business Applications',
       'CRM & ERP Development',
       'Inventory Management Systems',
-      'API Development & Integration',
+      'API Integration',
     ],
   },
   {
@@ -77,16 +77,16 @@ const DEFAULT_SERVICE_CATEGORIES = [
     colorClass: 'lime',
     title: 'Business Automation',
     badge: 'Save 20+ hrs/wk',
-    subtitle: 'Automate business processes and improve operational efficiency.',
+    subtitle: '',
     imageUrl: '/services/media_1793177731362_e9e3a465.jpg',
     imageAlt: 'Business Automation - Thenam Software Solutions',
     description:
-      'We create workflow automation solutions that connect business applications and reduce manual tasks.',
+      'Streamline business operations with intelligent workflow automation and business process solutions.',
     features: [
-      'WhatsApp Business Automation',
+      'WhatsApp Automation',
+      'Workflow Automation',
       'Automated Invoicing & Payments',
-      'Workflow & Process Automation',
-      'API & Third-Party Integration',
+      'Third-Party Integrations',
     ],
   },
   {
@@ -95,14 +95,14 @@ const DEFAULT_SERVICE_CATEGORIES = [
     colorClass: 'cyan',
     title: 'Mobile App Development',
     badge: 'iOS & Android',
-    subtitle: 'Modern Android and iOS apps built for seamless user experiences.',
+    subtitle: '',
     imageUrl: '/services/media_1793177742676_42188474.jpg',
     imageAlt: 'Mobile App Development - Thenam Software Solutions',
     description:
-      'We develop scalable mobile applications using React Native and modern technologies.',
+      'Create high-performance Android and iOS applications with seamless user experiences.',
     features: [
-      'Android & iOS App Development',
-      'Cross-Platform Mobile Apps',
+      'Android & iOS Apps',
+      'Cross-Platform Development',
       'Mobile UI/UX Design',
       'App Integration & Deployment',
     ],
@@ -113,14 +113,14 @@ const DEFAULT_SERVICE_CATEGORIES = [
     colorClass: 'green',
     title: 'Cloud & DevOps Solutions',
     badge: '99.99% Uptime',
-    subtitle: 'Secure cloud infrastructure and DevOps solutions for growing businesses.',
+    subtitle: '',
     imageUrl: '/services/cloud-devops.png',
     imageAlt: 'Cloud & DevOps Solutions - Thenam Software Solutions',
     description:
-      'We deliver scalable cloud computing, automated deployments and reliable infrastructure.',
+      'Deliver secure, scalable cloud infrastructure and automated DevOps solutions for reliable deployment.',
     features: [
-      'AWS & Google Cloud Solutions',
-      'CI/CD Pipeline Automation',
+      'AWS & Google Cloud',
+      'CI/CD Automation',
       'Docker & Kubernetes',
       'Cloud Security & Optimization',
     ],
@@ -299,8 +299,10 @@ export default function ServicesPage() {
                         </div>
                       )}
 
-                      <h3 className="service-card-title" style={{ fontSize: '20px', marginBottom: '6px' }}>{service.title}</h3>
-                      <p style={{ fontSize: '13px', color: '#0284c7', fontWeight: '600', marginBottom: '12px' }}>{service.subtitle}</p>
+                      <h3 className="service-card-title" style={{ fontSize: '20px', marginBottom: service.subtitle ? '6px' : '12px' }}>{service.title}</h3>
+                      {service.subtitle ? (
+                        <p style={{ fontSize: '13px', color: '#0284c7', fontWeight: '600', marginBottom: '12px' }}>{service.subtitle}</p>
+                      ) : null}
 
                       <p className="service-card-desc" style={{ fontSize: '13px', lineHeight: '1.65', marginBottom: '20px' }}>{service.description}</p>
 

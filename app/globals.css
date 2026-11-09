@@ -1955,11 +1955,12 @@ button {
   top: 110px;
 }
 
-/* 4-column horizontal card row matching reference Image 2 */
+/* 4-column horizontal card row (auto-wraps to show all 8 cards in 2 rows) */
 .featured-work-cards-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
+  align-content: start;
 }
 
 .featured-normal-card {
