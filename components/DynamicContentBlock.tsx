@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Sparkles, Layers, ExternalLink } from 'lucide-react'
+import { ArrowRight, Sparkles, Layers, ExternalLink, Bot } from 'lucide-react'
 
 export interface DynamicContentItem {
   id: string
@@ -77,9 +77,64 @@ export default function DynamicContentBlock({
   }
 
   return (
-    <div className={`dynamic-content-wrapper ${className}`} style={{ marginTop: '36px', width: '100%' }}>
-      {/* Optional Block Header if multiple items */}
-      {items.length > 0 && heading && (
+    <div
+      className={`dynamic-content-wrapper ${className}`}
+      style={{
+        marginTop: '36px',
+        marginBottom: '36px',
+        width: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
+      <style dangerouslySetInnerHTML={{ __html: `
+        .dynamic-cms-heading {
+          color: #ffffff;
+        }
+        .light .dynamic-cms-heading,
+        .inner-white-section .dynamic-cms-heading,
+        .inner-pale-section .dynamic-cms-heading {
+          color: #0f172a !important;
+        }
+        .dynamic-cms-desc {
+          color: #94a3b8;
+        }
+        .light .dynamic-cms-desc,
+        .inner-white-section .dynamic-cms-desc,
+        .inner-pale-section .dynamic-cms-desc {
+          color: #475569 !important;
+        }
+        .dynamic-cms-card {
+          background: linear-gradient(180deg, #071529 0%, #030d1c 100%);
+          border: 1px solid rgba(0, 201, 242, 0.25);
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+        }
+        .light .dynamic-cms-card,
+        .inner-white-section .dynamic-cms-card,
+        .inner-pale-section .dynamic-cms-card {
+          background: #ffffff !important;
+          border: 1px solid #e2e8f0 !important;
+          box-shadow: 0 10px 30px rgba(15, 23, 42, 0.07) !important;
+        }
+        .dynamic-card-title {
+          color: #ffffff;
+        }
+        .light .dynamic-card-title,
+        .inner-white-section .dynamic-card-title,
+        .inner-pale-section .dynamic-card-title {
+          color: #0f172a !important;
+        }
+        .dynamic-card-desc {
+          color: #94a3b8;
+        }
+        .light .dynamic-card-desc,
+        .inner-white-section .dynamic-card-desc,
+        .inner-pale-section .dynamic-card-desc {
+          color: #475569 !important;
+        }
+      ` }} />
+
+      {/* Optional Block Header */}
+      {heading && (
         <div style={{ marginBottom: '24px' }}>
           {eyebrow && (
             <span
@@ -100,10 +155,10 @@ export default function DynamicContentBlock({
             </span>
           )}
           <h3
+            className="dynamic-cms-heading"
             style={{
-              fontSize: 'clamp(20px, 2.5vw, 28px)',
+              fontSize: 'clamp(22px, 2.5vw, 30px)',
               fontWeight: 800,
-              color: '#ffffff',
               letterSpacing: '-0.02em',
               margin: '0 0 6px',
             }}
@@ -120,7 +175,7 @@ export default function DynamicContentBlock({
             </span>
           </h3>
           {description && (
-            <p style={{ fontSize: '13.5px', color: '#94a3b8', margin: 0, maxWidth: '600px' }}>
+            <p className="dynamic-cms-desc" style={{ fontSize: '14px', margin: 0, maxWidth: '640px' }}>
               {description}
             </p>
           )}
@@ -133,8 +188,8 @@ export default function DynamicContentBlock({
           display: 'grid',
           gridTemplateColumns:
             variant === 'grid-3'
-              ? 'repeat(auto-fit, minmax(300px, 1fr))'
-              : 'repeat(auto-fit, minmax(280px, 1fr))',
+              ? 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))'
+              : 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
           gap: '24px',
         }}
       >
@@ -143,24 +198,30 @@ export default function DynamicContentBlock({
             key={item.id}
             className="dynamic-cms-card"
             style={{
-              background: '#081426',
-              border: '1px solid #162642',
               borderRadius: '16px',
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              boxShadow: '0 16px 36px rgba(0, 0, 0, 0.45)',
-              transition: 'transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease',
+              transition: 'transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
+              position: 'relative',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-4px)'
+              e.currentTarget.style.borderColor = 'rgba(0, 201, 242, 0.55)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'none'
+              e.currentTarget.style.borderColor = ''
             }}
           >
             {/* Card Thumbnail */}
-            {item.image_url && (
+            {item.image_url ? (
               <div
                 style={{
                   position: 'relative',
                   width: '100%',
                   aspectRatio: '16 / 9',
-                  background: '#030a14',
+                  background: '#020914',
                   overflow: 'hidden',
                 }}
               >
@@ -171,7 +232,6 @@ export default function DynamicContentBlock({
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    transition: 'transform 0.4s ease',
                   }}
                   className="dynamic-card-img"
                 />
@@ -181,13 +241,13 @@ export default function DynamicContentBlock({
                       position: 'absolute',
                       top: '12px',
                       left: '12px',
-                      padding: '3px 9px',
+                      padding: '3px 10px',
                       borderRadius: '4px',
-                      fontSize: '10.5px',
+                      fontSize: '11px',
                       fontWeight: 800,
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
-                      background: 'rgba(5, 12, 24, 0.85)',
+                      background: 'rgba(5, 12, 24, 0.88)',
                       color: '#00c9f2',
                       border: '1px solid rgba(0, 201, 242, 0.4)',
                       backdropFilter: 'blur(6px)',
@@ -198,28 +258,76 @@ export default function DynamicContentBlock({
                   </span>
                 )}
               </div>
+            ) : (
+              /* Fallback Header when no image was uploaded */
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  padding: '24px 20px',
+                  background: 'linear-gradient(135deg, rgba(0, 201, 242, 0.14) 0%, rgba(130, 230, 46, 0.08) 100%)',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(0, 201, 242, 0.15)',
+                    border: '1px solid rgba(0, 201, 242, 0.35)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#00c9f2',
+                  }}
+                >
+                  <Bot size={22} />
+                </div>
+                {item.subtitle && (
+                  <span
+                    style={{
+                      padding: '3px 10px',
+                      borderRadius: '4px',
+                      fontSize: '11px',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                      background: 'rgba(0, 201, 242, 0.15)',
+                      color: '#00c9f2',
+                      border: '1px solid rgba(0, 201, 242, 0.35)',
+                    }}
+                  >
+                    {item.subtitle}
+                  </span>
+                )}
+              </div>
             )}
 
             {/* Card Content Body */}
-            <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ padding: '22px', flex: 1, display: 'flex', flexDirection: 'column' }}>
               <h4
+                className="dynamic-card-title"
                 style={{
-                  fontSize: '17px',
+                  fontSize: '18px',
                   fontWeight: 800,
-                  color: '#ffffff',
-                  margin: '0 0 8px',
+                  margin: '0 0 10px',
                   lineHeight: 1.3,
+                  letterSpacing: '-0.01em',
                 }}
               >
                 {item.title}
               </h4>
 
               <p
+                className="dynamic-card-desc"
                 style={{
-                  fontSize: '13px',
-                  color: '#94a3b8',
-                  lineHeight: 1.55,
-                  margin: '0 0 16px',
+                  fontSize: '13.5px',
+                  lineHeight: 1.6,
+                  margin: '0 0 18px',
                   flex: 1,
                 }}
               >
@@ -237,15 +345,15 @@ export default function DynamicContentBlock({
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '7px',
-                        padding: '8px 16px',
+                        padding: '9px 18px',
                         borderRadius: '8px',
-                        background: 'linear-gradient(135deg, rgba(0, 201, 242, 0.15), rgba(0, 223, 165, 0.15))',
-                        border: '1px solid rgba(0, 201, 242, 0.35)',
+                        background: 'linear-gradient(135deg, rgba(0, 201, 242, 0.18), rgba(0, 223, 165, 0.18))',
+                        border: '1px solid rgba(0, 201, 242, 0.4)',
                         color: '#00c9f2',
-                        fontSize: '12.5px',
+                        fontSize: '13px',
                         fontWeight: 700,
                         textDecoration: 'none',
-                        transition: 'all 0.2s',
+                        transition: 'all 0.2s ease',
                       }}
                     >
                       <span>{item.button_text}</span>
@@ -258,15 +366,15 @@ export default function DynamicContentBlock({
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '7px',
-                        padding: '8px 16px',
+                        padding: '9px 18px',
                         borderRadius: '8px',
-                        background: 'linear-gradient(135deg, rgba(0, 201, 242, 0.15), rgba(0, 223, 165, 0.15))',
-                        border: '1px solid rgba(0, 201, 242, 0.35)',
+                        background: 'linear-gradient(135deg, rgba(0, 201, 242, 0.18), rgba(0, 223, 165, 0.18))',
+                        border: '1px solid rgba(0, 201, 242, 0.4)',
                         color: '#00c9f2',
-                        fontSize: '12.5px',
+                        fontSize: '13px',
                         fontWeight: 700,
                         textDecoration: 'none',
-                        transition: 'all 0.2s',
+                        transition: 'all 0.2s ease',
                       }}
                     >
                       <span>{item.button_text}</span>
@@ -282,4 +390,3 @@ export default function DynamicContentBlock({
     </div>
   )
 }
-

@@ -7,6 +7,7 @@ import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
 import CreativePortfolioCarousel from '@/components/CreativePortfolioCarousel'
 import ThenamGallerySection from '@/components/ThenamGallerySection'
+import DynamicContentBlock from '@/components/DynamicContentBlock'
 import {
   Sparkles,
   ArrowRight,
@@ -279,6 +280,15 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
+
+            {/* Dynamic Content from Admin (Initiatives & Values) */}
+            <DynamicContentBlock
+              page="about"
+              eyebrow="INITIATIVES & VALUES"
+              heading="Company Highlights &"
+              headingHighlight="Initiatives"
+              description="Learn about our engineering principles, sustainability projects, and community contributions."
+            />
           </div>
         </section>
 

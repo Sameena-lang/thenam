@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
+import DynamicContentBlock from '@/components/DynamicContentBlock'
 import {
   Sparkles,
   ArrowRight,
@@ -275,6 +276,15 @@ export default function CareersPage() {
                 </button>
               </form>
             )}
+
+            {/* Dynamic Careers Highlights & Culture from Admin */}
+            <DynamicContentBlock
+              page="careers"
+              eyebrow="LIFE AT THENAM"
+              heading="Engineering Culture &"
+              headingHighlight="Spotlights"
+              description="Learn more about our team perks, hackathons, and growth opportunities."
+            />
           </div>
         </section>
 

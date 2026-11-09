@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
+import DynamicContentBlock from '@/components/DynamicContentBlock'
 import {
   Monitor,
   Cpu,
@@ -325,6 +326,15 @@ export default function ServicesPage() {
                 )
               })}
             </div>
+
+            {/* Dynamic Services Content from Admin */}
+            <DynamicContentBlock
+              page="services"
+              eyebrow="ADDITIONAL CAPABILITIES"
+              heading="Custom Packages &"
+              headingHighlight="Offerings"
+              description="Explore specialized service models, case studies, and enterprise solutions customized for our clients."
+            />
           </div>
         </section>
 

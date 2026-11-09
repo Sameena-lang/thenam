@@ -4,6 +4,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
 import CollaborationSection from '@/components/CollaborationSection'
+import DynamicContentBlock from '@/components/DynamicContentBlock'
 import { Sparkles, ArrowRight, Handshake } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -60,6 +61,17 @@ export default function CollaborationPage() {
             COLLABORATION MODELS, CLIENT SHOWCASE & WORKFLOW
             ======================================================== */}
         <CollaborationSection />
+
+        {/* Dynamic Collaboration Content from Admin */}
+        <section className="container" style={{ paddingBottom: '40px' }}>
+          <DynamicContentBlock
+            page="collaboration"
+            eyebrow="STRATEGIC ALLIANCES"
+            heading="Partnership Initiatives &"
+            headingHighlight="Programs"
+            description="Explore joint research, technology pods, and ecosystem partnerships."
+          />
+        </section>
 
         <CtaBanner />
       </main>

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
+import DynamicContentBlock from '@/components/DynamicContentBlock'
 import {
   Sparkles,
   ArrowRight,
@@ -528,6 +529,15 @@ export default function ProductsPage() {
                 </p>
               </div>
             </div>
+
+            {/* Dynamic Products & In-Development Content from Admin */}
+            <DynamicContentBlock
+              page="products"
+              eyebrow="PRODUCT SPOTLIGHTS"
+              heading="Proprietary Tools &"
+              headingHighlight="Innovations"
+              description="Explore new software tools, beta platforms, and telemetry integrations engineered by Thenam."
+            />
           </div>
         </section>
 

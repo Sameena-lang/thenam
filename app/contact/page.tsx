@@ -24,8 +24,6 @@ import {
   Workflow,
   Smartphone,
   Cloud,
-  ChevronDown,
-  ChevronUp,
 } from 'lucide-react'
 
 export default function ContactPage() {
@@ -34,7 +32,6 @@ export default function ContactPage() {
   const [selectedTimeline, setSelectedTimeline] = useState('standard')
   const [needNda, setNeedNda] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [openFaq, setOpenFaq] = useState<number | null>(0)
 
   // Form inputs
   const [fullName, setFullName] = useState('')
@@ -151,34 +148,6 @@ export default function ContactPage() {
       alert('Failed to submit enquiry. Please check your connection and try again.')
     }
   }
-
-  const faqs = [
-    {
-      question: 'How does the ₹1,999* Website Development package work?',
-      answer:
-        'Our ₹1,999* package is engineered for local businesses, professionals, and early-stage startups that need a high-converting, professional web presence fast. It includes a responsive modern landing page, mobile optimization, contact form, Google Maps integration, and basic SEO. Delivered in 48 to 72 hours with guidance on domain and hosting setup.',
-    },
-    {
-      question: 'What is your typical software development process?',
-      answer:
-        'We follow an agile, sprint-based approach: (1) Free Discovery & Architecture scope session, (2) Interactive UI/UX Figma prototypes for your approval, (3) Rapid milestone development with demo previews, (4) Automated testing, security checks & SEO audit, and (5) Seamless cloud deployment with complete handover and documentation.',
-    },
-    {
-      question: 'Can you sign a Non-Disclosure Agreement (NDA) before we discuss details?',
-      answer:
-        'Yes, absolutely. We prioritize your privacy and intellectual property. Check the "NDA required" option on the form or request our mutual NDA draft, and we will sign it before our technical discovery call.',
-    },
-    {
-      question: 'Can you build custom AI models in Indian languages like Tamil?',
-      answer:
-        'Yes! Our AI Labs team specifically specializes in Indian regional language models. Our proprietary ZaraBot architecture supports Tamil, Hindi, Telugu, and English conversational interfaces with custom voice synthesis and context grounding.',
-    },
-    {
-      question: 'Do you provide post-launch support and ongoing maintenance?',
-      answer:
-        'All projects include 30 days of complimentary hypercare support post-deployment. Afterward, we offer flexible Monthly Retainers (AMC) covering cloud monitoring, security patches, speed optimization, and regular feature enhancements.',
-    },
-  ]
 
   return (
     <>
@@ -668,49 +637,6 @@ export default function ContactPage() {
                   Tamil &amp; English bilingual support
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ========================================================
-            FREQUENTLY ASKED QUESTIONS (FAQ)
-            ======================================================== */}
-        <section className="inner-white-section" aria-label="Frequently Asked Questions">
-          <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: '46px' }}>
-              <span className="section-eyebrow">COMMON INQUIRIES</span>
-              <h2 className="section-title-large">Frequently Asked Questions</h2>
-              <p className="section-desc-light" style={{ margin: '8px auto 0' }}>
-                Everything you need to know about starting your project with Thenam.
-              </p>
-            </div>
-
-            <div className="faq-accordion-list">
-              {faqs.map((faq, index) => {
-                const isOpen = openFaq === index
-                return (
-                  <div key={index} className={`faq-card ${isOpen ? 'open' : ''}`}>
-                    <button
-                      type="button"
-                      className="faq-trigger"
-                      onClick={() => setOpenFaq(isOpen ? null : index)}
-                      aria-expanded={isOpen}
-                    >
-                      <span>{faq.question}</span>
-                      {isOpen ? (
-                        <ChevronUp size={18} className="text-cyan" />
-                      ) : (
-                        <ChevronDown size={18} color="#94a3b8" />
-                      )}
-                    </button>
-                    {isOpen && (
-                      <div className="faq-answer">
-                        <p style={{ margin: 0 }}>{faq.answer}</p>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
             </div>
           </div>
         </section>
