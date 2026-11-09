@@ -118,7 +118,7 @@ export default function AboutPage() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '36px', maxWidth: '960px', margin: '0 auto' }}>
-              {/* Leader 1: Tharun Varshan U */}
+              {/* Leader 1: Jayamurugan V */}
               <div
                 style={{
                   background: '#ffffff',
@@ -133,11 +133,11 @@ export default function AboutPage() {
               >
                 <div style={{ position: 'relative', width: '100%', height: '380px', background: '#061426', overflow: 'hidden' }}>
                   <Image
-                    src="/about-portfolio/team-curly-jacket.jpg"
-                    alt="Tharun Varshan U - Founder & CEO"
+                    src="/about-portfolio/leadership-founder.jpg"
+                    alt="Jayamurugan V - Founder"
                     fill
                     sizes="(max-width: 768px) 100vw, 480px"
-                    style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
+                    style={{ objectFit: 'cover', objectPosition: 'center 15%' }}
                     priority
                   />
                   <div
@@ -164,10 +164,10 @@ export default function AboutPage() {
                         marginBottom: '6px',
                       }}
                     >
-                      Founder &amp; CEO
+                      FOUNDER
                     </span>
                     <h3 style={{ margin: 0, fontSize: '22px', fontWeight: '800', color: '#ffffff' }}>
-                      Tharun Varshan U
+                      Jayamurugan V
                     </h3>
                   </div>
                 </div>
@@ -199,7 +199,7 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              {/* Leader 2: Yuvan Dharshan U */}
+              {/* Leader 2: Harishwaran P */}
               <div
                 style={{
                   background: '#ffffff',
@@ -214,11 +214,11 @@ export default function AboutPage() {
               >
                 <div style={{ position: 'relative', width: '100%', height: '380px', background: '#061426', overflow: 'hidden' }}>
                   <Image
-                    src="/about-portfolio/team-glasses-chair.jpg"
-                    alt="Yuvan Dharshan U - Co-Founder"
+                    src="/about-portfolio/leadership-ceo.jpg"
+                    alt="Harishwaran P - CEO"
                     fill
                     sizes="(max-width: 768px) 100vw, 480px"
-                    style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
+                    style={{ objectFit: 'cover', objectPosition: 'center 15%' }}
                     priority
                   />
                   <div
@@ -245,10 +245,10 @@ export default function AboutPage() {
                         marginBottom: '6px',
                       }}
                     >
-                      Co-Founder
+                      CEO
                     </span>
                     <h3 style={{ margin: 0, fontSize: '22px', fontWeight: '800', color: '#ffffff' }}>
-                      Yuvan Dharshan U
+                      Harishwaran P
                     </h3>
                   </div>
                 </div>
