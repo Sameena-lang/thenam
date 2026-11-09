@@ -3,8 +3,7 @@ import { db, ProductItem } from '@/lib/db'
 
 export async function GET() {
   try {
-    const rawProducts = (db
-      .prepare('SELECT * FROM products WHERE is_active = 1 ORDER BY sort_order ASC, created_at ASC')
+    const rawProducts = (await db.prepare('SELECT * FROM products WHERE is_active = 1 ORDER BY sort_order ASC, created_at ASC')
       .all() as unknown) as ProductItem[]
 
     const products = rawProducts.map((p) => ({

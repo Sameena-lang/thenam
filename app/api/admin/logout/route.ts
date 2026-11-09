@@ -5,7 +5,7 @@ export async function POST() {
   try {
     const admin = await getAuthenticatedAdmin()
     if (admin) {
-      recordAuditLog('ADMIN_LOGOUT', 'admin_users', admin.id, 'Administrator logged out', admin.id, admin.email)
+      await recordAuditLog('ADMIN_LOGOUT', 'admin_users', admin.id, 'Administrator logged out', admin.id, admin.email)
     }
 
     await destroyAdminSession()

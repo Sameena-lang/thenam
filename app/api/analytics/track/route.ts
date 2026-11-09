@@ -112,7 +112,7 @@ export async function POST(request: Request) {
     }
 
     if (type === 'pageview') {
-      recordPageView({
+      await recordPageView({
         visitorId,
         sessionId,
         path: cleanPath,
@@ -128,7 +128,7 @@ export async function POST(request: Request) {
       if (!eventName || typeof eventName !== 'string') {
         return NextResponse.json({ error: 'eventName is required for event tracking' }, { status: 400 })
       }
-      recordAnalyticsEvent({
+      await recordAnalyticsEvent({
         visitorId,
         sessionId,
         eventName: String(eventName).slice(0, 80),

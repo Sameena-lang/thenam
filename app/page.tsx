@@ -8,6 +8,8 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CtaBanner from '@/components/CtaBanner'
 import CommunityFeeds from '@/components/CommunityFeeds'
+import AnnouncementBanner from '@/components/AnnouncementBanner'
+import DynamicContentBlock from '@/components/DynamicContentBlock'
 import {
   ArrowRight,
   Headphones,
@@ -277,6 +279,9 @@ export default function HomePage() {
       <Header />
 
       <main id="main-content">
+        {/* Dynamic Announcement Banner (if published by Admin) */}
+        <AnnouncementBanner />
+
         {/* ========================================================
             HERO SECTION (DARK NAVY WITH LAPTOP & FLOATING CARDS)
             ======================================================== */}
@@ -915,6 +920,36 @@ export default function HomePage() {
                 </Link>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ========================================================
+            DYNAMIC CONTENT & UPDATES (Published live from Admin)
+            ======================================================== */}
+        <section className="dynamic-site-content-section" aria-label="Company Updates and Dynamic Content">
+          <div className="container">
+            <DynamicContentBlock
+              page="home"
+              section="announcements"
+              eyebrow="ANNOUNCEMENTS & UPDATES"
+              heading="Latest Announcements &"
+              headingHighlight="Updates"
+              description="Stay informed with our latest software releases, solutions, and company milestones."
+            />
+            <DynamicContentBlock
+              page="home"
+              section="highlights"
+              eyebrow="TECHNOLOGY HIGHLIGHTS"
+              heading="Engineering Highlights &"
+              headingHighlight="Innovations"
+            />
+            <DynamicContentBlock
+              page="home"
+              section="featured_work"
+              eyebrow="ADDITIONAL FEATURED WORK"
+              heading="Spotlight Solutions &"
+              headingHighlight="Products"
+            />
           </div>
         </section>
 

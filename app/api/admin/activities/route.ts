@@ -47,7 +47,7 @@ export async function GET(request: Request) {
     const activities: UnifiedActivity[] = []
 
     // 1. Inquiries & Quote Requests
-    const inquiries = db.prepare(`
+    const inquiries = await db.prepare(`
       SELECT id, full_name, email, company, service_name, budget_tier, timeline, message, status, created_at 
       FROM inquiries 
       ORDER BY created_at DESC 
@@ -88,7 +88,7 @@ export async function GET(request: Request) {
     }
 
     // 2. Client & Partner Registrations
-    const users = db.prepare(`
+    const users = await db.prepare(`
       SELECT id, name, email, company, role, status, created_at, notes 
       FROM users 
       ORDER BY created_at DESC 
@@ -120,7 +120,7 @@ export async function GET(request: Request) {
     }
 
     // 3. Career Applications
-    const applications = db.prepare(`
+    const applications = await db.prepare(`
       SELECT id, full_name, email, phone, role, experience_level, status, created_at 
       FROM applications 
       ORDER BY created_at DESC 
@@ -157,7 +157,7 @@ export async function GET(request: Request) {
     }
 
     // 4. Admin Audit Trail Actions
-    const auditLogs = db.prepare(`
+    const auditLogs = await db.prepare(`
       SELECT id, admin_id, admin_email, action, target_type, target_id, details, created_at 
       FROM audit_logs 
       ORDER BY created_at DESC 

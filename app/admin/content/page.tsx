@@ -53,7 +53,7 @@ const PAGE_OPTIONS = [
   { value: 'home', label: 'Homepage (/)', path: '/' },
   { value: 'services', label: 'Services (/services)', path: '/services' },
   { value: 'products', label: 'Products (/products)', path: '/products' },
-  { value: 'projects', label: 'Projects (/projects)', path: '/projects/swekas-luxe' },
+  { value: 'projects', label: 'Projects (/projects)', path: '/projects' },
   { value: 'about', label: 'About Us (/about)', path: '/about' },
   { value: 'careers', label: 'Careers (/careers)', path: '/careers' },
   { value: 'collaboration', label: 'Collaboration (/collaboration)', path: '/collaboration' },
@@ -112,7 +112,6 @@ export default function AdminContentPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null)
   const [previewItem, setPreviewItem] = useState<ContentItem | null>(null)
-  const [previewDevice, setPreviewDevice] = useState<'desktop' | 'mobile'>('desktop')
   const [deleteConfirmItem, setDeleteConfirmItem] = useState<ContentItem | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
@@ -124,17 +123,16 @@ export default function AdminContentPage() {
   const [formFullDesc, setFormFullDesc] = useState('')
   const [formPage, setFormPage] = useState('home')
   const [formSection, setFormSection] = useState('featured_work')
-  const [formButtonText, setFormButtonText] = useState('')
-  const [formButtonUrl, setFormButtonUrl] = useState('')
-  const [formDisplayOrder, setFormDisplayOrder] = useState<number>(0)
+  const [formButtonText, setFormButtonText] = useState('Explore Solution')
+  const [formButtonUrl, setFormButtonUrl] = useState('/services')
+  const [formDisplayOrder, setFormDisplayOrder] = useState(0)
   const [formStatus, setFormStatus] = useState<'draft' | 'published'>('published')
 
-  // Image Picker State
+  // Image State
   const [imageCurrentUrl, setImageCurrentUrl] = useState<string | null>(null)
   const [imageAltText, setImageAltText] = useState('')
   const [imageSelectedFile, setImageSelectedFile] = useState<File | null>(null)
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null)
-  const [modalTab, setModalTab] = useState<'form' | 'preview'>('form')
 
   const showToast = useCallback((type: 'success' | 'error', message: string) => {
     setToast({ type, message })
@@ -148,9 +146,6 @@ export default function AdminContentPage() {
     try {
       const res = await fetch('/api/admin/content')
       if (!res.ok) {
-        if (res.status === 401) {
-          throw new Error('Authentication required. Please log in again.')
-        }
         throw new Error('Failed to load content items.')
       }
       const data = await res.json()
@@ -167,9 +162,9 @@ export default function AdminContentPage() {
     fetchContent()
   }, [fetchContent])
 
-  // Context-aware section options when formPage changes
+  // Context-aware section options based on selected formPage
   const currentSectionOptions = useMemo(() => {
-    return SECTION_OPTIONS[formPage] || SECTION_OPTIONS.home
+    return SECTION_OPTIONS[formPage] || []
   }, [formPage])
 
   // Reset section when page changes in modal form if not valid
@@ -197,7 +192,6 @@ export default function AdminContentPage() {
     setImageAltText('')
     setImageSelectedFile(null)
     setImagePreviewUrl(null)
-    setModalTab('form')
     setIsModalOpen(true)
   }
 
@@ -218,7 +212,6 @@ export default function AdminContentPage() {
     setImageAltText(item.image_alt || '')
     setImageSelectedFile(null)
     setImagePreviewUrl(null)
-    setModalTab('form')
     setIsModalOpen(true)
   }
 
@@ -354,99 +347,62 @@ export default function AdminContentPage() {
     }
   }
 
-  // Filtered Content List
+  // Filter content items
   const filteredContent = useMemo(() => {
     return contentList.filter((item) => {
-      // Search
+      if (filterPage !== 'all' && item.page !== filterPage) return false
+      if (filterSection !== 'all' && item.section !== filterSection) return false
+      if (filterStatus !== 'all' && item.status !== filterStatus) return false
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase()
         const matchTitle = item.title.toLowerCase().includes(q)
-        const matchSub = (item.subtitle || '').toLowerCase().includes(q)
+        const matchSubtitle = (item.subtitle || '').toLowerCase().includes(q)
         const matchDesc = item.short_description.toLowerCase().includes(q)
         const matchBtn = (item.button_text || '').toLowerCase().includes(q)
-        if (!matchTitle && !matchSub && !matchDesc && !matchBtn) return false
+        if (!matchTitle && !matchSubtitle && !matchDesc && !matchBtn) return false
       }
-      // Page filter
-      if (filterPage !== 'all' && item.page !== filterPage) return false
-      // Section filter
-      if (filterSection !== 'all' && item.section !== filterSection) return false
-      // Status filter
-      if (filterStatus !== 'all' && item.status !== filterStatus) return false
       return true
     })
   }, [contentList, searchQuery, filterPage, filterSection, filterStatus])
 
-  // Metrics
+  // Counts
   const stats = useMemo(() => {
     const total = contentList.length
     const published = contentList.filter((c) => c.status === 'published').length
-    const drafts = total - published
+    const drafts = contentList.filter((c) => c.status === 'draft').length
     return { total, published, drafts }
   }, [contentList])
 
-  // Live Card Preview Construct
-  const activePreviewData = useMemo(() => {
-    if (previewItem) return previewItem
-    return {
-      id: 'preview_temp',
-      title: formTitle || 'Example Content Title',
-      subtitle: formSubtitle || 'Subheading / Tagline',
-      short_description:
-        formShortDesc ||
-        'This is a preview of the content description as it will appear in the card component on the website.',
-      full_description: formFullDesc || null,
-      image_url: imagePreviewUrl || imageCurrentUrl || '/projects/featured-zarabot-hq.png',
-      image_alt: imageAltText || formTitle || 'Content image preview',
-      page: formPage,
-      section: formSection,
-      button_text: formButtonText || 'Learn More',
-      button_url: formButtonUrl || '#',
-      display_order: formDisplayOrder,
-      status: formStatus,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    } as ContentItem
-  }, [
-    previewItem,
-    formTitle,
-    formSubtitle,
-    formShortDesc,
-    formFullDesc,
-    imagePreviewUrl,
-    imageCurrentUrl,
-    imageAltText,
-    formPage,
-    formSection,
-    formButtonText,
-    formButtonUrl,
-    formDisplayOrder,
-    formStatus,
-  ])
-
   return (
-    <div className="adm-page" style={{ padding: '24px 32px', color: '#f1f5f9' }}>
-      {/* Toast Alert */}
+    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+      {/* Toast Notification */}
       {toast && (
         <div
+          role="alert"
           style={{
             position: 'fixed',
-            top: '24px',
+            top: '20px',
             right: '24px',
             zIndex: 9999,
-            padding: '12px 20px',
-            borderRadius: '10px',
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
+            padding: '12px 18px',
+            borderRadius: '10px',
+            background: toast.type === 'success' ? '#ecfdf5' : '#fef2f2',
+            border: `1px solid ${toast.type === 'success' ? '#a7f3d0' : '#fecaca'}`,
+            color: toast.type === 'success' ? '#065f46' : '#991b1b',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
             fontSize: '13.5px',
             fontWeight: 600,
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
-            background: toast.type === 'success' ? '#064e3b' : '#7f1d1d',
-            color: '#ffffff',
-            border: `1px solid ${toast.type === 'success' ? '#10b981' : '#ef4444'}`,
+            animation: 'fadeIn 0.2s ease-out',
           }}
         >
-          {toast.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+          {toast.type === 'success' ? (
+            <CheckCircle2 size={18} color="#10b981" />
+          ) : (
+            <AlertCircle size={18} color="#ef4444" />
+          )}
           <span>{toast.message}</span>
         </div>
       )}
@@ -455,11 +411,11 @@ export default function AdminContentPage() {
       <div
         style={{
           display: 'flex',
-          flexWrap: 'wrap',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '16px',
           marginBottom: '24px',
+          flexWrap: 'wrap',
         }}
       >
         <div>
@@ -469,42 +425,31 @@ export default function AdminContentPage() {
                 width: '36px',
                 height: '36px',
                 borderRadius: '10px',
-                background: 'rgba(0, 201, 242, 0.15)',
+                background: '#e0f2fe',
                 display: 'grid',
                 placeItems: 'center',
-                color: '#00c9f2',
-                border: '1px solid rgba(0, 201, 242, 0.3)',
+                color: '#0284c7',
+                border: '1px solid #bae6fd',
               }}
             >
               <FileText size={20} />
             </div>
-            <h1 style={{ fontSize: '24px', fontWeight: 800, margin: 0, color: '#ffffff' }}>
+            <h1 className="adm-page-title" style={{ margin: 0, color: '#0f172a' }}>
               Content Management
             </h1>
           </div>
-          <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#94a3b8' }}>
+          <p className="adm-page-desc" style={{ margin: '6px 0 0', color: '#64748b' }}>
             Add, update, preview, and publish dynamic content, headlines, images, and descriptions across the website.
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button
             type="button"
             onClick={fetchContent}
             disabled={loading}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '8px 14px',
-              borderRadius: '8px',
-              background: '#0a1a30',
-              border: '1px solid #1e3a5f',
-              color: '#94a3b8',
-              fontSize: '12.5px',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
+            className="adm-btn adm-btn-outline"
+            title="Refresh Content"
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
             <span>Refresh</span>
@@ -513,20 +458,7 @@ export default function AdminContentPage() {
           <button
             type="button"
             onClick={handleAddNew}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '9px 18px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, #00c9f2, #00dfa5)',
-              border: 'none',
-              color: '#031422',
-              fontSize: '13px',
-              fontWeight: 750,
-              cursor: 'pointer',
-              boxShadow: '0 4px 15px rgba(0, 201, 242, 0.25)',
-            }}
+            className="adm-btn adm-btn-primary"
           >
             <Plus size={16} />
             <span>Add New Content</span>
@@ -535,87 +467,48 @@ export default function AdminContentPage() {
       </div>
 
       {/* Metrics Banner */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-          gap: '16px',
-          marginBottom: '24px',
-        }}
-      >
-        <div
-          style={{
-            background: '#091528',
-            border: '1px solid #152744',
-            borderRadius: '12px',
-            padding: '14px 18px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
+      <div className="adm-stats-grid" style={{ marginBottom: '24px' }}>
+        <div className="adm-stat-card">
           <div>
-            <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 600 }}>Total Content Items</span>
-            <div style={{ fontSize: '24px', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+            <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Total Content Items</span>
+            <div style={{ fontSize: '26px', fontWeight: 800, color: '#0f172a', marginTop: '2px' }}>
               {stats.total}
             </div>
           </div>
-          <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(0, 201, 242, 0.1)', color: '#00c9f2' }}>
-            <FileText size={20} />
+          <div style={{ padding: '10px', borderRadius: '10px', background: '#e0f2fe', color: '#0284c7' }}>
+            <FileText size={22} />
           </div>
         </div>
 
-        <div
-          style={{
-            background: '#091528',
-            border: '1px solid #152744',
-            borderRadius: '12px',
-            padding: '14px 18px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
+        <div className="adm-stat-card">
           <div>
-            <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 600 }}>Published Live</span>
-            <div style={{ fontSize: '24px', fontWeight: 800, color: '#22c55e', marginTop: '2px' }}>
+            <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Published Live</span>
+            <div style={{ fontSize: '26px', fontWeight: 800, color: '#16a34a', marginTop: '2px' }}>
               {stats.published}
             </div>
           </div>
-          <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>
-            <Globe size={20} />
+          <div style={{ padding: '10px', borderRadius: '10px', background: '#dcfce7', color: '#16a34a' }}>
+            <Globe size={22} />
           </div>
         </div>
 
-        <div
-          style={{
-            background: '#091528',
-            border: '1px solid #152744',
-            borderRadius: '12px',
-            padding: '14px 18px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
+        <div className="adm-stat-card">
           <div>
-            <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 600 }}>Saved as Draft</span>
-            <div style={{ fontSize: '24px', fontWeight: 800, color: '#f59e0b', marginTop: '2px' }}>
+            <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Saved as Draft</span>
+            <div style={{ fontSize: '26px', fontWeight: 800, color: '#d97706', marginTop: '2px' }}>
               {stats.drafts}
             </div>
           </div>
-          <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b' }}>
-            <EyeOff size={20} />
+          <div style={{ padding: '10px', borderRadius: '10px', background: '#fef3c7', color: '#d97706' }}>
+            <EyeOff size={22} />
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
       <div
+        className="adm-card"
         style={{
-          background: '#091528',
-          border: '1px solid #152744',
-          borderRadius: '12px',
           padding: '16px',
           marginBottom: '24px',
           display: 'flex',
@@ -630,7 +523,7 @@ export default function AdminContentPage() {
           <div style={{ position: 'relative', flex: '1 1 240px', minWidth: '200px' }}>
             <Search
               size={15}
-              style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }}
+              style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}
             />
             <input
               type="text"
@@ -639,11 +532,11 @@ export default function AdminContentPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 width: '100%',
-                background: '#050c18',
-                border: '1px solid #192a45',
+                background: '#f8fafc',
+                border: '1px solid #cbd5e1',
                 borderRadius: '8px',
                 padding: '8px 12px 8px 34px',
-                color: '#ffffff',
+                color: '#0f172a',
                 fontSize: '13px',
                 outline: 'none',
               }}
@@ -652,7 +545,7 @@ export default function AdminContentPage() {
 
           {/* Page Dropdown Filter */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 600 }}>Page:</span>
+            <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Page:</span>
             <select
               value={filterPage}
               onChange={(e) => {
@@ -660,13 +553,14 @@ export default function AdminContentPage() {
                 setFilterSection('all')
               }}
               style={{
-                background: '#050c18',
-                border: '1px solid #192a45',
+                background: '#f8fafc',
+                border: '1px solid #cbd5e1',
                 borderRadius: '8px',
                 padding: '8px 10px',
-                color: '#ffffff',
+                color: '#0f172a',
                 fontSize: '12.5px',
                 outline: 'none',
+                cursor: 'pointer',
               }}
             >
               <option value="all">All Pages</option>
@@ -678,21 +572,22 @@ export default function AdminContentPage() {
             </select>
           </div>
 
-          {/* Section Dropdown Filter (Context aware) */}
+          {/* Section Dropdown Filter */}
           {filterPage !== 'all' && SECTION_OPTIONS[filterPage] && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 600 }}>Section:</span>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Section:</span>
               <select
                 value={filterSection}
                 onChange={(e) => setFilterSection(e.target.value)}
                 style={{
-                  background: '#050c18',
-                  border: '1px solid #192a45',
+                  background: '#f8fafc',
+                  border: '1px solid #cbd5e1',
                   borderRadius: '8px',
                   padding: '8px 10px',
-                  color: '#ffffff',
+                  color: '#0f172a',
                   fontSize: '12.5px',
                   outline: 'none',
+                  cursor: 'pointer',
                 }}
               >
                 <option value="all">All Sections</option>
@@ -707,18 +602,19 @@ export default function AdminContentPage() {
 
           {/* Status Filter */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 600 }}>Status:</span>
+            <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Status:</span>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
               style={{
-                background: '#050c18',
-                border: '1px solid #192a45',
+                background: '#f8fafc',
+                border: '1px solid #cbd5e1',
                 borderRadius: '8px',
                 padding: '8px 10px',
-                color: '#ffffff',
+                color: '#0f172a',
                 fontSize: '12.5px',
                 outline: 'none',
+                cursor: 'pointer',
               }}
             >
               <option value="all">All Statuses</option>
@@ -729,22 +625,23 @@ export default function AdminContentPage() {
         </div>
 
         {/* View Toggle */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#050c18', padding: '3px', borderRadius: '8px', border: '1px solid #192a45' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#f1f5f9', padding: '3px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
           <button
             type="button"
             onClick={() => setViewMode('grid')}
             style={{
-              padding: '6px 10px',
+              padding: '6px 12px',
               borderRadius: '6px',
-              background: viewMode === 'grid' ? '#0f2442' : 'transparent',
-              color: viewMode === 'grid' ? '#00c9f2' : '#94a3b8',
-              border: 'none',
+              background: viewMode === 'grid' ? '#ffffff' : 'transparent',
+              color: viewMode === 'grid' ? '#0284c7' : '#64748b',
+              border: viewMode === 'grid' ? '1px solid #cbd5e1' : 'none',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '4px',
+              gap: '5px',
               fontSize: '12px',
-              fontWeight: 600,
+              fontWeight: 700,
+              boxShadow: viewMode === 'grid' ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
             }}
           >
             <LayoutGrid size={14} />
@@ -754,17 +651,18 @@ export default function AdminContentPage() {
             type="button"
             onClick={() => setViewMode('table')}
             style={{
-              padding: '6px 10px',
+              padding: '6px 12px',
               borderRadius: '6px',
-              background: viewMode === 'table' ? '#0f2442' : 'transparent',
-              color: viewMode === 'table' ? '#00c9f2' : '#94a3b8',
-              border: 'none',
+              background: viewMode === 'table' ? '#ffffff' : 'transparent',
+              color: viewMode === 'table' ? '#0284c7' : '#64748b',
+              border: viewMode === 'table' ? '1px solid #cbd5e1' : 'none',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '4px',
+              gap: '5px',
               fontSize: '12px',
-              fontWeight: 600,
+              fontWeight: 700,
+              boxShadow: viewMode === 'table' ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
             }}
           >
             <List size={14} />
@@ -775,19 +673,19 @@ export default function AdminContentPage() {
 
       {/* Main Content Area */}
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '60px 0', color: '#94a3b8' }}>
-          <Loader2 size={32} className="animate-spin" style={{ margin: '0 auto 12px', color: '#00c9f2' }} />
-          <p style={{ fontSize: '14px' }}>Loading website content items...</p>
+        <div style={{ textAlign: 'center', padding: '60px 0', color: '#64748b' }}>
+          <Loader2 size={32} className="animate-spin" style={{ margin: '0 auto 12px', color: '#0284c7' }} />
+          <p style={{ fontSize: '14px', fontWeight: 500 }}>Loading website content items...</p>
         </div>
       ) : error ? (
         <div
           style={{
-            background: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
             borderRadius: '12px',
             padding: '24px',
             textAlign: 'center',
-            color: '#f87171',
+            color: '#b91c1c',
           }}
         >
           <AlertCircle size={32} style={{ margin: '0 auto 10px' }} />
@@ -795,28 +693,22 @@ export default function AdminContentPage() {
           <button
             type="button"
             onClick={fetchContent}
-            style={{
-              marginTop: '12px',
-              padding: '8px 16px',
-              background: '#ef4444',
-              border: 'none',
-              borderRadius: '6px',
-              color: '#ffffff',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
+            className="adm-btn adm-btn-primary"
+            style={{ marginTop: '12px' }}
           >
             Retry
           </button>
         </div>
       ) : filteredContent.length === 0 ? (
+        /* Empty State */
         <div
+          className="adm-card"
           style={{
-            background: '#091528',
-            border: '1px solid #152744',
-            borderRadius: '16px',
             padding: '60px 24px',
             textAlign: 'center',
+            border: '2px dashed #cbd5e1',
+            borderRadius: '16px',
+            backgroundColor: '#ffffff',
           }}
         >
           <div
@@ -824,8 +716,8 @@ export default function AdminContentPage() {
               width: '56px',
               height: '56px',
               borderRadius: '50%',
-              background: 'rgba(0, 201, 242, 0.1)',
-              color: '#00c9f2',
+              background: '#e0f2fe',
+              color: '#0284c7',
               display: 'grid',
               placeItems: 'center',
               margin: '0 auto 16px',
@@ -833,10 +725,10 @@ export default function AdminContentPage() {
           >
             <FileText size={28} />
           </div>
-          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', margin: '0 0 6px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', margin: '0 0 6px' }}>
             No Content Found
           </h3>
-          <p style={{ fontSize: '13px', color: '#94a3b8', maxWidth: '440px', margin: '0 auto 20px' }}>
+          <p style={{ fontSize: '13.5px', color: '#64748b', maxWidth: '440px', margin: '0 auto 20px', lineHeight: 1.5 }}>
             {searchQuery || filterPage !== 'all' || filterStatus !== 'all'
               ? 'No content items match your active filters. Try clearing your filters or search term.'
               : 'You have not created any custom content items yet. Click below to add your first dynamic website card.'}
@@ -844,19 +736,7 @@ export default function AdminContentPage() {
           <button
             type="button"
             onClick={handleAddNew}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '10px 20px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, #00c9f2, #00dfa5)',
-              border: 'none',
-              color: '#031422',
-              fontSize: '13px',
-              fontWeight: 750,
-              cursor: 'pointer',
-            }}
+            className="adm-btn adm-btn-primary"
           >
             <Plus size={16} />
             <span>Add New Content</span>
@@ -867,7 +747,7 @@ export default function AdminContentPage() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
             gap: '20px',
           }}
         >
@@ -876,15 +756,14 @@ export default function AdminContentPage() {
             return (
               <div
                 key={item.id}
+                className="adm-card"
                 style={{
-                  background: '#091528',
-                  border: '1px solid #152744',
                   borderRadius: '16px',
                   overflow: 'hidden',
                   display: 'flex',
                   flexDirection: 'column',
-                  transition: 'transform 0.2s, border-color 0.2s',
-                  boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
                 }}
               >
                 {/* Card Thumbnail */}
@@ -893,7 +772,7 @@ export default function AdminContentPage() {
                     position: 'relative',
                     width: '100%',
                     height: '180px',
-                    background: '#030a14',
+                    background: '#f1f5f9',
                     overflow: 'hidden',
                   }}
                 >
@@ -914,7 +793,7 @@ export default function AdminContentPage() {
                         height: '100%',
                         display: 'grid',
                         placeItems: 'center',
-                        color: '#334155',
+                        color: '#94a3b8',
                       }}
                     >
                       <FileText size={40} />
@@ -928,16 +807,16 @@ export default function AdminContentPage() {
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '5px',
-                        padding: '3px 10px',
+                        padding: '4px 10px',
                         borderRadius: '20px',
                         fontSize: '11px',
                         fontWeight: 750,
                         textTransform: 'uppercase',
                         background:
-                          item.status === 'published' ? 'rgba(34, 197, 94, 0.9)' : 'rgba(245, 158, 11, 0.9)',
-                        color: '#ffffff',
-                        backdropFilter: 'blur(4px)',
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+                          item.status === 'published' ? '#dcfce7' : '#fef3c7',
+                        color: item.status === 'published' ? '#15803d' : '#b45309',
+                        border: `1px solid ${item.status === 'published' ? '#86efac' : '#fde68a'}`,
+                        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
                       }}
                     >
                       <span
@@ -945,7 +824,7 @@ export default function AdminContentPage() {
                           width: '6px',
                           height: '6px',
                           borderRadius: '50%',
-                          background: '#ffffff',
+                          background: item.status === 'published' ? '#15803d' : '#b45309',
                         }}
                       />
                       {item.status}
@@ -963,10 +842,11 @@ export default function AdminContentPage() {
                         borderRadius: '6px',
                         fontSize: '11px',
                         fontWeight: 700,
-                        background: 'rgba(5, 12, 24, 0.85)',
-                        color: '#38bdf8',
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        color: '#0284c7',
                         backdropFilter: 'blur(6px)',
-                        border: '1px solid rgba(56, 189, 248, 0.3)',
+                        border: '1px solid #bae6fd',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
                       }}
                     >
                       <span>{pageObj?.label.split(' ')[0] || item.page}</span>
@@ -980,7 +860,7 @@ export default function AdminContentPage() {
                 <div style={{ padding: '18px 20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ marginBottom: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                      <h3 style={{ fontSize: '16px', fontWeight: 750, color: '#ffffff', margin: 0 }}>
+                      <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
                         {item.title}
                       </h3>
                       <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>
@@ -988,7 +868,7 @@ export default function AdminContentPage() {
                       </span>
                     </div>
                     {item.subtitle && (
-                      <p style={{ margin: '3px 0 0', fontSize: '12px', color: '#00c9f2', fontWeight: 600 }}>
+                      <p style={{ margin: '3px 0 0', fontSize: '12px', color: '#0284c7', fontWeight: 600 }}>
                         {item.subtitle}
                       </p>
                     )}
@@ -996,9 +876,9 @@ export default function AdminContentPage() {
 
                   <p
                     style={{
-                      fontSize: '12.5px',
-                      color: '#94a3b8',
-                      lineHeight: 1.5,
+                      fontSize: '13px',
+                      color: '#475569',
+                      lineHeight: 1.55,
                       margin: '0 0 14px',
                       flex: 1,
                       display: '-webkit-box',
@@ -1018,12 +898,12 @@ export default function AdminContentPage() {
                         alignItems: 'center',
                         gap: '6px',
                         fontSize: '11.5px',
-                        color: '#38bdf8',
+                        color: '#0284c7',
                         marginBottom: '14px',
                         padding: '6px 10px',
-                        background: 'rgba(56, 189, 248, 0.08)',
+                        background: '#f0f9ff',
                         borderRadius: '6px',
-                        border: '1px solid rgba(56, 189, 248, 0.15)',
+                        border: '1px solid #bae6fd',
                       }}
                     >
                       <ArrowRight size={13} />
@@ -1043,32 +923,9 @@ export default function AdminContentPage() {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       paddingTop: '12px',
-                      borderTop: '1px solid #152744',
+                      borderTop: '1px solid #f1f5f9',
                     }}
                   >
-                    {/* Preview Button */}
-                    <button
-                      type="button"
-                      onClick={() => setPreviewItem(item)}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                        padding: '6px 10px',
-                        borderRadius: '6px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid #1e3a5f',
-                        color: '#cbd5e1',
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                      }}
-                      title="Preview Card"
-                    >
-                      <Eye size={13} />
-                      <span>Preview</span>
-                    </button>
-
                     {/* Quick Publish / Unpublish Toggle */}
                     <button
                       type="button"
@@ -1078,14 +935,13 @@ export default function AdminContentPage() {
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '5px',
-                        padding: '6px 10px',
+                        padding: '6px 12px',
                         borderRadius: '6px',
-                        background:
-                          item.status === 'published' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(34, 197, 94, 0.1)',
-                        border: `1px solid ${item.status === 'published' ? 'rgba(245, 158, 11, 0.3)' : 'rgba(34, 197, 94, 0.3)'}`,
-                        color: item.status === 'published' ? '#f59e0b' : '#22c55e',
+                        background: item.status === 'published' ? '#fef3c7' : '#dcfce7',
+                        border: `1px solid ${item.status === 'published' ? '#fde68a' : '#86efac'}`,
+                        color: item.status === 'published' ? '#b45309' : '#15803d',
                         fontSize: '12px',
-                        fontWeight: 600,
+                        fontWeight: 700,
                         cursor: 'pointer',
                       }}
                       title={item.status === 'published' ? 'Unpublish (Make Draft)' : 'Publish Live'}
@@ -1097,50 +953,52 @@ export default function AdminContentPage() {
                       ) : (
                         <Globe size={13} />
                       )}
-                      <span>{item.status === 'published' ? 'Unpublish' : 'Publish'}</span>
+                      <span>{item.status === 'published' ? 'Draft' : 'Publish'}</span>
                     </button>
 
-                    {/* Edit Button */}
-                    <button
-                      type="button"
-                      onClick={() => handleEdit(item)}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                        padding: '6px 10px',
-                        borderRadius: '6px',
-                        background: 'rgba(0, 201, 242, 0.1)',
-                        border: '1px solid rgba(0, 201, 242, 0.3)',
-                        color: '#00c9f2',
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                      }}
-                      title="Edit Content"
-                    >
-                      <Edit3 size={13} />
-                      <span>Edit</span>
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {/* Edit Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleEdit(item)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          padding: '6px 12px',
+                          borderRadius: '6px',
+                          background: '#f0f9ff',
+                          border: '1px solid #bae6fd',
+                          color: '#0284c7',
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                        }}
+                        title="Edit Content"
+                      >
+                        <Edit3 size={13} />
+                        <span>Edit</span>
+                      </button>
 
-                    {/* Delete Button */}
-                    <button
-                      type="button"
-                      onClick={() => setDeleteConfirmItem(item)}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        padding: '6px 8px',
-                        borderRadius: '6px',
-                        background: 'rgba(239, 68, 68, 0.1)',
-                        border: '1px solid rgba(239, 68, 68, 0.25)',
-                        color: '#f87171',
-                        cursor: 'pointer',
-                      }}
-                      title="Delete Content"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                      {/* Delete Button */}
+                      <button
+                        type="button"
+                        onClick={() => setDeleteConfirmItem(item)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          padding: '6px 10px',
+                          borderRadius: '6px',
+                          background: '#fef2f2',
+                          border: '1px solid #fecaca',
+                          color: '#dc2626',
+                          cursor: 'pointer',
+                        }}
+                        title="Delete Content"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1149,36 +1007,23 @@ export default function AdminContentPage() {
         </div>
       ) : (
         /* Table View */
-        <div
-          style={{
-            background: '#091528',
-            border: '1px solid #152744',
-            borderRadius: '16px',
-            overflow: 'hidden',
-          }}
-        >
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+        <div className="adm-card" style={{ padding: 0, overflow: 'hidden' }}>
+          <div className="adm-table-wrap">
+            <table className="adm-table">
               <thead>
-                <tr style={{ background: '#060e1c', borderBottom: '1px solid #152744', color: '#94a3b8' }}>
-                  <th style={{ padding: '14px 18px', fontWeight: 700 }}>Content</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700 }}>Page &amp; Section</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700 }}>Order</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700 }}>Status</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700 }}>Updated</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 700, textAlign: 'right' }}>Actions</th>
+                <tr>
+                  <th>Content</th>
+                  <th>Page &amp; Section</th>
+                  <th>Order</th>
+                  <th>Status</th>
+                  <th>Updated</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredContent.map((item) => (
-                  <tr
-                    key={item.id}
-                    style={{
-                      borderBottom: '1px solid #0f1d33',
-                      transition: 'background 0.15s',
-                    }}
-                  >
-                    <td style={{ padding: '14px 18px' }}>
+                  <tr key={item.id}>
+                    <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         {item.image_url ? (
                           <img
@@ -1189,8 +1034,7 @@ export default function AdminContentPage() {
                               height: '42px',
                               borderRadius: '8px',
                               objectFit: 'cover',
-                              background: '#040b15',
-                              border: '1px solid #152744',
+                              border: '1px solid #e2e8f0',
                             }}
                           />
                         ) : (
@@ -1199,124 +1043,76 @@ export default function AdminContentPage() {
                               width: '42px',
                               height: '42px',
                               borderRadius: '8px',
-                              background: '#0a1a30',
-                              border: '1px solid #152744',
+                              background: '#f1f5f9',
                               display: 'grid',
                               placeItems: 'center',
-                              color: '#64748b',
+                              color: '#94a3b8',
                             }}
                           >
                             <FileText size={18} />
                           </div>
                         )}
                         <div>
-                          <div style={{ fontWeight: 700, color: '#ffffff' }}>{item.title}</div>
+                          <strong style={{ color: '#0f172a', fontSize: '13.5px' }}>{item.title}</strong>
                           {item.subtitle && (
-                            <div style={{ fontSize: '11.5px', color: '#00c9f2' }}>{item.subtitle}</div>
+                            <span style={{ display: 'block', fontSize: '11px', color: '#0284c7' }}>
+                              {item.subtitle}
+                            </span>
                           )}
                         </div>
                       </div>
                     </td>
-                    <td style={{ padding: '14px 18px' }}>
+                    <td>
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: '#0f172a' }}>{item.page}</span>
+                      <small style={{ display: 'block', color: '#64748b', fontSize: '11px' }}>
+                        {item.section.replace(/_/g, ' ')}
+                      </small>
+                    </td>
+                    <td>
+                      <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>#{item.display_order}</span>
+                    </td>
+                    <td>
                       <span
                         style={{
                           display: 'inline-block',
                           padding: '3px 8px',
-                          borderRadius: '6px',
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          background: 'rgba(56, 189, 248, 0.1)',
-                          color: '#38bdf8',
-                        }}
-                      >
-                        /{item.page}
-                      </span>
-                      <span style={{ fontSize: '11.5px', color: '#94a3b8', display: 'block', marginTop: '2px' }}>
-                        {item.section.replace(/_/g, ' ')}
-                      </span>
-                    </td>
-                    <td style={{ padding: '14px 18px', fontWeight: 700, color: '#cbd5e1' }}>
-                      #{item.display_order}
-                    </td>
-                    <td style={{ padding: '14px 18px' }}>
-                      <span
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '5px',
-                          padding: '3px 8px',
                           borderRadius: '12px',
                           fontSize: '11px',
                           fontWeight: 700,
-                          textTransform: 'uppercase',
-                          background:
-                            item.status === 'published' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                          color: item.status === 'published' ? '#22c55e' : '#f59e0b',
+                          background: item.status === 'published' ? '#dcfce7' : '#fef3c7',
+                          color: item.status === 'published' ? '#15803d' : '#b45309',
                         }}
                       >
                         {item.status}
                       </span>
                     </td>
-                    <td style={{ padding: '14px 18px', fontSize: '12px', color: '#64748b' }}>
-                      {new Date(item.updated_at).toLocaleDateString()}
+                    <td>
+                      <span style={{ fontSize: '12px', color: '#64748b' }}>
+                        {new Date(item.updated_at).toLocaleDateString()}
+                      </span>
                     </td>
-                    <td style={{ padding: '14px 18px', textAlign: 'right' }}>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                        <button
-                          type="button"
-                          onClick={() => setPreviewItem(item)}
-                          style={{
-                            padding: '6px 8px',
-                            background: 'transparent',
-                            border: 'none',
-                            color: '#94a3b8',
-                            cursor: 'pointer',
-                          }}
-                          title="Preview"
-                        >
-                          <Eye size={15} />
-                        </button>
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'inline-flex', gap: '8px' }}>
                         <button
                           type="button"
                           onClick={() => handleTogglePublish(item)}
-                          style={{
-                            padding: '6px 8px',
-                            background: 'transparent',
-                            border: 'none',
-                            color: item.status === 'published' ? '#f59e0b' : '#22c55e',
-                            cursor: 'pointer',
-                          }}
-                          title={item.status === 'published' ? 'Unpublish' : 'Publish'}
+                          className="adm-btn adm-btn-outline adm-btn-sm"
                         >
-                          {item.status === 'published' ? <EyeOff size={15} /> : <Globe size={15} />}
+                          {item.status === 'published' ? 'Draft' : 'Publish'}
                         </button>
                         <button
                           type="button"
                           onClick={() => handleEdit(item)}
-                          style={{
-                            padding: '6px 8px',
-                            background: 'transparent',
-                            border: 'none',
-                            color: '#00c9f2',
-                            cursor: 'pointer',
-                          }}
-                          title="Edit"
+                          className="adm-btn adm-btn-outline adm-btn-sm"
                         >
-                          <Edit3 size={15} />
+                          Edit
                         </button>
                         <button
                           type="button"
                           onClick={() => setDeleteConfirmItem(item)}
-                          style={{
-                            padding: '6px 8px',
-                            background: 'transparent',
-                            border: 'none',
-                            color: '#f87171',
-                            cursor: 'pointer',
-                          }}
-                          title="Delete"
+                          className="adm-btn adm-btn-danger adm-btn-sm"
                         >
-                          <Trash2 size={15} />
+                          Delete
                         </button>
                       </div>
                     </td>
@@ -1329,710 +1125,388 @@ export default function AdminContentPage() {
       )}
 
       {/* ========================================================
-          MODAL: ADD / EDIT CONTENT FORM WITH LIVE PREVIEW
+          MODAL: ADD / EDIT CONTENT
           ======================================================== */}
       {isModalOpen && (
         <div
+          role="dialog"
+          aria-modal="true"
           style={{
             position: 'fixed',
             inset: 0,
             zIndex: 9000,
-            background: 'rgba(3, 10, 20, 0.85)',
-            backdropFilter: 'blur(8px)',
+            background: 'rgba(15, 23, 42, 0.6)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: '20px',
             overflowY: 'auto',
           }}
+          onClick={() => setIsModalOpen(false)}
         >
           <div
             style={{
               width: '100%',
-              maxWidth: '840px',
+              maxWidth: '820px',
               maxHeight: '90vh',
-              background: '#091528',
-              border: '1px solid #1e3a5f',
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
               borderRadius: '20px',
               display: 'flex',
               flexDirection: 'column',
-              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7)',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.2)',
               overflow: 'hidden',
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div
               style={{
                 padding: '20px 24px',
-                borderBottom: '1px solid #152744',
+                borderBottom: '1px solid #e2e8f0',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
               }}
             >
               <div>
-                <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: '#ffffff' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: '#0f172a' }}>
                   {editingItem ? 'Edit Content Item' : 'Add New Website Content'}
                 </h2>
-                <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#94a3b8' }}>
+                <p style={{ margin: '4px 0 0', fontSize: '12.5px', color: '#64748b' }}>
                   Define titles, descriptions, imagery, and target placements on the live website.
                 </p>
-              </div>
-
-              {/* Tabs: Form vs Live Card Preview */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: '#050c18',
-                  padding: '4px',
-                  borderRadius: '8px',
-                  border: '1px solid #192a45',
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => setModalTab('form')}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '6px',
-                    background: modalTab === 'form' ? '#0f2442' : 'transparent',
-                    color: modalTab === 'form' ? '#00c9f2' : '#94a3b8',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                  }}
-                >
-                  Editor Form
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setModalTab('preview')}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '6px',
-                    background: modalTab === 'preview' ? '#0f2442' : 'transparent',
-                    color: modalTab === 'preview' ? '#00c9f2' : '#94a3b8',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                  }}
-                >
-                  <Eye size={13} />
-                  <span>Live Preview</span>
-                </button>
               </div>
 
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
                 style={{
-                  background: 'transparent',
+                  background: '#f1f5f9',
                   border: 'none',
-                  color: '#94a3b8',
+                  borderRadius: '50%',
+                  width: '32px',
+                  height: '32px',
+                  display: 'grid',
+                  placeItems: 'center',
+                  color: '#64748b',
                   cursor: 'pointer',
-                  padding: '4px',
                 }}
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
             {/* Modal Body */}
             <div style={{ padding: '24px', overflowY: 'auto', flex: 1 }}>
-              {modalTab === 'form' ? (
-                <form id="content-form" onSubmit={handleSubmitForm} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  {/* Row 1: Title & Subtitle */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#e2e8f0', marginBottom: '6px' }}>
-                        Content Title <span style={{ color: '#ef4444' }}>*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g. Enterprise AI Knowledge Assistant"
-                        value={formTitle}
-                        onChange={(e) => setFormTitle(e.target.value)}
-                        style={{
-                          width: '100%',
-                          background: '#050c18',
-                          border: '1px solid #192a45',
-                          borderRadius: '8px',
-                          padding: '10px 14px',
-                          color: '#ffffff',
-                          fontSize: '13px',
-                          outline: 'none',
-                        }}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#e2e8f0', marginBottom: '6px' }}>
-                        Subtitle / Tagline <span style={{ color: '#64748b' }}>(optional)</span>
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Multilingual RAG Engine"
-                        value={formSubtitle}
-                        onChange={(e) => setFormSubtitle(e.target.value)}
-                        style={{
-                          width: '100%',
-                          background: '#050c18',
-                          border: '1px solid #192a45',
-                          borderRadius: '8px',
-                          padding: '10px 14px',
-                          color: '#ffffff',
-                          fontSize: '13px',
-                          outline: 'none',
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Row 2: Target Page & Section Placement */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#e2e8f0', marginBottom: '6px' }}>
-                        Target Website Page <span style={{ color: '#ef4444' }}>*</span>
-                      </label>
-                      <select
-                        value={formPage}
-                        onChange={(e) => setFormPage(e.target.value)}
-                        style={{
-                          width: '100%',
-                          background: '#050c18',
-                          border: '1px solid #192a45',
-                          borderRadius: '8px',
-                          padding: '10px 14px',
-                          color: '#ffffff',
-                          fontSize: '13px',
-                          outline: 'none',
-                        }}
-                      >
-                        {PAGE_OPTIONS.map((p) => (
-                          <option key={p.value} value={p.value}>
-                            {p.label}
-                          </option>
-                        ))}
-                      </select>
-                      <span style={{ fontSize: '11px', color: '#64748b', marginTop: '4px', display: 'block' }}>
-                        Select which page on thenamsoftwaresolutions.com will display this item.
-                      </span>
-                    </div>
-
-                    <div>
-                      <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#e2e8f0', marginBottom: '6px' }}>
-                        Placement Section <span style={{ color: '#ef4444' }}>*</span>
-                      </label>
-                      <select
-                        value={formSection}
-                        onChange={(e) => setFormSection(e.target.value)}
-                        style={{
-                          width: '100%',
-                          background: '#050c18',
-                          border: '1px solid #192a45',
-                          borderRadius: '8px',
-                          padding: '10px 14px',
-                          color: '#ffffff',
-                          fontSize: '13px',
-                          outline: 'none',
-                        }}
-                      >
-                        {currentSectionOptions.map((s) => (
-                          <option key={s.value} value={s.value}>
-                            {s.label}
-                          </option>
-                        ))}
-                      </select>
-                      <span style={{ fontSize: '11px', color: '#64748b', marginTop: '4px', display: 'block' }}>
-                        {currentSectionOptions.find((s) => s.value === formSection)?.desc || 'Target layout slot.'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Descriptions */}
+              <form id="content-form" onSubmit={handleSubmitForm} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {/* Row 1: Title & Subtitle */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#e2e8f0', marginBottom: '6px' }}>
-                      Short Description <span style={{ color: '#ef4444' }}>*</span>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#0f172a', marginBottom: '6px' }}>
+                      Content Title <span style={{ color: '#ef4444' }}>*</span>
                     </label>
-                    <textarea
+                    <input
+                      type="text"
                       required
-                      rows={3}
-                      placeholder="Concise overview displayed on the public card (1-3 sentences)..."
-                      value={formShortDesc}
-                      onChange={(e) => setFormShortDesc(e.target.value)}
+                      placeholder="e.g. Enterprise AI Knowledge Assistant"
+                      value={formTitle}
+                      onChange={(e) => setFormTitle(e.target.value)}
                       style={{
                         width: '100%',
-                        background: '#050c18',
-                        border: '1px solid #192a45',
+                        background: '#f8fafc',
+                        border: '1px solid #cbd5e1',
                         borderRadius: '8px',
                         padding: '10px 14px',
-                        color: '#ffffff',
+                        color: '#0f172a',
                         fontSize: '13px',
                         outline: 'none',
-                        resize: 'vertical',
                       }}
                     />
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#e2e8f0', marginBottom: '6px' }}>
-                      Full Description / Body <span style={{ color: '#64748b' }}>(optional expanded details)</span>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#0f172a', marginBottom: '6px' }}>
+                      Subtitle / Tagline <span style={{ color: '#64748b' }}>(optional)</span>
                     </label>
-                    <textarea
-                      rows={4}
-                      placeholder="Extended description for detailed views or expanded modal dialogs..."
-                      value={formFullDesc}
-                      onChange={(e) => setFormFullDesc(e.target.value)}
+                    <input
+                      type="text"
+                      placeholder="e.g. Multilingual RAG Engine"
+                      value={formSubtitle}
+                      onChange={(e) => setFormSubtitle(e.target.value)}
                       style={{
                         width: '100%',
-                        background: '#050c18',
-                        border: '1px solid #192a45',
+                        background: '#f8fafc',
+                        border: '1px solid #cbd5e1',
                         borderRadius: '8px',
                         padding: '10px 14px',
-                        color: '#ffffff',
+                        color: '#0f172a',
                         fontSize: '13px',
                         outline: 'none',
-                        resize: 'vertical',
                       }}
                     />
-                  </div>
-
-                  {/* Image Picker Integration */}
-                  <div style={{ background: '#050c18', padding: '16px', borderRadius: '12px', border: '1px solid #152744' }}>
-                    <AdminImagePicker
-                      label="Content Feature Image"
-                      currentUrl={imageCurrentUrl}
-                      altText={imageAltText}
-                      selectedFile={imageSelectedFile}
-                      previewUrl={imagePreviewUrl}
-                      onFileSelect={(file, preview) => {
-                        setImageSelectedFile(file)
-                        setImagePreviewUrl(preview)
-                      }}
-                      onUrlChange={(url) => {
-                        setImageCurrentUrl(url)
-                        setImageSelectedFile(null)
-                        setImagePreviewUrl(null)
-                      }}
-                      onAltChange={(alt) => setImageAltText(alt)}
-                      sectionTag={formPage === 'home' ? 'hero' : formPage === 'services' ? 'services' : formPage === 'products' ? 'products' : 'general'}
-                      helpText="Upload a high-resolution PNG, JPG, WebP, or pick an existing graphic from your media library."
-                    />
-                  </div>
-
-                  {/* Row 3: Button Label & Destination URL */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#e2e8f0', marginBottom: '6px' }}>
-                        Button Label <span style={{ color: '#64748b' }}>(optional)</span>
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Explore Case Study"
-                        value={formButtonText}
-                        onChange={(e) => setFormButtonText(e.target.value)}
-                        style={{
-                          width: '100%',
-                          background: '#050c18',
-                          border: '1px solid #192a45',
-                          borderRadius: '8px',
-                          padding: '10px 14px',
-                          color: '#ffffff',
-                          fontSize: '13px',
-                          outline: 'none',
-                        }}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#e2e8f0', marginBottom: '6px' }}>
-                        Button Destination URL <span style={{ color: '#64748b' }}>(optional)</span>
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. /services, /contact, or external URL"
-                        value={formButtonUrl}
-                        onChange={(e) => setFormButtonUrl(e.target.value)}
-                        style={{
-                          width: '100%',
-                          background: '#050c18',
-                          border: '1px solid #192a45',
-                          borderRadius: '8px',
-                          padding: '10px 14px',
-                          color: '#ffffff',
-                          fontSize: '13px',
-                          outline: 'none',
-                        }}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#e2e8f0', marginBottom: '6px' }}>
-                        Display Order
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        step="1"
-                        value={formDisplayOrder}
-                        onChange={(e) => setFormDisplayOrder(parseInt(e.target.value) || 0)}
-                        style={{
-                          width: '100%',
-                          background: '#050c18',
-                          border: '1px solid #192a45',
-                          borderRadius: '8px',
-                          padding: '10px 14px',
-                          color: '#ffffff',
-                          fontSize: '13px',
-                          outline: 'none',
-                        }}
-                      />
-                      <span style={{ fontSize: '11px', color: '#64748b', marginTop: '4px', display: 'block' }}>
-                        Lower numbers appear first.
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Status Setting */}
-                  <div style={{ background: '#050c18', padding: '14px 18px', borderRadius: '10px', border: '1px solid #152744' }}>
-                    <span style={{ fontSize: '12.5px', fontWeight: 700, color: '#e2e8f0', display: 'block', marginBottom: '8px' }}>
-                      Publishing Status
-                    </span>
-                    <div style={{ display: 'flex', gap: '20px' }}>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px' }}>
-                        <input
-                          type="radio"
-                          name="status"
-                          value="published"
-                          checked={formStatus === 'published'}
-                          onChange={() => setFormStatus('published')}
-                        />
-                        <span style={{ color: '#22c55e', fontWeight: 700 }}>Published (Live on Website)</span>
-                      </label>
-
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px' }}>
-                        <input
-                          type="radio"
-                          name="status"
-                          value="draft"
-                          checked={formStatus === 'draft'}
-                          onChange={() => setFormStatus('draft')}
-                        />
-                        <span style={{ color: '#f59e0b', fontWeight: 700 }}>Draft (Private, not visible publicly)</span>
-                      </label>
-                    </div>
-                  </div>
-                </form>
-              ) : (
-                /* Live Card Preview Inside Modal */
-                <div>
-                  <div
-                    style={{
-                      background: 'rgba(0, 201, 242, 0.08)',
-                      border: '1px solid rgba(0, 201, 242, 0.2)',
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      marginBottom: '20px',
-                      fontSize: '12.5px',
-                      color: '#cbd5e1',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <Sparkles size={16} color="#00c9f2" />
-                    <span>
-                      Live visual simulation of this content card as it renders on{' '}
-                      <strong>/{formPage}</strong> in the <strong>{formSection}</strong> section.
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <div style={{ width: '100%', maxWidth: '420px' }}>
-                      <ContentCardPreview item={activePreviewData} />
-                    </div>
                   </div>
                 </div>
-              )}
+
+                {/* Row 2: Target Page & Section Placement */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#0f172a', marginBottom: '6px' }}>
+                      Target Website Page <span style={{ color: '#ef4444' }}>*</span>
+                    </label>
+                    <select
+                      value={formPage}
+                      onChange={(e) => setFormPage(e.target.value)}
+                      style={{
+                        width: '100%',
+                        background: '#f8fafc',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '8px',
+                        padding: '10px 14px',
+                        color: '#0f172a',
+                        fontSize: '13px',
+                        outline: 'none',
+                      }}
+                    >
+                      {PAGE_OPTIONS.map((p) => (
+                        <option key={p.value} value={p.value}>
+                          {p.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#0f172a', marginBottom: '6px' }}>
+                      Placement Section <span style={{ color: '#ef4444' }}>*</span>
+                    </label>
+                    <select
+                      value={formSection}
+                      onChange={(e) => setFormSection(e.target.value)}
+                      style={{
+                        width: '100%',
+                        background: '#f8fafc',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '8px',
+                        padding: '10px 14px',
+                        color: '#0f172a',
+                        fontSize: '13px',
+                        outline: 'none',
+                      }}
+                    >
+                      {currentSectionOptions.map((s) => (
+                        <option key={s.value} value={s.value}>
+                          {s.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Descriptions */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#0f172a', marginBottom: '6px' }}>
+                    Short Description <span style={{ color: '#ef4444' }}>*</span>
+                  </label>
+                  <textarea
+                    required
+                    rows={3}
+                    placeholder="Concise overview displayed on the public card (1-3 sentences)..."
+                    value={formShortDesc}
+                    onChange={(e) => setFormShortDesc(e.target.value)}
+                    style={{
+                      width: '100%',
+                      background: '#f8fafc',
+                      border: '1px solid #cbd5e1',
+                      borderRadius: '8px',
+                      padding: '10px 14px',
+                      color: '#0f172a',
+                      fontSize: '13px',
+                      outline: 'none',
+                      resize: 'vertical',
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#0f172a', marginBottom: '6px' }}>
+                    Full Description / Body <span style={{ color: '#64748b' }}>(optional expanded details)</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Extended description for detailed views or expanded modal dialogs..."
+                    value={formFullDesc}
+                    onChange={(e) => setFormFullDesc(e.target.value)}
+                    style={{
+                      width: '100%',
+                      background: '#f8fafc',
+                      border: '1px solid #cbd5e1',
+                      borderRadius: '8px',
+                      padding: '10px 14px',
+                      color: '#0f172a',
+                      fontSize: '13px',
+                      outline: 'none',
+                      resize: 'vertical',
+                    }}
+                  />
+                </div>
+
+                {/* Image Picker Integration */}
+                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                  <AdminImagePicker
+                    label="Content Feature Image"
+                    currentUrl={imageCurrentUrl}
+                    altText={imageAltText}
+                    selectedFile={imageSelectedFile}
+                    previewUrl={imagePreviewUrl}
+                    onFileSelect={(file, preview) => {
+                      setImageSelectedFile(file)
+                      setImagePreviewUrl(preview)
+                    }}
+                    onUrlChange={(url) => {
+                      setImageCurrentUrl(url)
+                      setImageSelectedFile(null)
+                      setImagePreviewUrl(null)
+                    }}
+                    onAltChange={(alt) => setImageAltText(alt)}
+                    sectionTag={formPage === 'home' ? 'hero' : formPage === 'services' ? 'services' : formPage === 'products' ? 'products' : 'general'}
+                    helpText="Upload a high-resolution PNG, JPG, WebP, or pick an existing graphic from your media library."
+                  />
+                </div>
+
+                {/* Row 3: Button Label & Destination URL */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#0f172a', marginBottom: '6px' }}>
+                      Button Label <span style={{ color: '#64748b' }}>(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Explore Case Study"
+                      value={formButtonText}
+                      onChange={(e) => setFormButtonText(e.target.value)}
+                      style={{
+                        width: '100%',
+                        background: '#f8fafc',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '8px',
+                        padding: '10px 14px',
+                        color: '#0f172a',
+                        fontSize: '13px',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#0f172a', marginBottom: '6px' }}>
+                      Button Destination URL <span style={{ color: '#64748b' }}>(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. /services, /contact, or external URL"
+                      value={formButtonUrl}
+                      onChange={(e) => setFormButtonUrl(e.target.value)}
+                      style={{
+                        width: '100%',
+                        background: '#f8fafc',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '8px',
+                        padding: '10px 14px',
+                        color: '#0f172a',
+                        fontSize: '13px',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#0f172a', marginBottom: '6px' }}>
+                      Display Order
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={formDisplayOrder}
+                      onChange={(e) => setFormDisplayOrder(parseInt(e.target.value) || 0)}
+                      style={{
+                        width: '100%',
+                        background: '#f8fafc',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '8px',
+                        padding: '10px 14px',
+                        color: '#0f172a',
+                        fontSize: '13px',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Status Setting */}
+                <div style={{ background: '#f8fafc', padding: '14px 18px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                  <span style={{ fontSize: '12.5px', fontWeight: 700, color: '#0f172a', display: 'block', marginBottom: '8px' }}>
+                    Publishing Status
+                  </span>
+                  <div style={{ display: 'flex', gap: '20px' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px' }}>
+                      <input
+                        type="radio"
+                        name="status"
+                        value="published"
+                        checked={formStatus === 'published'}
+                        onChange={() => setFormStatus('published')}
+                      />
+                      <span style={{ color: '#16a34a', fontWeight: 700 }}>Published (Live on Website)</span>
+                    </label>
+
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px' }}>
+                      <input
+                        type="radio"
+                        name="status"
+                        value="draft"
+                        checked={formStatus === 'draft'}
+                        onChange={() => setFormStatus('draft')}
+                      />
+                      <span style={{ color: '#d97706', fontWeight: 700 }}>Draft (Private, not visible publicly)</span>
+                    </label>
+                  </div>
+                </div>
+              </form>
             </div>
 
             {/* Modal Footer */}
             <div
               style={{
                 padding: '16px 24px',
-                borderTop: '1px solid #152744',
-                background: '#060e1c',
+                borderTop: '1px solid #e2e8f0',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
+                justifyContent: 'flex-end',
+                gap: '12px',
+                background: '#f8fafc',
               }}
             >
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
                 disabled={submitting}
-                style={{
-                  padding: '9px 18px',
-                  borderRadius: '8px',
-                  background: 'transparent',
-                  border: '1px solid #1e3a5f',
-                  color: '#94a3b8',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
+                className="adm-btn adm-btn-outline"
               >
                 Cancel
               </button>
 
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button
-                  type="button"
-                  onClick={(e) => handleSubmitForm(e, 'draft')}
-                  disabled={submitting}
-                  style={{
-                    padding: '9px 18px',
-                    borderRadius: '8px',
-                    background: '#152744',
-                    border: '1px solid #23416d',
-                    color: '#f59e0b',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Save as Draft
-                </button>
-
-                <button
-                  type="submit"
-                  form="content-form"
-                  disabled={submitting}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '9px 22px',
-                    borderRadius: '8px',
-                    background: 'linear-gradient(135deg, #00c9f2, #00dfa5)',
-                    border: 'none',
-                    color: '#031422',
-                    fontSize: '13px',
-                    fontWeight: 750,
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 15px rgba(0, 201, 242, 0.25)',
-                  }}
-                >
-                  {submitting ? (
-                    <Loader2 size={15} className="animate-spin" />
-                  ) : (
-                    <Check size={15} />
-                  )}
-                  <span>{editingItem ? 'Save Changes' : 'Publish Content'}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================
-          MODAL: STANDALONE FULL PREVIEW MODAL
-          ======================================================== */}
-      {previewItem && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 9100,
-            background: 'rgba(3, 10, 20, 0.9)',
-            backdropFilter: 'blur(10px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '24px',
-          }}
-        >
-          <div
-            style={{
-              width: '100%',
-              maxWidth: '680px',
-              background: '#091528',
-              border: '1px solid #1e3a5f',
-              borderRadius: '20px',
-              overflow: 'hidden',
-              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8)',
-            }}
-          >
-            {/* Header */}
-            <div
-              style={{
-                padding: '18px 24px',
-                borderBottom: '1px solid #152744',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0, color: '#ffffff' }}>
-                  Live Component Preview
-                </h3>
-                <span style={{ fontSize: '12px', color: '#94a3b8' }}>
-                  Target: <strong>/{previewItem.page}</strong> (section: {previewItem.section})
-                </span>
-              </div>
-
-              {/* Viewport toggles */}
-              <div style={{ display: 'flex', gap: '6px' }}>
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('desktop')}
-                  style={{
-                    padding: '6px 10px',
-                    borderRadius: '6px',
-                    background: previewDevice === 'desktop' ? '#0f2442' : 'transparent',
-                    color: previewDevice === 'desktop' ? '#00c9f2' : '#94a3b8',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                >
-                  <Monitor size={14} />
-                  <span>Desktop</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('mobile')}
-                  style={{
-                    padding: '6px 10px',
-                    borderRadius: '6px',
-                    background: previewDevice === 'mobile' ? '#0f2442' : 'transparent',
-                    color: previewDevice === 'mobile' ? '#00c9f2' : '#94a3b8',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                >
-                  <Smartphone size={14} />
-                  <span>Mobile</span>
-                </button>
-              </div>
-
               <button
-                type="button"
-                onClick={() => setPreviewItem(null)}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: '#94a3b8',
-                  cursor: 'pointer',
-                }}
+                type="submit"
+                form="content-form"
+                disabled={submitting}
+                className="adm-btn adm-btn-primary"
               >
-                <X size={20} />
+                {submitting && <Loader2 size={14} className="animate-spin" />}
+                <span>{editingItem ? 'Save Changes' : 'Create Content'}</span>
               </button>
-            </div>
-
-            {/* Preview Box */}
-            <div
-              style={{
-                padding: '30px',
-                background: '#040d1a',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '380px',
-              }}
-            >
-              <div style={{ width: previewDevice === 'mobile' ? '320px' : '460px', transition: 'width 0.3s' }}>
-                <ContentCardPreview item={previewItem} />
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div
-              style={{
-                padding: '16px 24px',
-                borderTop: '1px solid #152744',
-                background: '#060e1c',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span
-                  style={{
-                    padding: '3px 8px',
-                    borderRadius: '4px',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    background:
-                      previewItem.status === 'published' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                    color: previewItem.status === 'published' ? '#22c55e' : '#f59e0b',
-                  }}
-                >
-                  STATUS: {previewItem.status.toUpperCase()}
-                </span>
-                <span style={{ fontSize: '12px', color: '#64748b' }}>Order: #{previewItem.display_order}</span>
-              </div>
-
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleTogglePublish(previewItem)
-                    setPreviewItem((prev) =>
-                      prev ? { ...prev, status: prev.status === 'published' ? 'draft' : 'published' } : null
-                    )
-                  }}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: '8px',
-                    background: previewItem.status === 'published' ? '#152744' : 'linear-gradient(135deg, #00c9f2, #00dfa5)',
-                    color: previewItem.status === 'published' ? '#f59e0b' : '#031422',
-                    border: 'none',
-                    fontSize: '12.5px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {previewItem.status === 'published' ? 'Switch to Draft' : 'Publish Live Now'}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setPreviewItem(null)}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: '8px',
-                    background: '#1e3a5f',
-                    color: '#ffffff',
-                    border: 'none',
-                    fontSize: '12.5px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Close Preview
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -2043,37 +1517,41 @@ export default function AdminContentPage() {
           ======================================================== */}
       {deleteConfirmItem && (
         <div
+          role="dialog"
+          aria-modal="true"
           style={{
             position: 'fixed',
             inset: 0,
             zIndex: 9200,
-            background: 'rgba(3, 10, 20, 0.85)',
-            backdropFilter: 'blur(8px)',
+            background: 'rgba(15, 23, 42, 0.6)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: '20px',
           }}
+          onClick={() => setDeleteConfirmItem(null)}
         >
           <div
             style={{
               width: '100%',
               maxWidth: '440px',
-              background: '#091528',
-              border: '1px solid rgba(239, 68, 68, 0.4)',
+              background: '#ffffff',
+              border: '1px solid #fecaca',
               borderRadius: '16px',
               padding: '24px',
               textAlign: 'center',
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.7)',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.15)',
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             <div
               style={{
                 width: '48px',
                 height: '48px',
                 borderRadius: '50%',
-                background: 'rgba(239, 68, 68, 0.15)',
-                color: '#ef4444',
+                background: '#fee2e2',
+                color: '#dc2626',
                 display: 'grid',
                 placeItems: 'center',
                 margin: '0 auto 16px',
@@ -2081,29 +1559,20 @@ export default function AdminContentPage() {
             >
               <Trash2 size={24} />
             </div>
-            <h3 style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 8px', color: '#ffffff' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 8px', color: '#0f172a' }}>
               Confirm Deletion
             </h3>
-            <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 20px', lineHeight: 1.5 }}>
+            <p style={{ fontSize: '13.5px', color: '#64748b', margin: '0 0 20px', lineHeight: 1.5 }}>
               Are you sure you want to permanently delete{' '}
-              <strong style={{ color: '#ffffff' }}>"{deleteConfirmItem.title}"</strong>?
-              It will be immediately removed from the live website.
+              <strong style={{ color: '#0f172a' }}>&ldquo;{deleteConfirmItem.title}&rdquo;</strong>?
+              It will be immediately removed from the database.
             </p>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
               <button
                 type="button"
                 onClick={() => setDeleteConfirmItem(null)}
                 disabled={submitting}
-                style={{
-                  padding: '9px 18px',
-                  borderRadius: '8px',
-                  background: 'transparent',
-                  border: '1px solid #1e3a5f',
-                  color: '#94a3b8',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
+                className="adm-btn adm-btn-outline"
               >
                 Cancel
               </button>
@@ -2111,19 +1580,7 @@ export default function AdminContentPage() {
                 type="button"
                 onClick={handleDeleteConfirm}
                 disabled={submitting}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '9px 20px',
-                  borderRadius: '8px',
-                  background: '#ef4444',
-                  border: 'none',
-                  color: '#ffffff',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
+                className="adm-btn adm-btn-danger"
               >
                 {submitting && <Loader2 size={14} className="animate-spin" />}
                 <span>Delete Permanently</span>
@@ -2135,125 +1592,3 @@ export default function AdminContentPage() {
     </div>
   )
 }
-
-// Reusable Visual Preview Component matching THENAM Card Styling
-function ContentCardPreview({ item }: { item: ContentItem }) {
-  return (
-    <article
-      style={{
-        background: '#081426',
-        border: '1px solid #162642',
-        borderRadius: '16px',
-        overflow: 'hidden',
-        boxShadow: '0 16px 36px rgba(0, 0, 0, 0.45)',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      {/* Media Image */}
-      <div
-        style={{
-          position: 'relative',
-          width: '100%',
-          aspectRatio: '16 / 9',
-          background: '#030a14',
-          overflow: 'hidden',
-        }}
-      >
-        {item.image_url ? (
-          <img
-            src={item.image_url}
-            alt={item.image_alt || item.title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        ) : (
-          <div style={{ width: '100%', height: '100%', display: 'grid', placeItems: 'center', color: '#334155' }}>
-            <FileText size={36} />
-          </div>
-        )}
-
-        <div
-          style={{
-            position: 'absolute',
-            top: '10px',
-            left: '10px',
-            padding: '3px 8px',
-            borderRadius: '4px',
-            fontSize: '10px',
-            fontWeight: 800,
-            textTransform: 'uppercase',
-            background: 'rgba(0, 201, 242, 0.2)',
-            color: '#00c9f2',
-            border: '1px solid rgba(0, 201, 242, 0.4)',
-            backdropFilter: 'blur(4px)',
-          }}
-        >
-          {item.page}
-        </div>
-      </div>
-
-      {/* Body */}
-      <div style={{ padding: '18px 20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <span
-          style={{
-            fontSize: '10.5px',
-            fontWeight: 800,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            color: '#00dfa5',
-            marginBottom: '4px',
-            display: 'block',
-          }}
-        >
-          {item.subtitle || item.section.replace(/_/g, ' ')}
-        </span>
-
-        <h3
-          style={{
-            fontSize: '16.5px',
-            fontWeight: 800,
-            color: '#ffffff',
-            margin: '0 0 8px',
-            lineHeight: 1.3,
-          }}
-        >
-          {item.title}
-        </h3>
-
-        <p
-          style={{
-            fontSize: '12.5px',
-            color: '#94a3b8',
-            lineHeight: 1.5,
-            margin: '0 0 16px',
-            flex: 1,
-          }}
-        >
-          {item.short_description}
-        </p>
-
-        {item.button_text && (
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '8px 14px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, rgba(0, 201, 242, 0.15), rgba(0, 223, 165, 0.15))',
-              border: '1px solid rgba(0, 201, 242, 0.35)',
-              color: '#00c9f2',
-              fontSize: '12px',
-              fontWeight: 700,
-              marginTop: 'auto',
-            }}
-          >
-            <span>{item.button_text}</span>
-            <ArrowRight size={13} />
-          </div>
-        )}
-      </div>
-    </article>
-  )
-}
-

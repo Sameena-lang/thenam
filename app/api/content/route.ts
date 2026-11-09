@@ -16,7 +16,7 @@ export async function GET(request: Request) {
       )
     }
 
-    const items = getPublicContentByPage(page, section)
+    const items = await getPublicContentByPage(page, section)
     return NextResponse.json({
       page,
       section: section || 'all',

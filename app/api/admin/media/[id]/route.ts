@@ -14,13 +14,13 @@ export async function GET(
 
   try {
     const { id } = await params
-    const item = (db.prepare('SELECT * FROM media WHERE id = ?').get(id) as unknown) as MediaItem | undefined
+    const item = (await db.prepare('SELECT * FROM media WHERE id = ?').get(id) as unknown) as MediaItem | undefined
 
     if (!item) {
       return NextResponse.json({ error: 'Media not found' }, { status: 404 })
     }
 
-    const usage = isMediaInUse(item.url)
+    const usage = await isMediaInUse(item.url)
 
     return NextResponse.json({
       media: {
@@ -46,7 +46,7 @@ export async function PATCH(
 
   try {
     const { id } = await params
-    const item = (db.prepare('SELECT * FROM media WHERE id = ?').get(id) as unknown) as MediaItem | undefined
+    const item = (await db.prepare('SELECT * FROM media WHERE id = ?').get(id) as unknown) as MediaItem | undefined
 
     if (!item) {
       return NextResponse.json({ error: 'Media not found' }, { status: 404 })
@@ -60,13 +60,13 @@ export async function PATCH(
     const updatedUsageRef = usage_ref !== undefined ? (usage_ref ? String(usage_ref).trim() : null) : item.usage_ref
     const now = new Date().toISOString()
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE media
       SET alt_text = ?, section_tag = ?, usage_ref = ?, updated_at = ?
       WHERE id = ?
     `).run(updatedAlt, updatedSection, updatedUsageRef, now, id)
 
-    recordAuditLog(
+    await recordAuditLog(
       'UPDATE_MEDIA_META',
       'media',
       id,
@@ -75,8 +75,8 @@ export async function PATCH(
       admin.email
     )
 
-    const updated = (db.prepare('SELECT * FROM media WHERE id = ?').get(id) as unknown) as MediaItem
-    const usage = isMediaInUse(updated.url)
+    const updated = (await db.prepare('SELECT * FROM media WHERE id = ?').get(id) as unknown) as MediaItem
+    const usage = await isMediaInUse(updated.url)
 
     return NextResponse.json({
       success: true,
@@ -103,14 +103,14 @@ export async function DELETE(
 
   try {
     const { id } = await params
-    const item = (db.prepare('SELECT * FROM media WHERE id = ?').get(id) as unknown) as MediaItem | undefined
+    const item = (await db.prepare('SELECT * FROM media WHERE id = ?').get(id) as unknown) as MediaItem | undefined
 
     if (!item) {
       return NextResponse.json({ error: 'Media not found' }, { status: 404 })
     }
 
     // Safety check: Cannot delete image if currently in active use or is a core system asset
-    const usage = isMediaInUse(item.url)
+    const usage = await isMediaInUse(item.url)
     if (usage.inUse) {
       return NextResponse.json(
         {
@@ -123,12 +123,12 @@ export async function DELETE(
     }
 
     // Delete record from database
-    db.prepare('DELETE FROM media WHERE id = ?').run(id)
+    await db.prepare('DELETE FROM media WHERE id = ?').run(id)
 
     // Delete physical file from uploads directory if it is an uploaded file
     await deleteUploadedFile(item.url)
 
-    recordAuditLog(
+    await recordAuditLog(
       'DELETE_MEDIA',
       'media',
       id,

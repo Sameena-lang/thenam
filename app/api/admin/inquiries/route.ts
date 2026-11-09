@@ -21,7 +21,7 @@ export async function GET(request: Request) {
     const params: (string | number)[] = []
 
     if (search) {
-      whereClause += ' AND (full_name LIKE ? OR email LIKE ? OR company LIKE ? OR message LIKE ?)'
+      whereClause += ' AND (full_name ILIKE ? OR email ILIKE ? OR company ILIKE ? OR message ILIKE ?)'
       const pattern = `%${search}%`
       params.push(pattern, pattern, pattern, pattern)
     }
@@ -37,7 +37,7 @@ export async function GET(request: Request) {
     }
 
     const countQuery = `SELECT COUNT(*) as total FROM inquiries ${whereClause}`
-    const totalCount = (db.prepare(countQuery).get(...params) as { total: number }).total
+    const totalCount = (await db.prepare(countQuery).get(...params) as { total: number }).total
 
     const query = `
       SELECT * FROM inquiries 
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
       ORDER BY created_at DESC 
       LIMIT ? OFFSET ?
     `
-    const inquiries = (db.prepare(query).all(...params, limit, offset) as unknown) as Inquiry[]
+    const inquiries = (await db.prepare(query).all(...params, limit, offset) as unknown) as Inquiry[]
 
     return NextResponse.json({
       inquiries,

@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     const params: (string | number)[] = []
 
     if (search) {
-      whereClause += ' AND (name LIKE ? OR email LIKE ? OR company LIKE ? OR phone LIKE ?)'
+      whereClause += ' AND (name ILIKE ? OR email ILIKE ? OR company ILIKE ? OR phone ILIKE ?)'
       const pattern = `%${search}%`
       params.push(pattern, pattern, pattern, pattern)
     }
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
 
     // Total count query
     const countQuery = `SELECT COUNT(*) as total FROM users ${whereClause}`
-    const totalCount = (db.prepare(countQuery).get(...params) as { total: number }).total
+    const totalCount = (await db.prepare(countQuery).get(...params) as { total: number }).total
 
     // Paged items query
     const query = `
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
       ORDER BY ${safeSortBy} ${sortOrder} 
       LIMIT ? OFFSET ?
     `
-    const users = (db.prepare(query).all(...params, limit, offset) as unknown) as WebsiteUser[]
+    const users = (await db.prepare(query).all(...params, limit, offset) as unknown) as WebsiteUser[]
 
     return NextResponse.json({
       users,
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
     const cleanName = name.trim()
 
     // Check duplicate email
-    const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(cleanEmail)
+    const existing = await db.prepare('SELECT id FROM users WHERE email = ?').get(cleanEmail)
     if (existing) {
       return NextResponse.json({ error: 'A user with this email address already exists.' }, { status: 409 })
     }
@@ -98,14 +98,14 @@ export async function POST(request: Request) {
     const id = 'usr_' + crypto.randomBytes(8).toString('hex')
     const now = new Date().toISOString()
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO users (id, name, email, phone, company, role, status, created_at, notes)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(id, cleanName, cleanEmail, phone ? String(phone).trim() : null, company ? String(company).trim() : null, role, status, now, notes ? String(notes).trim() : null)
 
-    recordAuditLog('CREATE_USER', 'users', id, `Created user record for ${cleanName} (${cleanEmail})`, admin.id, admin.email)
+    await recordAuditLog('CREATE_USER', 'users', id, `Created user record for ${cleanName} (${cleanEmail})`, admin.id, admin.email)
 
-    recordNotification({
+    await recordNotification({
       type: 'user',
       title: `Client Account Created: ${cleanName}`,
       message: `New ${role} profile created for ${cleanName} (${company || 'Individual Client'}).`,
@@ -115,7 +115,7 @@ export async function POST(request: Request) {
       isRead: 1,
     })
 
-    const newUser = (db.prepare('SELECT * FROM users WHERE id = ?').get(id) as unknown) as WebsiteUser
+    const newUser = (await db.prepare('SELECT * FROM users WHERE id = ?').get(id) as unknown) as WebsiteUser
 
     return NextResponse.json({ success: true, user: newUser }, { status: 201 })
   } catch (error) {

@@ -13,15 +13,14 @@ export async function GET(
 
   try {
     const { id } = await params
-    const user = (db.prepare('SELECT * FROM users WHERE id = ?').get(id) as unknown) as WebsiteUser | undefined
+    const user = (await db.prepare('SELECT * FROM users WHERE id = ?').get(id) as unknown) as WebsiteUser | undefined
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
     // Associated inquiries matching user's email
-    const inquiries = db
-      .prepare('SELECT id, service_name, budget_tier, timeline, status, created_at FROM inquiries WHERE email = ? ORDER BY created_at DESC')
+    const inquiries = await db.prepare('SELECT id, service_name, budget_tier, timeline, status, created_at FROM inquiries WHERE email = ? ORDER BY created_at DESC')
       .all(user.email)
 
     return NextResponse.json({ user, inquiries })
@@ -45,7 +44,7 @@ export async function PATCH(
     const body = await request.json()
     const { name, email, status, role, phone, company, notes } = body
 
-    const user = (db.prepare('SELECT * FROM users WHERE id = ?').get(id) as unknown) as WebsiteUser | undefined
+    const user = (await db.prepare('SELECT * FROM users WHERE id = ?').get(id) as unknown) as WebsiteUser | undefined
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
@@ -58,13 +57,13 @@ export async function PATCH(
     const updatedCompany = company !== undefined ? company : user.company
     const updatedNotes = notes !== undefined ? notes : user.notes
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE users 
       SET name = ?, email = ?, status = ?, role = ?, phone = ?, company = ?, notes = ?
       WHERE id = ?
     `).run(updatedName, updatedEmail, updatedStatus, updatedRole, updatedPhone, updatedCompany, updatedNotes, id)
 
-    recordAuditLog(
+    await recordAuditLog(
       'UPDATE_USER',
       'users',
       id,
@@ -73,7 +72,7 @@ export async function PATCH(
       admin.email
     )
 
-    const updatedUser = (db.prepare('SELECT * FROM users WHERE id = ?').get(id) as unknown) as WebsiteUser
+    const updatedUser = (await db.prepare('SELECT * FROM users WHERE id = ?').get(id) as unknown) as WebsiteUser
     return NextResponse.json({ success: true, user: updatedUser })
   } catch (error) {
     console.error('Error updating user:', error)
@@ -92,14 +91,14 @@ export async function DELETE(
 
   try {
     const { id } = await params
-    const user = (db.prepare('SELECT * FROM users WHERE id = ?').get(id) as unknown) as WebsiteUser | undefined
+    const user = (await db.prepare('SELECT * FROM users WHERE id = ?').get(id) as unknown) as WebsiteUser | undefined
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    db.prepare('DELETE FROM users WHERE id = ?').run(id)
+    await db.prepare('DELETE FROM users WHERE id = ?').run(id)
 
-    recordAuditLog(
+    await recordAuditLog(
       'DELETE_USER',
       'users',
       id,

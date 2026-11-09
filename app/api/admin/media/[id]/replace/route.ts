@@ -20,7 +20,7 @@ export async function POST(
 
   try {
     const { id } = await params
-    const item = (db.prepare('SELECT * FROM media WHERE id = ?').get(id) as unknown) as MediaItem | undefined
+    const item = (await db.prepare('SELECT * FROM media WHERE id = ?').get(id) as unknown) as MediaItem | undefined
 
     if (!item) {
       return NextResponse.json({ error: 'Target media record not found' }, { status: 404 })
@@ -68,7 +68,7 @@ export async function POST(
     const now = new Date().toISOString()
 
     // 1. Update media record
-    db.prepare(`
+    await db.prepare(`
       UPDATE media
       SET filename = ?, original_name = ?, url = ?, alt_text = ?, mime_type = ?, file_size = ?, width = ?, height = ?, updated_at = ?
       WHERE id = ?
@@ -86,19 +86,19 @@ export async function POST(
     )
 
     // 2. Cascade replacement to site_settings
-    db.prepare('UPDATE site_settings SET value = ?, updated_at = ? WHERE value = ?').run(
+    await db.prepare('UPDATE site_settings SET value = ?, updated_at = ? WHERE value = ?').run(
       newUrl,
       now,
       oldUrl
     )
 
     // 3. Cascade replacement to services and products
-    db.prepare('UPDATE services SET image_url = ?, updated_at = ? WHERE image_url = ?').run(
+    await db.prepare('UPDATE services SET image_url = ?, updated_at = ? WHERE image_url = ?').run(
       newUrl,
       now,
       oldUrl
     )
-    db.prepare('UPDATE products SET image_url = ?, updated_at = ? WHERE image_url = ?').run(
+    await db.prepare('UPDATE products SET image_url = ?, updated_at = ? WHERE image_url = ?').run(
       newUrl,
       now,
       oldUrl
@@ -109,7 +109,7 @@ export async function POST(
       await deleteUploadedFile(oldUrl)
     }
 
-    recordAuditLog(
+    await recordAuditLog(
       'REPLACE_MEDIA',
       'media',
       id,
@@ -118,8 +118,8 @@ export async function POST(
       admin.email
     )
 
-    const updated = (db.prepare('SELECT * FROM media WHERE id = ?').get(id) as unknown) as MediaItem
-    const usage = isMediaInUse(updated.url)
+    const updated = (await db.prepare('SELECT * FROM media WHERE id = ?').get(id) as unknown) as MediaItem
+    const usage = await isMediaInUse(updated.url)
 
     return NextResponse.json({
       success: true,

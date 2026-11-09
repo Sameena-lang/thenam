@@ -52,11 +52,11 @@ export async function GET(request: Request) {
 
     const { startDate, endDate } = resolveDateRange(range, customStart, customEnd)
 
-    const overview = getAnalyticsOverview(startDate, endDate)
-    const trafficSeries = getDailyTrafficSeries(startDate, endDate)
-    const topPages = getTopPages(startDate, endDate, 50)
-    const { services, products } = getPopularServicesAndProducts(startDate, endDate)
-    const enquiryPerformance = getEnquiryPerformanceData(startDate, endDate)
+    const overview = await getAnalyticsOverview(startDate, endDate)
+    const trafficSeries = await getDailyTrafficSeries(startDate, endDate)
+    const topPages = await getTopPages(startDate, endDate, 50)
+    const { services, products } = await getPopularServicesAndProducts(startDate, endDate)
+    const enquiryPerformance = await getEnquiryPerformanceData(startDate, endDate)
 
     const rows: string[] = []
 

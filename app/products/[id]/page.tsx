@@ -76,7 +76,7 @@ function getProductIcon(name: string, id: string) {
 
 export default async function ProductDetailPage({ params }: PageProps) {
   const { id } = await params
-  const product = getProductById(id)
+  const product = await getProductById(id)
 
   if (!product) {
     notFound()
@@ -84,7 +84,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
   const badgeStyle = getBadgeStyle(product.badge_color)
   const IconComponent = getProductIcon(product.name, product.id)
-  const allProducts = getAllProductsFromDb(true)
+  const allProducts = await getAllProductsFromDb(true)
   const otherProducts = allProducts.filter((p) => p.id !== product.id).slice(0, 4)
 
   const productImage =

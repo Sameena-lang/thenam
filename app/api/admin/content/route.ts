@@ -22,8 +22,8 @@ export async function GET(request: Request) {
     const status = searchParams.get('status') || undefined
     const search = searchParams.get('q') || searchParams.get('search') || undefined
 
-    const items = getAllContent({ page, section, status, search })
-    const allItems = getAllContent()
+    const items = await getAllContent({ page, section, status, search })
+    const allItems = await getAllContent()
 
     const publishedCount = allItems.filter((i) => i.status === 'published').length
     const draftCount = allItems.filter((i) => i.status === 'draft').length
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Placement section is required.' }, { status: 400 })
     }
 
-    const newItem = createContent({
+    const newItem = await createContent({
       title: title.trim(),
       subtitle: subtitle ? String(subtitle).trim() : null,
       short_description: short_description.trim(),
@@ -103,7 +103,7 @@ export async function POST(request: Request) {
     }
 
     // Log admin action
-    recordAuditLog(
+    await recordAuditLog(
       'CREATE_CONTENT',
       'site_content',
       newItem.id,

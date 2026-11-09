@@ -37,7 +37,7 @@ export async function GET() {
   }
 
   try {
-    const projects = getAllProjects(true)
+    const projects = await getAllProjects(true)
     return NextResponse.json({ projects })
   } catch (error) {
     console.error('Error fetching admin projects:', error)
@@ -91,7 +91,7 @@ export async function POST(request: Request) {
     const cleanSlug = slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')
     const normalizedVisitUrl = visitUrl ? normalizeUrl(visitUrl) : ''
 
-    const existing = getProjectBySlug(cleanSlug)
+    const existing = await getProjectBySlug(cleanSlug)
     if (existing) {
       return NextResponse.json(
         { error: `Project with slug "${cleanSlug}" already exists` },
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const created = createProject({
+    const created = await createProject({
       slug: cleanSlug,
       titleFirst: titleFirst.trim(),
       titleSecond: titleSecond.trim(),
@@ -120,7 +120,7 @@ export async function POST(request: Request) {
       isActive: Boolean(isActive),
     })
 
-    recordAuditLog(
+    await recordAuditLog(
       'CREATE_PROJECT',
       'project',
       cleanSlug,

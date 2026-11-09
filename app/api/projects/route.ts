@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    const projects = getAllProjects(false)
+    const projects = await getAllProjects(false)
     return NextResponse.json({ projects })
   } catch (error) {
     console.error('Error fetching public projects:', error)

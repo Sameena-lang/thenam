@@ -13,7 +13,7 @@ export async function GET(
 
   try {
     const { id } = await params
-    const service = (db.prepare('SELECT * FROM services WHERE id = ?').get(id) as unknown) as ServiceItem | undefined
+    const service = (await db.prepare('SELECT * FROM services WHERE id = ?').get(id) as unknown) as ServiceItem | undefined
     if (!service) {
       return NextResponse.json({ error: 'Service not found' }, { status: 404 })
     }
@@ -47,7 +47,7 @@ export async function PATCH(
 
   try {
     const { id } = await params
-    const service = (db.prepare('SELECT * FROM services WHERE id = ?').get(id) as unknown) as ServiceItem | undefined
+    const service = (await db.prepare('SELECT * FROM services WHERE id = ?').get(id) as unknown) as ServiceItem | undefined
     if (!service) {
       return NextResponse.json({ error: 'Service not found' }, { status: 404 })
     }
@@ -85,7 +85,7 @@ export async function PATCH(
 
     const now = new Date().toISOString()
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE services
       SET title = ?, subtitle = ?, badge = ?, description = ?, color_class = ?, icon_name = ?, features = ?, sort_order = ?, is_active = ?, image_url = ?, image_alt = ?, updated_at = ?
       WHERE id = ?
@@ -105,7 +105,7 @@ export async function PATCH(
       id
     )
 
-    recordAuditLog(
+    await recordAuditLog(
       'UPDATE_SERVICE',
       'services',
       id,
@@ -114,7 +114,7 @@ export async function PATCH(
       admin.email
     )
 
-    const updated = (db.prepare('SELECT * FROM services WHERE id = ?').get(id) as unknown) as ServiceItem
+    const updated = (await db.prepare('SELECT * FROM services WHERE id = ?').get(id) as unknown) as ServiceItem
 
     return NextResponse.json({
       success: true,
@@ -146,14 +146,14 @@ export async function DELETE(
 
   try {
     const { id } = await params
-    const service = (db.prepare('SELECT * FROM services WHERE id = ?').get(id) as unknown) as ServiceItem | undefined
+    const service = (await db.prepare('SELECT * FROM services WHERE id = ?').get(id) as unknown) as ServiceItem | undefined
     if (!service) {
       return NextResponse.json({ error: 'Service not found' }, { status: 404 })
     }
 
-    db.prepare('DELETE FROM services WHERE id = ?').run(id)
+    await db.prepare('DELETE FROM services WHERE id = ?').run(id)
 
-    recordAuditLog(
+    await recordAuditLog(
       'DELETE_SERVICE',
       'services',
       id,

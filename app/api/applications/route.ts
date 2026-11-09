@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     const cleanName = String(fullName).trim()
     const cleanRole = String(role).trim()
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO applications (
         id, full_name, email, phone, role, portfolio_link, experience_level, message, status, created_at
       )
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     )
 
     // Trigger Admin Notification for Career Application
-    recordNotification({
+    await recordNotification({
       type: 'application',
       title: `Career Application: ${cleanName}`,
       message: `${cleanName} applied for ${cleanRole}${experienceLevel ? ` (${experienceLevel})` : ''}. Review and screening pending.`,

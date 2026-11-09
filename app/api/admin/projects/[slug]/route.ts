@@ -42,7 +42,7 @@ export async function GET(
 
   try {
     const { slug } = await params
-    const project = getProjectBySlug(slug)
+    const project = await getProjectBySlug(slug)
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 })
     }
@@ -65,7 +65,7 @@ export async function PATCH(
 
   try {
     const { slug } = await params
-    const existing = getProjectBySlug(slug)
+    const existing = await getProjectBySlug(slug)
     if (!existing) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 })
     }
@@ -95,7 +95,7 @@ export async function PATCH(
       }
     }
 
-    const updated = updateProject(slug, {
+    const updated = await updateProject(slug, {
       ...body,
       visitUrl: normalizedVisitUrl !== undefined ? normalizedVisitUrl : body.visitUrl,
       domain: domainUpdate !== undefined ? domainUpdate : body.domain,
@@ -123,7 +123,7 @@ export async function PATCH(
       changesSummary.push(`title: "${updated.titleFirst} ${updated.titleSecond}"`)
     }
 
-    recordAuditLog(
+    await recordAuditLog(
       'UPDATE_PROJECT',
       'project',
       slug,
@@ -153,12 +153,12 @@ export async function DELETE(
 
   try {
     const { slug } = await params
-    const existing = getProjectBySlug(slug)
+    const existing = await getProjectBySlug(slug)
     if (!existing) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 })
     }
 
-    const success = deleteProject(slug)
+    const success = await deleteProject(slug)
     if (!success) {
       return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 })
     }
@@ -171,7 +171,7 @@ export async function DELETE(
       // cache revalidation
     }
 
-    recordAuditLog(
+    await recordAuditLog(
       'DELETE_PROJECT',
       'project',
       slug,

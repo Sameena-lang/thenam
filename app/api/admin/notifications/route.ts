@@ -25,19 +25,19 @@ export async function GET(request: Request) {
     }
 
     if (search) {
-      whereClause += ' AND (title LIKE ? OR message LIKE ?)'
+      whereClause += ' AND (title ILIKE ? OR message ILIKE ?)'
       const pattern = `%${search}%`
       params.push(pattern, pattern)
     }
 
     // Unread count
     const unreadCount = (
-      db.prepare('SELECT COUNT(*) as count FROM admin_notifications WHERE is_read = 0').get() as { count: number }
+      await db.prepare('SELECT COUNT(*) as count FROM admin_notifications WHERE is_read = 0').get() as { count: number }
     ).count
 
     // Total count matching filter
     const totalCount = (
-      db.prepare(`SELECT COUNT(*) as count FROM admin_notifications ${whereClause}`).get(...params) as { count: number }
+      await db.prepare(`SELECT COUNT(*) as count FROM admin_notifications ${whereClause}`).get(...params) as { count: number }
     ).count
 
     // Query notifications
@@ -48,26 +48,26 @@ export async function GET(request: Request) {
       ORDER BY created_at DESC 
       LIMIT ?
     `
-    const notifications = (db.prepare(query).all(...params, limit) as unknown) as AdminNotification[]
+    const notifications = (await db.prepare(query).all(...params, limit) as unknown) as AdminNotification[]
 
     // Compute Pending and Overdue summary
     const now = new Date()
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
 
     const overdueInquiriesCount = (
-      db.prepare("SELECT COUNT(*) as count FROM inquiries WHERE status = 'new' AND created_at < ?").get(oneDayAgo) as { count: number }
+      await db.prepare("SELECT COUNT(*) as count FROM inquiries WHERE status = 'new' AND created_at < ?").get(oneDayAgo) as { count: number }
     ).count
 
     const pendingInquiriesCount = (
-      db.prepare("SELECT COUNT(*) as count FROM inquiries WHERE status = 'new'").get() as { count: number }
+      await db.prepare("SELECT COUNT(*) as count FROM inquiries WHERE status = 'new'").get() as { count: number }
     ).count
 
     const pendingUsersCount = (
-      db.prepare("SELECT COUNT(*) as count FROM users WHERE status = 'pending'").get() as { count: number }
+      await db.prepare("SELECT COUNT(*) as count FROM users WHERE status = 'pending'").get() as { count: number }
     ).count
 
     const pendingApplicationsCount = (
-      db.prepare("SELECT COUNT(*) as count FROM applications WHERE status = 'submitted' OR status = 'screening'").get() as { count: number }
+      await db.prepare("SELECT COUNT(*) as count FROM applications WHERE status = 'submitted' OR status = 'screening'").get() as { count: number }
     ).count
 
     return NextResponse.json({
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
     const { action } = body
 
     if (action === 'mark_all_read' || !action) {
-      db.prepare('UPDATE admin_notifications SET is_read = 1 WHERE is_read = 0').run()
+      await db.prepare('UPDATE admin_notifications SET is_read = 1 WHERE is_read = 0').run()
       return NextResponse.json({ success: true, message: 'All notifications marked as read' })
     }
 
